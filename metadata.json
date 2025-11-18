@@ -1,0 +1,7 @@
+{
+  "name": "Prep4Loan",
+  "description": "A modern, multi-step loan application form that provides a personalized loan summary using AI.",
+  "requestFramePermissions": [
+    "microphone"
+  ]
+}

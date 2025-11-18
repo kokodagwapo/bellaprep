@@ -1,0 +1,75 @@
+import React from 'react';
+import StepHeader from './StepHeader';
+import StepNavigation from './StepNavigation';
+
+interface StepPricingProps {
+  data: { purchasePrice: number, downPayment: number };
+  onChange: (data: { purchasePrice?: number, downPayment?: number }) => void;
+  onNext: () => void;
+  onBack: () => void;
+}
+
+const StepPricing: React.FC<StepPricingProps> = ({ data, onChange, onNext, onBack }) => {
+  const isFormValid = data.purchasePrice > 0 && data.downPayment >= 0 && data.downPayment < data.purchasePrice;
+
+  const formatNumber = (num: number) => {
+    return num === 0 ? '' : num.toLocaleString('en-US');
+  };
+
+  const parseNumber = (str: string) => {
+    return parseInt(str.replace(/,/g, ''), 10) || 0;
+  };
+
+  const handleValueChange = (field: 'purchasePrice' | 'downPayment', value: string) => {
+    onChange({ [field]: parseNumber(value) });
+  };
+
+  return (
+    <div>
+      <StepHeader
+        title="What is your estimated purchase price?"
+      />
+      <div className="space-y-4">
+        <div>
+          <label htmlFor="purchasePrice" className="block text-sm font-medium text-muted-foreground mb-1">Purchase Price</label>
+          <div className="relative">
+            <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4">
+              <span className="text-muted-foreground sm:text-lg">$</span>
+            </div>
+            <input
+              id="purchasePrice"
+              type="text"
+              inputMode="numeric"
+              placeholder="500,000"
+              value={formatNumber(data.purchasePrice)}
+              onChange={(e) => handleValueChange('purchasePrice', e.target.value)}
+              className="w-full px-4 py-3 pl-8 text-lg border border-input bg-background rounded-lg focus:outline-none focus:ring-2 focus:ring-ring focus:border-primary transition duration-200"
+              aria-label="Purchase Price"
+            />
+          </div>
+        </div>
+        <div>
+          <label htmlFor="downPayment" className="block text-sm font-medium text-muted-foreground mb-1">Down Payment</label>
+          <div className="relative">
+            <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4">
+              <span className="text-muted-foreground sm:text-lg">$</span>
+            </div>
+            <input
+              id="downPayment"
+              type="text"
+              inputMode="numeric"
+              placeholder="100,000"
+              value={formatNumber(data.downPayment)}
+              onChange={(e) => handleValueChange('downPayment', e.target.value)}
+              className="w-full px-4 py-3 pl-8 text-lg border border-input bg-background rounded-lg focus:outline-none focus:ring-2 focus:ring-ring focus:border-primary transition duration-200"
+              aria-label="Down Payment"
+            />
+          </div>
+        </div>
+      </div>
+      <StepNavigation onNext={onNext} onBack={onBack} isNextDisabled={!isFormValid} />
+    </div>
+  );
+};
+
+export default StepPricing;
