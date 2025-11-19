@@ -217,7 +217,7 @@ const App: React.FC = () => {
             </div>
           </div>
           <div style={{ color: '#000000' }}>
-            <SidebarLink link={{ label: "Jane Doe", href: "#", icon: ( <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=JaneDoe&backgroundColor=b6e3f4,c0aede,d1d4f9,ffd5dc,ffdfbf" className="h-7 w-7 flex-shrink-0 rounded-full" width={50} height={50} alt="Avatar"/> )}} />
+            <SidebarLink link={{ label: "Jane Doe", href: "#", icon: ( <div className="h-7 w-7 flex-shrink-0 rounded-full bg-primary flex items-center justify-center text-primary-foreground font-semibold text-xs">JD</div> )}} />
           </div>
         </SidebarBody>
       </Sidebar>
