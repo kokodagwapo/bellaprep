@@ -123,7 +123,7 @@ export const getForm1003Requirements = (): Form1003Requirement[] => {
         }
         // If it's an empty object or has data, check if it's complete
         return !!data.previousEmployment?.employerName && 
-               !!data.previousEmployment?.startDate && 
+         !!data.previousEmployment?.startDate && 
                !!data.previousEmployment?.endDate;
       },
     },

@@ -66,3 +66,32 @@ button:active {
   transition: transform 0.1s ease;
 }
 
+/* Global dotted background pattern */
+body {
+  position: relative;
+  background-color: #ffffff;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: radial-gradient(circle, rgb(212 212 212) 1px, transparent 1px);
+  background-size: 16px 16px;
+  opacity: 0.6;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.dark body {
+  background-color: #111827;
+}
+
+.dark body::before {
+  background-image: radial-gradient(circle, rgb(38 38 38) 1px, transparent 1px);
+  opacity: 0.6;
+}
+

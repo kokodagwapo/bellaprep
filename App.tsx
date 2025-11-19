@@ -250,8 +250,8 @@ const App: React.FC = () => {
           </div>
         </SidebarBody>
       </Sidebar>
-      <main ref={mainContentRef} className="flex-1 h-full overflow-y-auto custom-scrollbar" style={{ backgroundColor: '#ffffff' }}>
-        <div className="min-h-full flex items-center justify-center p-3 sm:p-4 md:p-6 lg:p-8">
+      <main ref={mainContentRef} className="flex-1 h-full overflow-y-auto custom-scrollbar relative" style={{ backgroundColor: 'transparent', zIndex: 1 }}>
+        <div className="min-h-full flex items-center justify-center p-4 sm:p-6 md:p-8 lg:p-10 relative z-10">
             {currentView === 'home' ? (
                 <LandingPage 
                   onNavigateToPrep={resetApplication}

@@ -1,5 +1,5 @@
-import React from 'react';
-import { motion } from 'framer-motion';
+import React, { useRef, useState, useEffect } from 'react';
+import { motion, useScroll, useTransform } from 'framer-motion';
 import { FilePlus2, FileText, LayoutList, Shield, Zap, CheckCircle2, UploadCloud, Smartphone, Scan } from './icons';
 import { HeroHighlight, Highlight } from './ui/hero-highlight';
 
@@ -9,6 +9,25 @@ interface LandingPageProps {
 }
 
 const LandingPage: React.FC<LandingPageProps> = ({ onNavigateToPrep, onNavigateToForm1003 }) => {
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const [frontImageIndex, setFrontImageIndex] = useState(0);
+  
+  // Scroll progress for the images container
+  // Using viewport-based scroll tracking
+  const { scrollYProgress } = useScroll({
+    target: scrollContainerRef,
+    offset: ["start 0.8", "start 0.2"]
+  });
+
+  // Rotate images to front every 12 seconds
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setFrontImageIndex((prev) => (prev + 1) % 4);
+    }, 12000); // 12 seconds
+
+    return () => clearInterval(interval);
+  }, []);
+
   const mainProducts = [
     {
       icon: <FilePlus2 className="h-10 w-10 text-primary" />,
@@ -56,164 +75,243 @@ const LandingPage: React.FC<LandingPageProps> = ({ onNavigateToPrep, onNavigateT
   ];
 
   return (
-    <div className="w-full max-w-7xl mx-auto animate-fade-in px-2 sm:px-4">
+    <div className="w-full max-w-7xl mx-auto animate-fade-in">
       {/* Hero Section with HeroHighlight Background */}
-      <div className="relative mb-12 sm:mb-16 md:mb-20 lg:mb-24 -mx-2 sm:-mx-4 md:-mx-6 lg:-mx-8">
+      <div className="relative mb-16 sm:mb-20 md:mb-24 lg:mb-28 -mx-2 sm:-mx-4 md:-mx-6 lg:-mx-8">
         <HeroHighlight 
-          containerClassName="h-auto min-h-[500px] sm:min-h-[600px] md:min-h-[700px] lg:min-h-[800px] rounded-none"
+          containerClassName="h-auto min-h-[600px] sm:min-h-[700px] md:min-h-[800px] lg:min-h-[900px] rounded-none"
           className="w-full"
         >
-          <div className="relative text-center px-4 sm:px-6 pt-8 sm:pt-12 md:pt-16 pb-10 sm:pb-14 md:pb-20 w-full">
-            <motion.div 
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, ease: "easeOut" }}
-              className="flex flex-col items-center gap-4 sm:gap-5 md:gap-6 mb-8 sm:mb-10 md:mb-12"
-            >
-              <motion.div
-                initial={{ scale: 0.9, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                transition={{ delay: 0.2, duration: 0.6, ease: "easeOut" }}
-                className="relative mb-2"
-              >
-                <img 
-                  src={`${import.meta.env.BASE_URL}TeraTrans.png`}
-                  alt="TERAVERDE Logo" 
-                  className="relative w-auto h-auto max-w-[120px] sm:max-w-[160px] md:max-w-[200px] lg:max-w-[240px] object-contain drop-shadow-lg"
-                  style={{ maxHeight: '80px', width: 'auto', height: 'auto' }}
-                  onError={(e) => {
-                    console.error('Logo failed to load');
-                    (e.target as HTMLImageElement).style.display = 'none';
-                  }}
-                />
-              </motion.div>
-              <motion.span
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.4, duration: 0.8 }}
-                className="text-xs sm:text-sm md:text-base font-semibold text-muted-foreground tracking-wider uppercase px-3 py-1.5 rounded-full bg-white/80 backdrop-blur-sm border border-gray-200/50 shadow-sm"
-                style={{ color: '#6b7280', letterSpacing: '0.15em' }}
-              >
-                Business Process Solutions
-              </motion.span>
-            </motion.div>
-            
-            <motion.h1 
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3, duration: 0.8, ease: "easeOut" }}
-              className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold text-foreground mb-6 sm:mb-8 md:mb-10 leading-tight px-4 max-w-5xl mx-auto"
-            >
-              Your <Highlight className="text-foreground">Home Journey</Highlight>.<br className="hidden sm:block" /> Faster. Clearer. Better.
-            </motion.h1>
-            
-            <motion.p 
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.5, duration: 0.8 }}
-              className="text-sm sm:text-base md:text-lg lg:text-xl text-muted-foreground max-w-3xl mx-auto mb-10 sm:mb-12 md:mb-14 lg:mb-16 leading-relaxed font-light px-4"
-            >
-              Experience a seamless, AI-powered mortgage application process designed to save you time and simplify every step.
-            </motion.p>
+          <div className="relative w-full px-4 sm:px-6 lg:px-8" style={{ paddingTop: '2rem', paddingBottom: '3rem' }}>
 
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.6, duration: 0.8 }}
-              className="flex flex-col sm:flex-row gap-4 sm:gap-5 md:gap-6 justify-center items-stretch sm:items-center px-4"
+            {/* Images backdrop - positioned absolutely behind content */}
+            <div 
+              ref={scrollContainerRef}
+              className="absolute inset-0 -mx-20 -my-20 sm:-mx-28 sm:-my-28 md:-mx-40 md:-my-40 lg:-mx-56 lg:-my-56 xl:-mx-72 xl:-my-72 flex items-center justify-center overflow-visible z-0"
+              style={{ height: 'calc(100% + 10rem)', width: 'calc(100% + 10rem)' }}
             >
-              <motion.button
-                whileHover={{ scale: 1.05, y: -2 }}
-                whileTap={{ scale: 0.98 }}
-                onClick={() => onNavigateToPrep?.()}
-                className="group relative w-full sm:w-auto sm:min-w-[220px] md:min-w-[260px] bg-gradient-to-r from-primary via-primary to-green-600 text-white font-bold py-4 sm:py-4 md:py-5 px-8 sm:px-10 md:px-14 rounded-2xl sm:rounded-2xl md:rounded-3xl hover:from-green-600 hover:via-primary hover:to-primary transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-primary/30 shadow-xl hover:shadow-2xl hover:shadow-primary/30 text-base sm:text-base md:text-lg touch-manipulation min-h-[52px] sm:min-h-[56px] md:min-h-[60px] overflow-hidden"
-                style={{ WebkitTapHighlightColor: 'transparent' }}
-              >
-                <span className="relative z-10 flex items-center justify-center gap-2">
-                  Prep4Loan
-                  <svg className="w-5 h-5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                  </svg>
-                </span>
+              {[1, 2, 3, 4].map((index) => {
+                // Each image animates at different scroll thresholds
+                const startProgress = Math.max(0, (index - 1) * 0.25);
+                const midProgress = (index - 0.5) * 0.25;
+                const endProgress = Math.min(1, index * 0.25);
+                
+                const opacity = useTransform(
+                  scrollYProgress,
+                  [startProgress, midProgress, endProgress],
+                  [0, 0.5, 1]
+                );
+                
+                const scale = useTransform(
+                  scrollYProgress,
+                  [startProgress, midProgress, endProgress],
+                  [0.85, 0.92, 1]
+                );
+
+                // Calculate z-index based on rotation: front image gets highest z-index
+                // Images rotate: 0 -> 1 -> 2 -> 3 -> 0 (cycling)
+                const imageIndex = index - 1; // Convert to 0-based
+                const relativePosition = (imageIndex - frontImageIndex + 4) % 4;
+                const dynamicZIndex = 10 - relativePosition; // Front image gets z-index 10, others get lower
+
+                // Calculate offset positions - all images centered, front image slightly larger
+                const isFront = relativePosition === 0;
+                const baseOffsetX = imageIndex % 2 === 0 ? 40 : -40;
+                const baseOffsetY = (imageIndex) * 40;
+                
+                // Scale animation - front image is slightly larger
+                const frontScale = isFront ? 1.05 : 1;
+                const combinedScale = useTransform(scale, (scrollScale) => scrollScale * frontScale);
+
+                return (
+                  <motion.img
+                    key={`${index}-${frontImageIndex}`}
+                    src={`${import.meta.env.BASE_URL}app-image-${index}.png`}
+                    alt={`App screenshot ${index}`}
+                    className="absolute w-full max-w-[1000px] sm:max-w-[1200px] md:max-w-[1400px] lg:max-w-[1600px] xl:max-w-[1800px] h-auto object-contain rounded-2xl"
+                    animate={{
+                      x: 768, // Move all images 8 inches (768px) to the right
+                      y: isFront ? 192 : baseOffsetY + 192, // Move all images 2 inches (192px) down
+                      zIndex: dynamicZIndex,
+                    }}
+                    transition={{
+                      type: "spring",
+                      stiffness: 60,
+                      damping: 20,
+                      mass: 0.7,
+                      duration: 1.5,
+                    }}
+                    style={{
+                      border: '4mm solid white',
+                      boxShadow: isFront 
+                        ? '0 30px 60px -12px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(0, 0, 0, 0.05)' 
+                        : '0 25px 50px -12px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(0, 0, 0, 0.05)',
+                      opacity,
+                      scale: combinedScale,
+                      transformOrigin: 'center center',
+                    }}
+                    initial={{ opacity: 0, scale: 0.85 }}
+                    whileInView={{ opacity: 1 }}
+                    viewport={{ once: false, margin: `-${80 + index * 40}px` }}
+                  />
+                );
+              })}
+            </div>
+
+            {/* Hero Text Content with backdrop overlay */}
+            <div className="relative z-20 text-center lg:text-left max-w-4xl mx-auto lg:mx-0" style={{ transform: 'translateX(-144px)' }}>
+              <div className="bg-white/90 backdrop-blur-md rounded-2xl md:rounded-3xl p-6 sm:p-8 md:p-10 lg:p-12 shadow-xl border border-white/50">
+                {/* Logo/Badge Section - Top Center */}
+                <motion.div 
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] }}
+                  className="flex flex-col items-center gap-2.5 sm:gap-3 mb-6 sm:mb-8"
+                >
+                  <motion.div
+                    initial={{ scale: 0.95, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    transition={{ delay: 0.15, duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] }}
+                    className="relative"
+                  >
+                    <img 
+                      src={`${import.meta.env.BASE_URL}TeraTrans.png`}
+                      alt="TERAVERDE Logo" 
+                      className="relative w-auto h-auto max-w-[90px] sm:max-w-[110px] md:max-w-[130px] object-contain"
+                      style={{ maxHeight: '55px', width: 'auto', height: 'auto', filter: 'drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1))' }}
+                      onError={(e) => {
+                        console.error('Logo failed to load');
+                        (e.target as HTMLImageElement).style.display = 'none';
+                      }}
+                    />
+                  </motion.div>
+                  <motion.span
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 0.3, duration: 0.6 }}
+                    className="text-[9px] sm:text-[10px] md:text-xs font-medium text-muted-foreground tracking-[0.2em] uppercase px-3 py-1.5 rounded-full bg-white/95 backdrop-blur-md border border-gray-200/80 shadow-sm"
+                    style={{ color: '#6b7280' }}
+                  >
+                    Business Process Solutions
+                  </motion.span>
+                </motion.div>
+                <motion.h1 
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.2, duration: 0.7, ease: [0.25, 0.46, 0.45, 0.94] }}
+                  className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-extrabold text-foreground mb-5 sm:mb-6 md:mb-7 leading-[1.1] tracking-tight"
+                >
+                  Your <Highlight className="text-foreground">Home Journey</Highlight>.<br className="hidden sm:block" /> Faster. Clearer. Better.
+                </motion.h1>
+                
+                <motion.p 
+                  initial={{ opacity: 0, y: 15 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.35, duration: 0.7 }}
+                  className="text-sm sm:text-base md:text-lg lg:text-xl text-muted-foreground max-w-xl lg:max-w-lg mx-auto lg:mx-0 mb-8 sm:mb-10 leading-relaxed font-normal"
+                  style={{ color: '#4b5563' }}
+                >
+                  Experience a seamless, AI-powered mortgage application process designed to save you time and simplify every step.
+                </motion.p>
+
                 <motion.div
-                  className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0"
-                  initial={{ x: '-100%' }}
-                  whileHover={{ x: '100%' }}
-                  transition={{ duration: 0.6 }}
-                />
-              </motion.button>
-              <motion.button
-                whileHover={{ scale: 1.05, y: -2 }}
-                whileTap={{ scale: 0.98 }}
-                onClick={() => onNavigateToForm1003?.()}
-                className="group relative w-full sm:w-auto sm:min-w-[220px] md:min-w-[260px] bg-white text-primary border-2 border-primary/40 font-bold py-4 sm:py-4 md:py-5 px-8 sm:px-10 md:px-14 rounded-2xl sm:rounded-2xl md:rounded-3xl hover:bg-gradient-to-r hover:from-primary/5 hover:via-primary/10 hover:to-primary/5 hover:border-primary transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-primary/20 shadow-lg hover:shadow-xl hover:shadow-primary/20 text-base sm:text-base md:text-lg touch-manipulation min-h-[52px] sm:min-h-[56px] md:min-h-[60px] backdrop-blur-sm"
-                style={{ WebkitTapHighlightColor: 'transparent' }}
-              >
-                <span className="relative z-10 flex items-center justify-center gap-2">
-                  Home Journey
-                  <svg className="w-5 h-5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                  </svg>
-                </span>
-              </motion.button>
-            </motion.div>
+                  initial={{ opacity: 0, y: 15 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.5, duration: 0.7 }}
+                  className="flex flex-col sm:flex-row gap-3.5 sm:gap-4 justify-center lg:justify-start items-stretch sm:items-center"
+                >
+                  <motion.button
+                    whileHover={{ scale: 1.02, y: -1 }}
+                    whileTap={{ scale: 0.98 }}
+                    onClick={() => onNavigateToPrep?.()}
+                    className="group relative w-full sm:w-auto sm:min-w-[190px] md:min-w-[210px] bg-gradient-to-r from-primary via-primary to-green-600 text-white font-semibold py-3.5 sm:py-4 px-7 sm:px-9 md:px-11 rounded-xl md:rounded-2xl hover:from-green-600 hover:via-primary hover:to-primary transition-all duration-300 focus:outline-none focus:ring-3 focus:ring-primary/40 shadow-lg hover:shadow-xl hover:shadow-primary/25 text-sm sm:text-base touch-manipulation min-h-[48px] sm:min-h-[50px] overflow-hidden"
+                    style={{ WebkitTapHighlightColor: 'transparent' }}
+                  >
+                    <span className="relative z-10 flex items-center justify-center gap-2 font-medium">
+                      Prep4Loan
+                      <svg className="w-4 h-4 opacity-0 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                      </svg>
+                    </span>
+                    <motion.div
+                      className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/25 to-white/0"
+                      initial={{ x: '-100%' }}
+                      whileHover={{ x: '100%' }}
+                      transition={{ duration: 0.7, ease: "easeInOut" }}
+                    />
+                  </motion.button>
+                  <motion.button
+                    whileHover={{ scale: 1.02, y: -1 }}
+                    whileTap={{ scale: 0.98 }}
+                    onClick={() => onNavigateToForm1003?.()}
+                    className="group relative w-full sm:w-auto sm:min-w-[190px] md:min-w-[210px] bg-white text-primary border-2 border-primary/50 font-semibold py-3.5 sm:py-4 px-7 sm:px-9 md:px-11 rounded-xl md:rounded-2xl hover:bg-gradient-to-r hover:from-primary/8 hover:via-primary/12 hover:to-primary/8 hover:border-primary transition-all duration-300 focus:outline-none focus:ring-3 focus:ring-primary/30 shadow-md hover:shadow-lg hover:shadow-primary/15 text-sm sm:text-base touch-manipulation min-h-[48px] sm:min-h-[50px] backdrop-blur-sm"
+                    style={{ WebkitTapHighlightColor: 'transparent' }}
+                  >
+                    <span className="relative z-10 flex items-center justify-center gap-2 font-medium">
+                      Home Journey
+                      <svg className="w-4 h-4 opacity-0 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                      </svg>
+                    </span>
+                  </motion.button>
+                </motion.div>
+              </div>
+            </div>
           </div>
         </HeroHighlight>
       </div>
 
       {/* Main Products Section */}
-      <div className="mb-12 sm:mb-16 md:mb-20 lg:mb-24 px-2 sm:px-4">
+      <div className="mb-20 sm:mb-24 md:mb-28 lg:mb-32 px-4 sm:px-6">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8 }}
-          className="text-center mb-8 sm:mb-12 md:mb-16"
+          viewport={{ once: true, margin: "-50px" }}
+          transition={{ duration: 0.7, ease: [0.25, 0.46, 0.45, 0.94] }}
+          className="text-center mb-12 sm:mb-16 md:mb-20"
         >
-          <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold text-foreground mb-3 sm:mb-4 px-2">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold text-foreground mb-4 sm:mb-5 tracking-tight">
             Business Process Solutions
           </h2>
-          <p className="text-base sm:text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto px-3">
+          <p className="text-base sm:text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed" style={{ color: '#6b7280' }}>
             Two powerful solutions to guide you through your mortgage journey
           </p>
         </motion.div>
         
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 md:gap-10 max-w-6xl mx-auto">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-10 md:gap-12 max-w-6xl mx-auto">
           {mainProducts.map((product, index) => (
             <motion.div
               key={index}
-              initial={{ opacity: 0, y: 40 }}
+              initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: index * 0.2, duration: 0.8 }}
-              whileHover={{ y: -12, scale: 1.02, transition: { duration: 0.3 } }}
-              className="group relative bg-white rounded-2xl sm:rounded-[2rem] border-2 border-gray-200 p-6 sm:p-8 md:p-10 lg:p-12 shadow-xl hover:shadow-2xl transition-all duration-500 overflow-hidden"
+              viewport={{ once: true, margin: "-50px" }}
+              transition={{ delay: index * 0.15, duration: 0.7, ease: [0.25, 0.46, 0.45, 0.94] }}
+              whileHover={{ y: -8, transition: { duration: 0.3 } }}
+              className="group relative bg-white rounded-2xl md:rounded-3xl border border-gray-200/80 p-8 sm:p-10 md:p-12 shadow-lg hover:shadow-2xl transition-all duration-500 overflow-hidden"
             >
               <div className="relative z-10">
-                <div className="flex items-center justify-center w-20 h-20 sm:w-24 sm:h-24 rounded-2xl sm:rounded-3xl bg-gray-100 mb-6 sm:mb-8 group-hover:scale-110 group-hover:rotate-3 transition-all duration-500 group-hover:shadow-2xl">
-                  <div className="group-hover:scale-110 transition-transform duration-500">
+                <div className="flex items-center justify-center w-16 h-16 sm:w-20 sm:h-24 rounded-2xl bg-gradient-to-br from-primary/10 to-primary/5 mb-6 sm:mb-8 group-hover:scale-105 group-hover:rotate-2 transition-all duration-500">
+                  <div className="group-hover:scale-110 transition-transform duration-500 text-primary">
                     {product.icon}
                   </div>
                 </div>
-                <h3 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-foreground mb-3 sm:mb-4 group-hover:text-primary transition-colors duration-300">
+                <h3 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground mb-4 sm:mb-5 group-hover:text-primary transition-colors duration-300 tracking-tight">
                   {product.title}
                 </h3>
-                <p className="text-base sm:text-lg md:text-xl text-muted-foreground leading-relaxed mb-6 sm:mb-8">
+                <p className="text-base sm:text-lg md:text-xl text-muted-foreground leading-relaxed mb-8 sm:mb-10" style={{ color: '#6b7280' }}>
                   {product.description}
                 </p>
                 <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
                   onClick={() => {
                     if (index === 0) {
-                      // Navigate to Prep4Loan
                       onNavigateToPrep?.();
                     } else {
-                      // Navigate to Home Journey
                       onNavigateToForm1003?.();
                     }
                   }}
-                  className="w-full bg-primary text-primary-foreground font-bold py-4 sm:py-4 px-6 sm:px-8 rounded-xl sm:rounded-2xl hover:bg-primary/90 active:bg-primary/85 transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-primary/30 shadow-lg hover:shadow-xl text-base sm:text-base md:text-lg touch-manipulation min-h-[48px] sm:min-h-[52px]"
+                  className="w-full bg-primary text-white font-semibold py-4 px-8 rounded-xl hover:bg-primary/90 transition-all duration-300 focus:outline-none focus:ring-3 focus:ring-primary/40 shadow-md hover:shadow-lg text-base sm:text-lg touch-manipulation min-h-[50px]"
                   style={{ WebkitTapHighlightColor: 'transparent' }}
                 >
                   {product.action}
@@ -225,43 +323,43 @@ const LandingPage: React.FC<LandingPageProps> = ({ onNavigateToPrep, onNavigateT
       </div>
 
       {/* Additional Features Section */}
-      <div className="mb-12 sm:mb-16 md:mb-20 lg:mb-24 px-2 sm:px-4">
+      <div className="mb-20 sm:mb-24 md:mb-28 lg:mb-32 px-4 sm:px-6">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8 }}
-          className="text-center mb-8 sm:mb-12 md:mb-16"
+          viewport={{ once: true, margin: "-50px" }}
+          transition={{ duration: 0.7, ease: [0.25, 0.46, 0.45, 0.94] }}
+          className="text-center mb-12 sm:mb-16 md:mb-20"
         >
-          <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold text-foreground mb-3 sm:mb-4 px-2">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold text-foreground mb-4 sm:mb-5 tracking-tight">
             Additional Features
           </h2>
-          <p className="text-base sm:text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto px-3">
+          <p className="text-base sm:text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed" style={{ color: '#6b7280' }}>
             Everything you need for a seamless mortgage experience
           </p>
         </motion.div>
         
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 md:gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
           {features.map((feature, index) => (
             <motion.div
               key={index}
-              initial={{ opacity: 0, y: 30 }}
+              initial={{ opacity: 0, y: 25 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: index * 0.1, duration: 0.6 }}
-              whileHover={{ y: -8, transition: { duration: 0.3 } }}
-              className="group relative bg-white rounded-2xl sm:rounded-3xl border border-gray-200 p-6 sm:p-8 md:p-10 shadow-lg hover:shadow-2xl transition-all duration-500 overflow-hidden"
+              viewport={{ once: true, margin: "-50px" }}
+              transition={{ delay: index * 0.1, duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] }}
+              whileHover={{ y: -6, transition: { duration: 0.3 } }}
+              className="group relative bg-white rounded-2xl border border-gray-200/80 p-6 sm:p-8 shadow-md hover:shadow-xl transition-all duration-500 overflow-hidden"
             >
               <div className="relative z-10">
-                <div className="flex items-center justify-center w-16 h-16 sm:w-20 sm:h-20 rounded-xl sm:rounded-2xl bg-gray-100 mb-4 sm:mb-6 group-hover:scale-110 transition-transform duration-300">
-                  <div className="group-hover:scale-110 transition-transform duration-300">
+                <div className="flex items-center justify-center w-14 h-14 sm:w-16 sm:h-16 rounded-xl bg-gradient-to-br from-primary/10 to-primary/5 mb-5 sm:mb-6 group-hover:scale-105 transition-transform duration-300">
+                  <div className="group-hover:scale-110 transition-transform duration-300 text-primary">
                     {feature.icon}
                   </div>
                 </div>
-                <h3 className="text-xl sm:text-2xl md:text-3xl font-bold text-foreground mb-2 sm:mb-3 group-hover:text-primary transition-colors duration-300">
+                <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-foreground mb-3 group-hover:text-primary transition-colors duration-300 tracking-tight">
                   {feature.title}
                 </h3>
-                <p className="text-sm sm:text-base md:text-lg text-muted-foreground leading-relaxed">
+                <p className="text-sm sm:text-base text-muted-foreground leading-relaxed" style={{ color: '#6b7280' }}>
                   {feature.description}
                 </p>
               </div>
@@ -271,33 +369,33 @@ const LandingPage: React.FC<LandingPageProps> = ({ onNavigateToPrep, onNavigateT
       </div>
 
       {/* Benefits Section */}
-      <div className="relative mb-12 sm:mb-16 md:mb-20 lg:mb-24 mx-2 sm:mx-4">
-        <div className="relative bg-white rounded-2xl sm:rounded-3xl border border-gray-200 p-6 sm:p-10 md:p-14 lg:p-20 shadow-2xl">
+      <div className="relative mb-20 sm:mb-24 md:mb-28 lg:mb-32 px-4 sm:px-6">
+        <div className="relative bg-white rounded-3xl border border-gray-200/80 p-8 sm:p-12 md:p-16 lg:p-20 shadow-xl">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8 }}
+            viewport={{ once: true, margin: "-50px" }}
+            transition={{ duration: 0.7, ease: [0.25, 0.46, 0.45, 0.94] }}
             className="max-w-4xl mx-auto"
           >
-            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold text-foreground text-center mb-8 sm:mb-12 md:mb-16 px-2">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold text-foreground text-center mb-12 sm:mb-16 tracking-tight">
               Why Choose Our Platform?
             </h2>
             
-            <div className="space-y-4 sm:space-y-5 md:space-y-6">
+            <div className="space-y-5 sm:space-y-6">
               {benefits.map((benefit, index) => (
                 <motion.div
                   key={index}
-                  initial={{ opacity: 0, x: -30 }}
+                  initial={{ opacity: 0, x: -20 }}
                   whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: index * 0.1, duration: 0.6 }}
-                  className="flex items-start gap-3 sm:gap-4 md:gap-5 group"
+                  viewport={{ once: true, margin: "-50px" }}
+                  transition={{ delay: index * 0.08, duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] }}
+                  className="flex items-start gap-4 sm:gap-5 group cursor-default"
                 >
-                  <div className="flex-shrink-0 mt-0.5 sm:mt-1 p-1.5 sm:p-2 rounded-lg sm:rounded-xl bg-gray-100 group-hover:bg-gray-200 transition-colors duration-300">
-                    <CheckCircle2 className="h-5 w-5 sm:h-6 sm:w-6 md:h-7 md:w-7 text-gray-600" />
+                  <div className="flex-shrink-0 mt-0.5 p-2 rounded-xl bg-gradient-to-br from-primary/10 to-primary/5 group-hover:from-primary/20 group-hover:to-primary/10 transition-all duration-300">
+                    <CheckCircle2 className="h-5 w-5 sm:h-6 sm:w-6 text-primary" />
                   </div>
-                  <p className="text-base sm:text-lg md:text-xl text-foreground font-semibold pt-0.5 sm:pt-1 group-hover:text-primary transition-colors duration-300">
+                  <p className="text-base sm:text-lg md:text-xl text-foreground font-semibold pt-0.5 group-hover:text-primary transition-colors duration-300">
                     {benefit}
                   </p>
                 </motion.div>
@@ -311,26 +409,37 @@ const LandingPage: React.FC<LandingPageProps> = ({ onNavigateToPrep, onNavigateT
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.8 }}
-        className="text-center px-2 sm:px-4 mb-12 sm:mb-16"
+        viewport={{ once: true, margin: "-50px" }}
+        transition={{ duration: 0.7, ease: [0.25, 0.46, 0.45, 0.94] }}
+        className="text-center px-4 sm:px-6 mb-16 sm:mb-20"
       >
-        <div className="relative bg-white rounded-2xl sm:rounded-[2.5rem] p-8 sm:p-12 md:p-16 lg:p-20 shadow-2xl border border-gray-200 overflow-hidden">
+        <div className="relative bg-gradient-to-br from-white to-gray-50/50 rounded-3xl p-10 sm:p-14 md:p-18 lg:p-24 shadow-xl border border-gray-200/80 overflow-hidden">
           <div className="relative z-10">
-            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold text-foreground mb-4 sm:mb-6 md:mb-8 px-2">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold text-foreground mb-5 sm:mb-6 md:mb-8 tracking-tight">
               Ready to Get Started?
             </h2>
-            <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-muted-foreground mb-8 sm:mb-10 md:mb-12 max-w-3xl mx-auto leading-relaxed px-3">
+            <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-muted-foreground mb-10 sm:mb-12 max-w-3xl mx-auto leading-relaxed" style={{ color: '#6b7280' }}>
               Join thousands of borrowers who have simplified their mortgage application process with our platform.
             </p>
             <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
+              whileHover={{ scale: 1.03, y: -2 }}
+              whileTap={{ scale: 0.98 }}
               onClick={() => onNavigateToPrep?.()}
-              className="w-full sm:w-auto sm:min-w-[240px] md:min-w-[280px] bg-primary text-primary-foreground font-bold py-4 sm:py-5 md:py-6 px-10 sm:px-12 md:px-16 rounded-xl sm:rounded-2xl md:rounded-3xl hover:bg-primary/95 active:bg-primary/90 transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-primary/30 shadow-xl hover:shadow-2xl text-base sm:text-lg md:text-xl touch-manipulation min-h-[48px] sm:min-h-[52px] md:min-h-[60px]"
+              className="group relative w-full sm:w-auto sm:min-w-[240px] md:min-w-[280px] bg-gradient-to-r from-primary via-primary to-green-600 text-white font-semibold py-4 sm:py-5 md:py-6 px-10 sm:px-12 md:px-16 rounded-xl md:rounded-2xl hover:from-green-600 hover:via-primary hover:to-primary transition-all duration-300 focus:outline-none focus:ring-3 focus:ring-primary/40 shadow-lg hover:shadow-xl hover:shadow-primary/25 text-base sm:text-lg md:text-xl touch-manipulation min-h-[52px] sm:min-h-[56px] md:min-h-[60px] overflow-hidden"
               style={{ WebkitTapHighlightColor: 'transparent' }}
             >
-              Begin Your Journey
+              <span className="relative z-10 flex items-center justify-center gap-2">
+                Begin Your Journey
+                <svg className="w-5 h-5 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                </svg>
+              </span>
+              <motion.div
+                className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/25 to-white/0"
+                initial={{ x: '-100%' }}
+                whileHover={{ x: '100%' }}
+                transition={{ duration: 0.7, ease: "easeInOut" }}
+              />
             </motion.button>
           </div>
         </div>
