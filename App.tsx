@@ -250,7 +250,7 @@ const App: React.FC = () => {
           </div>
         </SidebarBody>
       </Sidebar>
-      <main ref={mainContentRef} className="flex-1 h-full overflow-y-auto" style={{ backgroundColor: '#ffffff' }}>
+      <main ref={mainContentRef} className="flex-1 h-full overflow-y-auto custom-scrollbar" style={{ backgroundColor: '#ffffff' }}>
         <div className="min-h-full flex items-center justify-center p-3 sm:p-4 md:p-6 lg:p-8">
             {currentView === 'home' ? (
                 <LandingPage 
