@@ -204,60 +204,17 @@ const AddressInput: React.FC<{
                 setIsLoading(false);
             });
 
-            // Validate on manual input with debouncing (for autocomplete suggestions)
-            // Note: React's onChange handler handles the value updates
-            const handleInput = () => {
-                if (inputTimeoutRef.current) {
-                    clearTimeout(inputTimeoutRef.current);
-                }
-                const inputValue = addressInputRef.current?.value || '';
-                
-                // Clear address details if manually editing (value will be updated by React onChange)
-                if (inputValue !== value) {
-                    setAddressDetails(null);
-                }
-                
-                // Debounced validation (React onChange handles immediate validation)
-                inputTimeoutRef.current = setTimeout(() => {
-                    if (inputValue.length > 5) {
-                        const isValidInput = inputValue.trim().length > 5;
-                        setIsValid(isValidInput);
-                        setErrorMessage('');
-                        if (onValidationChange) {
-                            onValidationChange(isValidInput);
-                        }
-                    } else {
-                        setIsValid(false);
-                        if (onValidationChange) {
-                            onValidationChange(false);
-                        }
-                    }
-                }, 300);
-            };
-
-            // Only add listener if autocomplete is active (for triggering suggestions)
-            if (mapsLoaded) {
-                addressInputRef.current.addEventListener('input', handleInput);
-            }
-            
-            // Add focus event to show suggestions
+            // Add focus event to show suggestions (optional enhancement)
             const handleFocus = () => {
-                if (addressInputRef.current && addressInputRef.current.value.length > 0 && mapsLoaded) {
-                    // Trigger autocomplete dropdown by simulating input
-                    const event = new KeyboardEvent('keydown', { key: 'ArrowDown', bubbles: true });
-                    addressInputRef.current.dispatchEvent(event);
-                }
+                // Google Maps autocomplete will show suggestions automatically on focus
+                // No need to manually trigger
             };
             
             addressInputRef.current.addEventListener('focus', handleFocus);
             
             const cleanup = () => {
                 console.log('Cleaning up autocomplete listeners');
-                if (inputTimeoutRef.current) {
-                    clearTimeout(inputTimeoutRef.current);
-                }
-                if (addressInputRef.current && mapsLoaded) {
-                    addressInputRef.current.removeEventListener('input', handleInput);
+                if (addressInputRef.current) {
                     addressInputRef.current.removeEventListener('focus', handleFocus);
                 }
                 if (window.google && autocompleteRef.current) {
@@ -302,23 +259,31 @@ const AddressInput: React.FC<{
                     value={value || ''}
                     onChange={(e) => {
                         const newValue = e.target.value;
+                        // Update parent immediately
                         onChange(id, newValue);
+                        
                         // Clear address details when manually editing
-                        if (newValue !== value) {
-                            setAddressDetails(null);
+                        setAddressDetails(null);
+                        
+                        // Validate with debouncing
+                        if (inputTimeoutRef.current) {
+                            clearTimeout(inputTimeoutRef.current);
                         }
-                        // Validate immediately for better UX
-                        if (newValue.trim().length > 5) {
-                            setIsValid(true);
-                            if (onValidationChange) {
-                                onValidationChange(true);
+                        
+                        inputTimeoutRef.current = setTimeout(() => {
+                            if (newValue.trim().length > 5) {
+                                setIsValid(true);
+                                setErrorMessage('');
+                                if (onValidationChange) {
+                                    onValidationChange(true);
+                                }
+                            } else {
+                                setIsValid(false);
+                                if (onValidationChange) {
+                                    onValidationChange(false);
+                                }
                             }
-                        } else {
-                            setIsValid(false);
-                            if (onValidationChange) {
-                                onValidationChange(false);
-                            }
-                        }
+                        }, 300);
                     }}
                     placeholder={mapsLoaded ? "Start typing your address (e.g., 123 Main St, New York, NY)" : placeholder || "Street address, City, State ZIP"}
                     className="mt-1 block w-full px-4 py-3 sm:px-3 sm:py-2.5 bg-background border border-border rounded-xl sm:rounded-lg shadow-sm text-base sm:text-sm text-foreground focus:ring-2 focus:ring-primary focus:border-primary transition-all touch-manipulation min-h-[44px] sm:min-h-[auto] pr-10"
