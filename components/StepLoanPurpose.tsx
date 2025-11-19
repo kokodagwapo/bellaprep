@@ -24,12 +24,12 @@ const StepLoanPurpose: React.FC<StepLoanPurposeProps> = ({ data, onChange, onNex
   };
 
   return (
-    <div className="w-full max-w-2xl mx-auto">
+    <div className="w-full max-w-2xl mx-auto px-2 sm:px-0">
       <StepHeader 
         title="What is the purpose of this loan?" 
         subtitle="Select the option that best describes your loan needs"
       />
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 mt-4 sm:mt-6">
         {loanPurposeOptions.map((option, index) => (
           <motion.div
             key={option.value}

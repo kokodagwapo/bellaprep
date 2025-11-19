@@ -211,19 +211,19 @@ const App: React.FC = () => {
         </SidebarBody>
       </Sidebar>
       <main className="flex-1 h-full overflow-y-auto" style={{ backgroundColor: '#ffffff' }}>
-        <div className="min-h-full flex items-center justify-center p-4 sm:p-6 md:p-8">
+        <div className="min-h-full flex items-center justify-center p-3 sm:p-4 md:p-6 lg:p-8">
             {currentView === 'form1003' ? (
                 <Form1003 initialData={formData} />
             ) : currentView === 'documents' ? (
                 <DocumentList formData={formData} />
             ) : (
-                <div className="w-full max-w-[1088px] mx-auto grid grid-cols-1 md:grid-cols-3 md:gap-12 lg:gap-16 items-start">
-                    <div className="hidden md:block md:col-span-1 pt-24">
+                <div className="w-full max-w-[1088px] mx-auto grid grid-cols-1 lg:grid-cols-3 lg:gap-12 xl:gap-16 items-start">
+                    <div className="hidden lg:block lg:col-span-1 pt-6 lg:pt-24">
                         <RequirementsChecklist loanPurpose={formData.loanPurpose} formData={formData} />
                     </div>
-                    <div className="w-full md:col-span-2">
+                    <div className="w-full lg:col-span-2">
                         {showStepIndicator && (
-                        <div className="mb-8 mt-8">
+                        <div className="mb-4 sm:mb-6 md:mb-8 mt-4 sm:mt-6 md:mt-8">
                             <StepIndicator 
                                 labels={indicatorSteps.labels} 
                                 currentStepIndex={currentIndicatorIndex}
@@ -232,18 +232,18 @@ const App: React.FC = () => {
                             />
                         </div>
                         )}
-                        <div className="bg-card rounded-2xl border border-border transition-all duration-300 overflow-hidden shadow-lg hover:shadow-xl">
-                            <div className="p-8 sm:p-12 min-h-[550px] flex flex-col justify-between">
+                        <div className="bg-card rounded-xl sm:rounded-2xl border border-border transition-all duration-300 overflow-hidden shadow-md sm:shadow-lg hover:shadow-xl">
+                            <div className="p-4 sm:p-6 md:p-8 lg:p-12 min-h-[400px] sm:min-h-[500px] md:min-h-[550px] flex flex-col justify-between">
                                 <div key={step} className="animate-fade-in w-full flex-1 flex flex-col justify-center">
                                     {renderPrepFlow()}
                                 </div>
                                 {/* Navigation Buttons */}
                                 {step > 0 && step < filteredFlow.length - 1 && (
-                                    <div className="mt-8 pt-6 border-t border-border/50">
-                                        <div className="flex items-center justify-between gap-4">
+                                    <div className="mt-6 sm:mt-8 pt-4 sm:pt-6 border-t border-border/50">
+                                        <div className="flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-between gap-3 sm:gap-4">
                                             <button
                                                 onClick={prevStep}
-                                                className="flex items-center justify-center gap-2 px-6 py-3 rounded-xl border border-border/60 bg-white hover:bg-muted/50 text-foreground font-medium transition-all duration-200 active:scale-95 min-w-[120px]"
+                                                className="flex items-center justify-center gap-2 px-4 sm:px-6 py-2.5 sm:py-3 rounded-lg sm:rounded-xl bg-primary text-primary-foreground font-medium hover:bg-primary/90 transition-all duration-200 active:scale-95 shadow-sm hover:shadow-md w-full sm:w-auto sm:min-w-[120px] text-sm sm:text-base"
                                             >
                                                 <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -252,7 +252,7 @@ const App: React.FC = () => {
                                             </button>
                                             <button
                                                 onClick={nextStep}
-                                                className="flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-primary text-primary-foreground font-semibold hover:bg-primary/90 transition-all duration-200 active:scale-95 shadow-sm hover:shadow-md min-w-[120px]"
+                                                className="flex items-center justify-center gap-2 px-4 sm:px-6 py-2.5 sm:py-3 rounded-lg sm:rounded-xl bg-primary text-primary-foreground font-semibold hover:bg-primary/90 transition-all duration-200 active:scale-95 shadow-sm hover:shadow-md w-full sm:w-auto sm:min-w-[120px] text-sm sm:text-base"
                                             >
                                                 Next
                                                 <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">

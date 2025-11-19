@@ -7,12 +7,12 @@ interface StepHeaderProps {
 }
 
 const StepHeader: React.FC<StepHeaderProps> = ({ title, subtitle }) => (
-  <div className="text-center mb-10">
+  <div className="text-center mb-6 sm:mb-8 md:mb-10 px-2">
     <motion.h2 
       initial={{ opacity: 0, y: -10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4 }}
-      className="text-3xl sm:text-4xl md:text-5xl font-bold text-foreground font-heading mb-3"
+      className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-foreground font-heading mb-2 sm:mb-3"
     >
       {title}
     </motion.h2>
@@ -21,7 +21,7 @@ const StepHeader: React.FC<StepHeaderProps> = ({ title, subtitle }) => (
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.2, duration: 0.4 }}
-        className="text-base sm:text-lg text-muted-foreground"
+        className="text-sm sm:text-base md:text-lg text-muted-foreground px-2"
       >
         {subtitle}
       </motion.p>
@@ -45,29 +45,31 @@ const SelectionButton: React.FC<SelectionButtonProps> = ({ label, icon, isSelect
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3 }}
-            className={`w-full p-6 border-2 rounded-xl text-left transition-all duration-300 flex items-center gap-4 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary relative ${
+            className={`w-full p-4 sm:p-6 border-2 rounded-lg sm:rounded-xl text-left transition-all duration-300 flex items-center gap-3 sm:gap-4 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary relative ${
                 isSelected
                 ? 'bg-gradient-to-br from-primary/10 to-primary/5 border-primary shadow-lg shadow-primary/20 ring-2 ring-primary/20'
                 : 'bg-card border-border hover:border-primary/30 hover:bg-primary/5 hover:shadow-md'
             }`}
         >
             {icon && (
-              <div className={`p-3 rounded-lg transition-all duration-300 flex-shrink-0 ${
+              <div className={`p-2 sm:p-3 rounded-lg transition-all duration-300 flex-shrink-0 ${
                 isSelected 
                   ? 'bg-primary text-primary-foreground shadow-md' 
                   : 'bg-primary/10 text-primary'
               }`}>
-                {icon}
+                <div className="w-6 h-6 sm:w-8 sm:h-8 flex items-center justify-center">
+                  {icon}
+                </div>
               </div>
             )}
-            <span className={`font-semibold text-lg sm:text-xl flex-1 transition-colors duration-300 ${
+            <span className={`font-semibold text-base sm:text-lg md:text-xl flex-1 transition-colors duration-300 ${
               isSelected ? 'text-primary' : 'text-foreground'
             }`}>
               {label}
             </span>
-            <div className="flex-shrink-0 ml-2 pl-4 border-l border-border/50">
+            <div className="flex-shrink-0 ml-1 sm:ml-2 pl-2 sm:pl-4 border-l border-border/50">
               <motion.div 
-                className={`w-8 h-8 rounded-full border-2 flex items-center justify-center transition-all duration-300 ${
+                className={`w-6 h-6 sm:w-8 sm:h-8 rounded-full border-2 flex items-center justify-center transition-all duration-300 ${
                   isSelected 
                     ? 'border-primary bg-primary shadow-md shadow-primary/30' 
                     : 'border-border bg-card hover:border-primary/50'
@@ -80,7 +82,7 @@ const SelectionButton: React.FC<SelectionButtonProps> = ({ label, icon, isSelect
                     initial={{ scale: 0, rotate: -180 }}
                     animate={{ scale: 1, rotate: 0 }}
                     transition={{ type: "spring", stiffness: 200, damping: 15 }}
-                    className="w-5 h-5 text-primary-foreground"
+                    className="w-4 h-4 sm:w-5 sm:h-5 text-primary-foreground"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"

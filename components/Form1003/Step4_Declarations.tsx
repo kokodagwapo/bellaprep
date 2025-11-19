@@ -17,9 +17,9 @@ const DeclarationQuestion: React.FC<{
     value: boolean | null;
     onChange: (field: keyof FormData, value: boolean) => void;
 }> = ({ question, field, value, onChange }) => (
-    <div className="py-4 border-b border-border last:border-b-0">
-        <p className="text-md font-medium text-foreground">{question}</p>
-        <div className="grid grid-cols-2 gap-4 mt-3">
+    <div className="py-3 sm:py-4 border-b border-border last:border-b-0">
+        <p className="text-sm sm:text-base font-medium text-foreground mb-2 sm:mb-3">{question}</p>
+        <div className="grid grid-cols-2 gap-3 sm:gap-4 mt-2 sm:mt-3">
             <SelectionButton
                 label="Yes"
                 isSelected={value === true}
@@ -42,9 +42,9 @@ const Step4Declarations: React.FC<Step4Props> = ({ data, onDataChange, onNext, o
     const isComplete = data.isFirstTimeBuyer !== null && data.isMilitary !== null;
 
     return (
-        <div>
+        <div className="px-2 sm:px-0">
             <StepHeader title="Section 4: Declarations" subtitle="Please answer the following questions." />
-            <div className="mt-8 space-y-4">
+            <div className="mt-4 sm:mt-6 md:mt-8 space-y-3 sm:space-y-4">
                 <DeclarationQuestion
                     question="Are you a first-time homebuyer?"
                     field="isFirstTimeBuyer"

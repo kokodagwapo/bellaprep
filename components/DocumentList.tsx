@@ -47,13 +47,13 @@ const DocumentList: React.FC<DocumentListProps> = ({ formData }) => {
   ];
 
   return (
-    <div className="w-full max-w-6xl mx-auto animate-fade-in my-8 px-4">
-      <div className="text-center mb-8">
-        <h1 className="text-4xl font-extrabold text-foreground font-heading mb-2">Document List</h1>
-        <p className="text-muted-foreground text-lg">Track your progress and see what's needed for your mortgage application</p>
+    <div className="w-full max-w-6xl mx-auto animate-fade-in my-4 sm:my-6 md:my-8 px-3 sm:px-4 md:px-6">
+      <div className="text-center mb-6 sm:mb-8">
+        <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-foreground font-heading mb-2 px-2">Document List</h1>
+        <p className="text-muted-foreground text-sm sm:text-base md:text-lg px-2">Track your progress and see what's needed for your mortgage application</p>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 mb-6 sm:mb-8">
         {/* Prep4Loan Progress Card */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -62,16 +62,16 @@ const DocumentList: React.FC<DocumentListProps> = ({ formData }) => {
         >
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-3">
-              <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
-                <FileText className="h-5 w-5 text-primary" />
+              <div className="h-8 w-8 sm:h-10 sm:w-10 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                <FileText className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
               </div>
-              <div>
-                <h2 className="text-xl font-bold text-foreground">Prep4Loan</h2>
-                <p className="text-sm text-muted-foreground">Pre-Evaluation Requirements</p>
+              <div className="min-w-0 flex-1">
+                <h2 className="text-lg sm:text-xl font-bold text-foreground">Prep4Loan</h2>
+                <p className="text-xs sm:text-sm text-muted-foreground">Pre-Evaluation Requirements</p>
               </div>
             </div>
-            <div className="text-right">
-              <div className="text-2xl font-bold text-primary">{Math.round(prep4LoanProgress)}%</div>
+            <div className="text-right flex-shrink-0">
+              <div className="text-xl sm:text-2xl font-bold text-primary">{Math.round(prep4LoanProgress)}%</div>
               <div className="text-xs text-muted-foreground">{prep4LoanCompleted}/{prep4LoanRequirements.length}</div>
             </div>
           </div>
@@ -126,20 +126,20 @@ const DocumentList: React.FC<DocumentListProps> = ({ formData }) => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="bg-white rounded-2xl border border-border shadow-lg p-6"
+          className="bg-white rounded-xl sm:rounded-2xl border border-border shadow-lg p-4 sm:p-6"
         >
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-3">
-              <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
-                <FileText className="h-5 w-5 text-primary" />
+          <div className="flex items-center justify-between mb-4 gap-2">
+            <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
+              <div className="h-8 w-8 sm:h-10 sm:w-10 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                <FileText className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
               </div>
-              <div>
-                <h2 className="text-xl font-bold text-foreground">Loan Application</h2>
-                <p className="text-sm text-muted-foreground">URLA Form 1003</p>
+              <div className="min-w-0 flex-1">
+                <h2 className="text-lg sm:text-xl font-bold text-foreground">Loan Application</h2>
+                <p className="text-xs sm:text-sm text-muted-foreground">URLA Form 1003</p>
               </div>
             </div>
-            <div className="text-right">
-              <div className="text-2xl font-bold text-primary">{Math.round(urla1003Progress)}%</div>
+            <div className="text-right flex-shrink-0">
+              <div className="text-xl sm:text-2xl font-bold text-primary">{Math.round(urla1003Progress)}%</div>
               <div className="text-xs text-muted-foreground">{urla1003Completed}/{urla1003Steps.length}</div>
             </div>
           </div>
@@ -192,19 +192,19 @@ const DocumentList: React.FC<DocumentListProps> = ({ formData }) => {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.3 }}
-        className="bg-gradient-to-br from-primary/5 to-primary/10 rounded-2xl border border-primary/20 p-6"
+        className="bg-gradient-to-br from-primary/5 to-primary/10 rounded-xl sm:rounded-2xl border border-primary/20 p-4 sm:p-6"
       >
-        <div className="flex items-center gap-3 mb-6">
-          <div className="h-10 w-10 rounded-full bg-primary/20 flex items-center justify-center">
-            <Lightbulb className="h-5 w-5 text-primary" />
+        <div className="flex items-center gap-2 sm:gap-3 mb-4 sm:mb-6">
+          <div className="h-8 w-8 sm:h-10 sm:w-10 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0">
+            <Lightbulb className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
           </div>
-          <div>
-            <h2 className="text-2xl font-bold text-foreground">Tips & Advice</h2>
-            <p className="text-sm text-muted-foreground">Especially helpful for first-time homebuyers</p>
+          <div className="min-w-0">
+            <h2 className="text-xl sm:text-2xl font-bold text-foreground">Tips & Advice</h2>
+            <p className="text-xs sm:text-sm text-muted-foreground">Especially helpful for first-time homebuyers</p>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
           {firstTimeBuyerTips.map((tip, index) => (
             <motion.div
               key={index}

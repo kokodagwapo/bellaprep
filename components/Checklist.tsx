@@ -16,7 +16,7 @@ const RequirementItem: React.FC<{ requirement: Requirement; isCompleted: boolean
         transition={{ delay: index * 0.1, duration: 0.3 }}
     >
         <motion.div 
-            className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 border-2 transition-all duration-300 ${
+            className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center flex-shrink-0 border-2 transition-all duration-300 ${
                 isCompleted 
                     ? 'bg-primary border-primary shadow-lg shadow-primary/20' 
                     : 'border-border bg-card group-hover:border-primary/50 group-hover:bg-primary/5'
@@ -27,7 +27,7 @@ const RequirementItem: React.FC<{ requirement: Requirement; isCompleted: boolean
             {isCompleted && (
                 <motion.svg 
                     xmlns="http://www.w3.org/2000/svg" 
-                    className="h-5 w-5 text-primary-foreground" 
+                    className="h-4 w-4 sm:h-5 sm:w-5 text-primary-foreground" 
                     fill="none" 
                     viewBox="0 0 24 24" 
                     stroke="currentColor"
@@ -39,7 +39,7 @@ const RequirementItem: React.FC<{ requirement: Requirement; isCompleted: boolean
                 </motion.svg>
             )}
         </motion.div>
-        <span className={`font-semibold text-base transition-all duration-300 ${
+        <span className={`font-semibold text-sm sm:text-base transition-all duration-300 ${
             isCompleted 
                 ? 'text-muted-foreground line-through' 
                 : 'text-foreground group-hover:text-primary'
@@ -55,10 +55,10 @@ const RequirementsChecklist: React.FC<RequirementsChecklistProps> = ({ loanPurpo
   return (
     <div className="space-y-6">
       <div className="space-y-2">
-        <h3 className="text-2xl font-bold font-heading text-foreground tracking-tight">
+        <h3 className="text-xl sm:text-2xl font-bold font-heading text-foreground tracking-tight">
           Your Requirements
         </h3>
-        <p className="text-sm text-muted-foreground leading-relaxed">
+        <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
           As you provide information via the form, chat, or document uploads, this list will update automatically.
         </p>
       </div>

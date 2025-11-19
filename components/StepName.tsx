@@ -19,18 +19,18 @@ const StepName: React.FC<StepNameProps> = ({ data, onChange, onNext, onBack }) =
   const isFormValid = data.fullName.trim().includes(' ');
 
   return (
-    <div>
+    <div className="px-2 sm:px-0">
       <StepHeader 
         title="What is your full name?"
       />
-      <div className="space-y-4">
+      <div className="space-y-4 mt-4 sm:mt-6">
         <input
           ref={nameInputRef}
           type="text"
           placeholder="John Smith"
           value={data.fullName}
           onChange={(e) => onChange('fullName', e.target.value)}
-          className="w-full px-4 py-3 text-lg border border-input bg-background rounded-lg focus:outline-none focus:ring-2 focus:ring-ring focus:border-primary transition duration-200"
+          className="w-full px-4 py-3 sm:py-3.5 text-base sm:text-lg border border-input bg-background rounded-lg sm:rounded-xl focus:outline-none focus:ring-2 focus:ring-ring focus:border-primary transition duration-200"
           aria-label="Full Name"
           required
         />

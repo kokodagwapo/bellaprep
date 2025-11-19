@@ -25,16 +25,16 @@ const StepPricing: React.FC<StepPricingProps> = ({ data, onChange, onNext, onBac
   };
 
   return (
-    <div>
+    <div className="px-2 sm:px-0">
       <StepHeader
         title="What is your estimated purchase price?"
       />
-      <div className="space-y-4">
+      <div className="space-y-4 sm:space-y-6 mt-4 sm:mt-6">
         <div>
-          <label htmlFor="purchasePrice" className="block text-sm font-medium text-muted-foreground mb-1">Purchase Price</label>
+          <label htmlFor="purchasePrice" className="block text-xs sm:text-sm font-medium text-muted-foreground mb-1.5 sm:mb-2">Purchase Price</label>
           <div className="relative">
-            <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4">
-              <span className="text-muted-foreground sm:text-lg">$</span>
+            <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 sm:pl-4">
+              <span className="text-muted-foreground text-base sm:text-lg">$</span>
             </div>
             <input
               id="purchasePrice"
@@ -43,16 +43,16 @@ const StepPricing: React.FC<StepPricingProps> = ({ data, onChange, onNext, onBac
               placeholder="500,000"
               value={formatNumber(data.purchasePrice)}
               onChange={(e) => handleValueChange('purchasePrice', e.target.value)}
-              className="w-full px-4 py-3 pl-8 text-lg border border-input bg-background rounded-lg focus:outline-none focus:ring-2 focus:ring-ring focus:border-primary transition duration-200"
+              className="w-full px-3 sm:px-4 py-2.5 sm:py-3 pl-7 sm:pl-8 text-base sm:text-lg border border-input bg-background rounded-lg sm:rounded-xl focus:outline-none focus:ring-2 focus:ring-ring focus:border-primary transition duration-200"
               aria-label="Purchase Price"
             />
           </div>
         </div>
         <div>
-          <label htmlFor="downPayment" className="block text-sm font-medium text-muted-foreground mb-1">Down Payment</label>
+          <label htmlFor="downPayment" className="block text-xs sm:text-sm font-medium text-muted-foreground mb-1.5 sm:mb-2">Down Payment</label>
           <div className="relative">
-            <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4">
-              <span className="text-muted-foreground sm:text-lg">$</span>
+            <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 sm:pl-4">
+              <span className="text-muted-foreground text-base sm:text-lg">$</span>
             </div>
             <input
               id="downPayment"
@@ -61,7 +61,7 @@ const StepPricing: React.FC<StepPricingProps> = ({ data, onChange, onNext, onBac
               placeholder="100,000"
               value={formatNumber(data.downPayment)}
               onChange={(e) => handleValueChange('downPayment', e.target.value)}
-              className="w-full px-4 py-3 pl-8 text-lg border border-input bg-background rounded-lg focus:outline-none focus:ring-2 focus:ring-ring focus:border-primary transition duration-200"
+              className="w-full px-3 sm:px-4 py-2.5 sm:py-3 pl-7 sm:pl-8 text-base sm:text-lg border border-input bg-background rounded-lg sm:rounded-xl focus:outline-none focus:ring-2 focus:ring-ring focus:border-primary transition duration-200"
               aria-label="Down Payment"
             />
           </div>

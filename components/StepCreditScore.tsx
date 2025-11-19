@@ -19,9 +19,9 @@ const creditScoreOptions = [
 
 const StepCreditScore: React.FC<StepCreditScoreProps> = ({ data, onChange, onNext, onBack }) => {
   return (
-    <div>
+    <div className="px-2 sm:px-0">
       <StepHeader title="What is your estimated credit score?" />
-      <div className="grid grid-cols-1 gap-3">
+      <div className="grid grid-cols-1 gap-3 sm:gap-4 mt-4 sm:mt-6">
         {creditScoreOptions.map((option) => (
           <SelectionButton
             key={option.value}
