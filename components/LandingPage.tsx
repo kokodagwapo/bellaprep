@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { FilePlus2, FileText, LayoutList, Shield, Zap, Users, CheckCircle2 } from './icons';
+import { HeroHighlight, Highlight } from './ui/hero-highlight';
 
 interface LandingPageProps {
   onNavigateToPrep?: () => void;
@@ -56,88 +57,92 @@ const LandingPage: React.FC<LandingPageProps> = ({ onNavigateToPrep, onNavigateT
 
   return (
     <div className="w-full max-w-7xl mx-auto animate-fade-in">
-      {/* Hero Section */}
-      <div className="relative text-center mb-16 sm:mb-20 md:mb-24 px-4 pt-8 sm:pt-12">
-        {/* Subtle background gradient */}
-        <div className="absolute inset-0 -z-10 bg-gradient-to-b from-primary/5 via-transparent to-transparent rounded-3xl blur-3xl opacity-50"></div>
-        
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, ease: "easeOut" }}
-          className="flex flex-col items-center gap-4 sm:gap-5 mb-8 sm:mb-10"
+      {/* Hero Section with HeroHighlight Background */}
+      <div className="relative mb-16 sm:mb-20 md:mb-24 -mx-4 sm:-mx-6 md:-mx-8">
+        <HeroHighlight 
+          containerClassName="h-auto min-h-[600px] sm:min-h-[700px] md:min-h-[800px] rounded-none"
+          className="w-full"
         >
-          <motion.div
-            initial={{ scale: 0.9 }}
-            animate={{ scale: 1 }}
-            transition={{ delay: 0.2, duration: 0.6, ease: "easeOut" }}
-            className="relative"
-          >
-            <div className="absolute inset-0 bg-primary/10 rounded-full blur-xl"></div>
-            <img 
-              src={`${import.meta.env.BASE_URL}TeraTrans.png`}
-              alt="TERAVERDE Logo" 
-              className="relative w-auto h-auto max-w-[160px] sm:max-w-[200px] md:max-w-[240px] object-contain"
-              style={{ maxHeight: '100px', width: 'auto', height: 'auto' }}
-              onError={(e) => {
-                console.error('Logo failed to load');
-                (e.target as HTMLImageElement).style.display = 'none';
-              }}
-            />
-          </motion.div>
-          <motion.span
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.4, duration: 0.8 }}
-            className="text-sm sm:text-base font-semibold text-muted-foreground tracking-wider uppercase"
-            style={{ color: '#6b7280', letterSpacing: '0.1em' }}
-          >
-            Business Process Solutions
-          </motion.span>
-        </motion.div>
-        
-        <motion.h1 
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3, duration: 0.8, ease: "easeOut" }}
-          className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-extrabold text-foreground mb-6 sm:mb-8 leading-tight bg-gradient-to-br from-foreground via-foreground to-foreground/80 bg-clip-text"
-        >
-          Transform Your<br className="hidden sm:block" /> Mortgage Journey
-        </motion.h1>
-        
-        <motion.p 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.5, duration: 0.8 }}
-          className="text-xl sm:text-2xl md:text-3xl text-muted-foreground max-w-4xl mx-auto mb-10 sm:mb-14 leading-relaxed font-light"
-        >
-          Experience a seamless, AI-powered mortgage application process designed to save you time and simplify every step.
-        </motion.p>
+          <div className="relative text-center px-4 pt-8 sm:pt-12 pb-12 sm:pb-16 w-full">
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, ease: "easeOut" }}
+              className="flex flex-col items-center gap-4 sm:gap-5 mb-8 sm:mb-10"
+            >
+              <motion.div
+                initial={{ scale: 0.9 }}
+                animate={{ scale: 1 }}
+                transition={{ delay: 0.2, duration: 0.6, ease: "easeOut" }}
+                className="relative"
+              >
+                <div className="absolute inset-0 bg-primary/10 rounded-full blur-xl"></div>
+                <img 
+                  src={`${import.meta.env.BASE_URL}TeraTrans.png`}
+                  alt="TERAVERDE Logo" 
+                  className="relative w-auto h-auto max-w-[160px] sm:max-w-[200px] md:max-w-[240px] object-contain"
+                  style={{ maxHeight: '100px', width: 'auto', height: 'auto' }}
+                  onError={(e) => {
+                    console.error('Logo failed to load');
+                    (e.target as HTMLImageElement).style.display = 'none';
+                  }}
+                />
+              </motion.div>
+              <motion.span
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.4, duration: 0.8 }}
+                className="text-sm sm:text-base font-semibold text-muted-foreground tracking-wider uppercase"
+                style={{ color: '#6b7280', letterSpacing: '0.1em' }}
+              >
+                Business Process Solutions
+              </motion.span>
+            </motion.div>
+            
+            <motion.h1 
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3, duration: 0.8, ease: "easeOut" }}
+              className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-extrabold text-foreground mb-6 sm:mb-8 leading-tight"
+            >
+              Transform Your<br className="hidden sm:block" /> <Highlight className="text-foreground">Mortgage Journey</Highlight>
+            </motion.h1>
+            
+            <motion.p 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.5, duration: 0.8 }}
+              className="text-xl sm:text-2xl md:text-3xl text-muted-foreground max-w-4xl mx-auto mb-10 sm:mb-14 leading-relaxed font-light"
+            >
+              Experience a seamless, AI-powered mortgage application process designed to save you time and simplify every step.
+            </motion.p>
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.6, duration: 0.8 }}
-          className="flex flex-col sm:flex-row gap-4 sm:gap-5 justify-center items-center"
-        >
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={() => onNavigateToPrep?.()}
-            className="group relative w-full sm:w-auto sm:min-w-[240px] bg-primary text-primary-foreground font-bold py-5 sm:py-5 px-10 sm:px-12 rounded-2xl sm:rounded-3xl hover:bg-primary/95 transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-primary/30 shadow-xl hover:shadow-2xl text-base sm:text-lg touch-manipulation min-h-[60px] sm:min-h-[56px] overflow-hidden"
-          >
-            <span className="relative z-10">Get Started</span>
-            <div className="absolute inset-0 bg-gradient-to-r from-primary/0 via-white/20 to-primary/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000"></div>
-          </motion.button>
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={() => onNavigateToForm1003?.()}
-            className="w-full sm:w-auto sm:min-w-[240px] bg-white/80 backdrop-blur-sm text-primary border-2 border-primary/30 font-bold py-5 sm:py-5 px-10 sm:px-12 rounded-2xl sm:rounded-3xl hover:bg-white hover:border-primary transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-primary/20 shadow-lg hover:shadow-xl text-base sm:text-lg touch-manipulation min-h-[60px] sm:min-h-[56px]"
-          >
-            Start Application
-          </motion.button>
-        </motion.div>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.6, duration: 0.8 }}
+              className="flex flex-col sm:flex-row gap-4 sm:gap-5 justify-center items-center"
+            >
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => onNavigateToPrep?.()}
+                className="group relative w-full sm:w-auto sm:min-w-[240px] bg-primary text-primary-foreground font-bold py-5 sm:py-5 px-10 sm:px-12 rounded-2xl sm:rounded-3xl hover:bg-primary/95 transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-primary/30 shadow-xl hover:shadow-2xl text-base sm:text-lg touch-manipulation min-h-[60px] sm:min-h-[56px] overflow-hidden"
+              >
+                <span className="relative z-10">Get Started</span>
+                <div className="absolute inset-0 bg-gradient-to-r from-primary/0 via-white/20 to-primary/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000"></div>
+              </motion.button>
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => onNavigateToForm1003?.()}
+                className="w-full sm:w-auto sm:min-w-[240px] bg-white/80 backdrop-blur-sm text-primary border-2 border-primary/30 font-bold py-5 sm:py-5 px-10 sm:px-12 rounded-2xl sm:rounded-3xl hover:bg-white hover:border-primary transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-primary/20 shadow-lg hover:shadow-xl text-base sm:text-lg touch-manipulation min-h-[60px] sm:min-h-[56px]"
+              >
+                Start Application
+              </motion.button>
+            </motion.div>
+          </div>
+        </HeroHighlight>
       </div>
 
       {/* Main Products Section */}
