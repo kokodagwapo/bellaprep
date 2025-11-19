@@ -9,23 +9,31 @@ interface Form1003ChecklistProps {
   formData: FormData;
 }
 
-const RequirementItem: React.FC<{ requirement: Form1003Requirement; isCompleted: boolean }> = ({ requirement, isCompleted }) => (
-    <div className="flex items-start space-x-3">
-        <div className={`mt-1 w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 border-2 transition-all duration-300 ${isCompleted ? 'bg-primary border-primary shadow-sm shadow-primary/20' : 'border-border'}`}>
-            {isCompleted && (
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 text-primary-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-                </svg>
-            )}
+const RequirementItem: React.FC<{ requirement: Form1003Requirement; isCompleted: boolean }> = ({ requirement, isCompleted }) => {
+    if (!requirement || !requirement.label) {
+        return null;
+    }
+    
+    return (
+        <div className="flex items-start gap-3">
+            <div className={`mt-1 w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 border-2 transition-all duration-300 ${isCompleted ? 'bg-primary border-primary shadow-sm shadow-primary/20' : 'border-border'}`}>
+                {isCompleted && (
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 text-primary-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                    </svg>
+                )}
+            </div>
+            <div className="flex-1 min-w-0">
+                <p className={`font-semibold text-sm transition-colors duration-300 ${isCompleted ? 'text-muted-foreground line-through' : 'text-foreground'}`}>
+                    {requirement.label}
+                </p>
+                {requirement.section && (
+                    <p className="text-xs text-muted-foreground mt-0.5">{requirement.section}</p>
+                )}
+            </div>
         </div>
-        <div className="flex-1">
-            <p className={`font-semibold text-sm transition-colors duration-300 ${isCompleted ? 'text-muted-foreground line-through' : 'text-foreground'}`}>
-                {requirement.label}
-            </p>
-            <p className="text-xs text-muted-foreground mt-0.5">{requirement.section}</p>
-        </div>
-    </div>
-);
+    );
+};
 
 const Form1003Checklist: React.FC<Form1003ChecklistProps> = ({ formData }) => {
   const requirements = getForm1003Requirements();
@@ -33,7 +41,16 @@ const Form1003Checklist: React.FC<Form1003ChecklistProps> = ({ formData }) => {
   const groupedRequirements = useMemo(() => {
     const groups: { [key: string]: Form1003Requirement[] } = {};
     requirements.forEach(req => {
-      const sectionKey = req.section.split(' ')[0] + ' ' + req.section.split(' ')[1];
+      // Handle sections with format "Section X" or "Section Xy" or just "Documents"
+      const parts = req.section.split(' ');
+      let sectionKey: string;
+      if (parts.length >= 2 && parts[0].toLowerCase() === 'section') {
+        // Format: "Section 1a" -> "Section 1a"
+        sectionKey = parts[0] + ' ' + parts[1];
+      } else {
+        // Format: "Documents" -> "Documents"
+        sectionKey = req.section;
+      }
       if (!groups[sectionKey]) {
         groups[sectionKey] = [];
       }
@@ -49,18 +66,9 @@ const Form1003Checklist: React.FC<Form1003ChecklistProps> = ({ formData }) => {
   const totalCount = requirements.length;
   const completionPercentage = Math.round((completedCount / totalCount) * 100);
 
-  // Initialize expanded sections - Section 1A expanded by default
+  // Initialize expanded sections - all sections collapsed by default
   const [expandedSections, setExpandedSections] = useState<Set<string>>(() => {
-    const groups: { [key: string]: Form1003Requirement[] } = {};
-    requirements.forEach(req => {
-      const sectionKey = req.section.split(' ')[0] + ' ' + req.section.split(' ')[1];
-      if (!groups[sectionKey]) {
-        groups[sectionKey] = [];
-      }
-    });
-    const sections = Object.keys(groups);
-    const defaultExpanded = sections.find(s => s.toLowerCase() === 'section 1a') || sections[0];
-    return new Set(defaultExpanded ? [defaultExpanded] : []);
+    return new Set<string>();
   });
 
   const toggleSection = (section: string) => {
