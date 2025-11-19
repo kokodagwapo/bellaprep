@@ -91,9 +91,9 @@ const AddressInput: React.FC<{
         document.head.appendChild(script);
     }, []);
 
-    // Initialize autocomplete when maps loads
+    // Initialize autocomplete when maps loads (only once)
     useEffect(() => {
-        if (!addressInputRef.current || !mapsLoaded || !window.google?.maps?.places) {
+        if (!addressInputRef.current || !mapsLoaded || !window.google?.maps?.places || autocompleteRef.current) {
             return;
         }
 
@@ -129,12 +129,13 @@ const AddressInput: React.FC<{
             return () => {
                 if (window.google && autocompleteRef.current) {
                     window.google.maps.event.clearInstanceListeners(autocompleteRef.current);
+                    autocompleteRef.current = null;
                 }
             };
         } catch (error) {
             console.error('Error initializing autocomplete:', error);
         }
-    }, [mapsLoaded, id, onChange, onValidationChange]);
+    }, [mapsLoaded]); // Only depend on mapsLoaded to prevent re-initialization
 
     // Validate address on value change
     useEffect(() => {
@@ -158,7 +159,17 @@ const AddressInput: React.FC<{
                     onChange={(e) => {
                         const newValue = e.target.value;
                         onChange(id, newValue);
-                        setIsVerified(false); // Reset verification when manually editing
+                        // Only reset verification if we had a verified address and user is editing
+                        if (isVerified && newValue !== value) {
+                            setIsVerified(false);
+                        }
+                    }}
+                    onInput={(e) => {
+                        // Ensure input works normally
+                        const newValue = (e.target as HTMLInputElement).value;
+                        if (newValue !== value) {
+                            onChange(id, newValue);
+                        }
                     }}
                     placeholder={placeholder || "Street address, City, State ZIP"}
                     className="mt-1 block w-full px-4 py-3 sm:px-3 sm:py-2.5 bg-background border border-border rounded-xl sm:rounded-lg shadow-sm text-base sm:text-sm text-foreground focus:ring-2 focus:ring-primary focus:border-primary transition-all touch-manipulation min-h-[44px] sm:min-h-[auto] pr-10"
