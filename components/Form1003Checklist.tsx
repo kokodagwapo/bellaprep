@@ -67,7 +67,7 @@ const Form1003Checklist: React.FC<Form1003ChecklistProps> = ({ formData }) => {
         <p className="text-xs text-muted-foreground mt-1 text-right">{completionPercentage}% Complete</p>
       </div>
       
-      <div className="space-y-5 max-h-[600px] overflow-y-auto pr-2">
+      <div className="space-y-5 max-h-[600px] overflow-y-auto pr-2 custom-scrollbar">
         {Object.entries(groupedRequirements).map(([section, sectionReqs]) => (
           <div key={section} className="space-y-3">
             <h4 className="text-xs font-bold text-primary uppercase tracking-wider sticky top-0 bg-secondary/50 py-1 z-10">

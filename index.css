@@ -1,3 +1,27 @@
 /* Additional styles can be added here if needed */
 /* Most styles are defined inline in index.html */
 
+/* Custom thin light green scrollbar */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgb(187, 247, 208); /* light green (green-200) */
+  border-radius: 2px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgb(134, 239, 172); /* slightly darker green (green-300) */
+}
+
+/* Firefox */
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: rgb(187, 247, 208) transparent; /* light green thumb, transparent track */
+}
+
