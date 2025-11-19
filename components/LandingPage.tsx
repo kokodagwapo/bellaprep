@@ -81,7 +81,6 @@ const LandingPage: React.FC<LandingPageProps> = ({ onNavigateToPrep, onNavigateT
                 transition={{ delay: 0.2, duration: 0.6, ease: "easeOut" }}
                 className="relative"
               >
-                <div className="absolute inset-0 bg-primary/10 rounded-full blur-xl"></div>
                 <img 
                   src={`${import.meta.env.BASE_URL}TeraTrans.png`}
                   alt="TERAVERDE Logo" 
@@ -132,10 +131,9 @@ const LandingPage: React.FC<LandingPageProps> = ({ onNavigateToPrep, onNavigateT
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => onNavigateToPrep?.()}
-                className="group relative w-full sm:w-auto sm:min-w-[240px] bg-primary text-primary-foreground font-bold py-5 sm:py-5 px-10 sm:px-12 rounded-2xl sm:rounded-3xl hover:bg-primary/95 transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-primary/30 shadow-xl hover:shadow-2xl text-base sm:text-lg touch-manipulation min-h-[60px] sm:min-h-[56px] overflow-hidden"
+                className="w-full sm:w-auto sm:min-w-[240px] bg-primary text-primary-foreground font-bold py-5 sm:py-5 px-10 sm:px-12 rounded-2xl sm:rounded-3xl hover:bg-primary/95 transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-primary/30 shadow-xl hover:shadow-2xl text-base sm:text-lg touch-manipulation min-h-[60px] sm:min-h-[56px]"
               >
-                <span className="relative z-10">Get Started</span>
-                <div className="absolute inset-0 bg-gradient-to-r from-primary/0 via-white/20 to-primary/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000"></div>
+                Get Started
               </motion.button>
               <motion.button
                 whileHover={{ scale: 1.05 }}
@@ -176,14 +174,10 @@ const LandingPage: React.FC<LandingPageProps> = ({ onNavigateToPrep, onNavigateT
               viewport={{ once: true }}
               transition={{ delay: index * 0.2, duration: 0.8 }}
               whileHover={{ y: -12, scale: 1.02, transition: { duration: 0.3 } }}
-              className="group relative bg-gradient-to-br from-white via-white to-white/95 backdrop-blur-sm rounded-[2rem] border-2 border-primary/20 p-10 sm:p-12 shadow-xl hover:shadow-2xl transition-all duration-500 overflow-hidden"
+              className="group relative bg-white backdrop-blur-sm rounded-[2rem] border-2 border-gray-200 p-10 sm:p-12 shadow-xl hover:shadow-2xl transition-all duration-500 overflow-hidden"
             >
-              {/* Enhanced gradient overlay */}
-              <div className="absolute inset-0 bg-gradient-to-br from-primary/0 via-primary/5 to-primary/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-              <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
-              
               <div className="relative z-10">
-                <div className="flex items-center justify-center w-24 h-24 rounded-3xl bg-gradient-to-br from-primary/15 via-primary/10 to-primary/5 mb-8 group-hover:scale-110 group-hover:rotate-3 transition-all duration-500 group-hover:shadow-2xl group-hover:shadow-primary/30">
+                <div className="flex items-center justify-center w-24 h-24 rounded-3xl bg-gray-100 mb-8 group-hover:scale-110 group-hover:rotate-3 transition-all duration-500 group-hover:shadow-2xl">
                   <div className="group-hover:scale-110 transition-transform duration-500">
                     {product.icon}
                   </div>
@@ -242,10 +236,10 @@ const LandingPage: React.FC<LandingPageProps> = ({ onNavigateToPrep, onNavigateT
               viewport={{ once: true }}
               transition={{ delay: index * 0.1, duration: 0.6 }}
               whileHover={{ y: -8, transition: { duration: 0.3 } }}
-              className="group relative bg-gradient-to-br from-white via-white to-white/95 backdrop-blur-sm rounded-3xl border border-border/40 p-8 sm:p-10 shadow-lg hover:shadow-2xl transition-all duration-500 overflow-hidden"
+              className="group relative bg-white backdrop-blur-sm rounded-3xl border border-gray-200 p-8 sm:p-10 shadow-lg hover:shadow-2xl transition-all duration-500 overflow-hidden"
             >
               <div className="relative z-10">
-                <div className="flex items-center justify-center w-20 h-20 rounded-2xl bg-gradient-to-br from-primary/10 via-primary/10 to-primary/5 mb-6 group-hover:scale-110 transition-transform duration-300 group-hover:shadow-lg group-hover:shadow-primary/20">
+                <div className="flex items-center justify-center w-20 h-20 rounded-2xl bg-gray-100 mb-6 group-hover:scale-110 transition-transform duration-300">
                   <div className="group-hover:scale-110 transition-transform duration-300">
                     {feature.icon}
                   </div>
@@ -264,8 +258,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onNavigateToPrep, onNavigateT
 
       {/* Benefits Section */}
       <div className="relative mb-16 sm:mb-20 md:mb-24 mx-4">
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-primary/5 to-primary/10 rounded-[2.5rem] blur-2xl"></div>
-        <div className="relative bg-gradient-to-br from-white/90 via-white/80 to-white/90 backdrop-blur-xl rounded-3xl border border-primary/20 p-10 sm:p-14 md:p-20 shadow-2xl">
+        <div className="relative bg-white backdrop-blur-xl rounded-3xl border border-gray-200 p-10 sm:p-14 md:p-20 shadow-2xl">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -287,8 +280,8 @@ const LandingPage: React.FC<LandingPageProps> = ({ onNavigateToPrep, onNavigateT
                   transition={{ delay: index * 0.1, duration: 0.6 }}
                   className="flex items-start gap-5 group"
                 >
-                  <div className="flex-shrink-0 mt-1 p-2 rounded-xl bg-primary/10 group-hover:bg-primary/20 transition-colors duration-300">
-                    <CheckCircle2 className="h-6 w-6 sm:h-7 sm:w-7 text-primary" />
+                  <div className="flex-shrink-0 mt-1 p-2 rounded-xl bg-gray-100 group-hover:bg-gray-200 transition-colors duration-300">
+                    <CheckCircle2 className="h-6 w-6 sm:h-7 sm:w-7 text-gray-600" />
                   </div>
                   <p className="text-lg sm:text-xl text-foreground font-semibold pt-1 group-hover:text-primary transition-colors duration-300">
                     {benefit}
@@ -308,10 +301,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onNavigateToPrep, onNavigateT
         transition={{ duration: 0.8 }}
         className="text-center px-4 mb-12 sm:mb-16"
       >
-        <div className="relative bg-gradient-to-br from-primary/10 via-primary/5 to-primary/10 rounded-[2.5rem] p-12 sm:p-16 md:p-20 shadow-2xl border border-primary/20 overflow-hidden">
-          {/* Animated background gradient */}
-          <div className="absolute inset-0 bg-gradient-to-r from-primary/0 via-white/10 to-primary/0 animate-pulse"></div>
-          
+        <div className="relative bg-white rounded-[2.5rem] p-12 sm:p-16 md:p-20 shadow-2xl border border-gray-200 overflow-hidden">
           <div className="relative z-10">
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-foreground mb-6 sm:mb-8">
               Ready to Get Started?
@@ -323,10 +313,9 @@ const LandingPage: React.FC<LandingPageProps> = ({ onNavigateToPrep, onNavigateT
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={() => onNavigateToPrep?.()}
-              className="group relative w-full sm:w-auto sm:min-w-[280px] bg-primary text-primary-foreground font-bold py-5 sm:py-6 px-12 sm:px-16 rounded-2xl sm:rounded-3xl hover:bg-primary/95 transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-primary/30 shadow-xl hover:shadow-2xl text-lg sm:text-xl touch-manipulation min-h-[64px] sm:min-h-[60px] overflow-hidden"
+              className="w-full sm:w-auto sm:min-w-[280px] bg-primary text-primary-foreground font-bold py-5 sm:py-6 px-12 sm:px-16 rounded-2xl sm:rounded-3xl hover:bg-primary/95 transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-primary/30 shadow-xl hover:shadow-2xl text-lg sm:text-xl touch-manipulation min-h-[64px] sm:min-h-[60px]"
             >
-              <span className="relative z-10">Begin Your Journey</span>
-              <div className="absolute inset-0 bg-gradient-to-r from-primary/0 via-white/20 to-primary/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000"></div>
+              Begin Your Journey
             </motion.button>
           </div>
         </div>
