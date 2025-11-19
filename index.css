@@ -25,3 +25,44 @@
   scrollbar-color: rgb(187, 247, 208) transparent; /* light green thumb, transparent track */
 }
 
+/* Mobile-first improvements */
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+button, a {
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* Ensure buttons are easily tappable on mobile */
+@media (max-width: 640px) {
+  button {
+    min-height: 44px; /* iOS recommended minimum touch target */
+    min-width: 44px;
+  }
+}
+
+/* Prevent text selection on buttons */
+button {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+/* Smooth scrolling for better mobile experience */
+html {
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Improve touch feedback */
+button:active {
+  transform: scale(0.98);
+  transition: transform 0.1s ease;
+}
+
