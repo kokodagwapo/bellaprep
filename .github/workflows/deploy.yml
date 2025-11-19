@@ -13,7 +13,7 @@ permissions:
 
 concurrency:
   group: "pages"
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 jobs:
   build:
@@ -28,6 +28,15 @@ jobs:
           node-version: '18'
           cache: 'npm'
           cache-dependency-path: bellaNew/package-lock.json
+      
+      - name: Clear GitHub Actions cache
+        uses: actions/cache@v3
+        with:
+          path: |
+            bellaNew/node_modules
+            bellaNew/.vite
+            bellaNew/dist
+          key: ${{ runner.os }}-clear-cache-${{ github.run_id }}
       
       - name: Clear build cache and old files
         working-directory: ./bellaNew
