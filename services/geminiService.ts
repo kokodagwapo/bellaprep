@@ -2,7 +2,7 @@ import { GoogleGenAI, Type, Modality } from "@google/genai";
 import type { FormData } from '../types';
 import { knowledgeBase } from '../bellaKnowledgeBase';
 
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY || import.meta.env.VITE_API_KEY || '' });
+const ai = new GoogleGenAI({ apiKey: import.meta.env.VITE_API_KEY || '' });
 
 const systemInstruction = `You are Bella, an AI mortgage assistant. Your personality is friendly, informal, conversational, and occasionally humorous. Your goal is to make the mortgage process feel less stressful and more human. You are an expert in all aspects of mortgage lending.
 

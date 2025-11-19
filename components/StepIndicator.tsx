@@ -4,9 +4,11 @@ import { motion } from 'framer-motion';
 interface StepIndicatorProps {
   labels: string[];
   currentStepIndex: number;
+  onStepClick?: (stepIndex: number) => void;
+  stepIndices?: number[];
 }
 
-const StepIndicator: React.FC<StepIndicatorProps> = ({ labels, currentStepIndex }) => {
+const StepIndicator: React.FC<StepIndicatorProps> = ({ labels, currentStepIndex, onStepClick, stepIndices }) => {
   return (
     <div className="flex items-start justify-center w-full px-2 py-4">
       {labels.map((label, index) => {
@@ -16,7 +18,14 @@ const StepIndicator: React.FC<StepIndicatorProps> = ({ labels, currentStepIndex 
         return (
           <React.Fragment key={index}>
             <div className="flex flex-col items-center text-center flex-shrink-0" style={{width: `calc(100% / ${labels.length})`}}>
-              <div className="relative w-8 h-8 flex items-center justify-center mb-3">
+              <div 
+                className="relative w-8 h-8 flex items-center justify-center mb-3 cursor-pointer"
+                onClick={() => {
+                  if (onStepClick && stepIndices && stepIndices[index] !== undefined) {
+                    onStepClick(stepIndices[index]);
+                  }
+                }}
+              >
                 {isCompleted ? (
                    <motion.div 
                      initial={{ scale: 0 }} 

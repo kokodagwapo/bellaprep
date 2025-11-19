@@ -184,10 +184,10 @@ const App: React.FC = () => {
   const showStepIndicator = step > 0 && step < filteredFlow.length - 1 && currentView === 'prep';
 
   const links = [
-    { label: "Prep4Loan", action: resetApplication, icon: <FilePlus2 className="h-6 w-6 flex-shrink-0" style={{ color: '#000000' }} /> },
-    { label: "Loan Application", action: () => setCurrentView('form1003'), icon: <FileText className="h-6 w-6 flex-shrink-0" style={{ color: '#000000' }} /> },
-    { label: "Document List", action: () => setCurrentView('documents'), icon: <LayoutList className="h-6 w-6 flex-shrink-0" style={{ color: '#000000' }} /> },
-    { label: "My Loans", action: () => {}, icon: <Landmark className="h-6 w-6 flex-shrink-0" style={{ color: '#000000' }} /> },
+    { label: "Prep4Loan", action: resetApplication, icon: <FilePlus2 className="h-6 w-6 flex-shrink-0" /> },
+    { label: "Loan Application", action: () => setCurrentView('form1003'), icon: <FileText className="h-6 w-6 flex-shrink-0" /> },
+    { label: "Document List", action: () => setCurrentView('documents'), icon: <LayoutList className="h-6 w-6 flex-shrink-0" /> },
+    { label: "My Loans", action: () => {}, icon: <Landmark className="h-6 w-6 flex-shrink-0" /> },
   ];
 
   return (
@@ -227,7 +227,7 @@ const App: React.FC = () => {
                             <StepIndicator 
                                 labels={indicatorSteps.labels} 
                                 currentStepIndex={currentIndicatorIndex}
-                                onStepClick={(stepIndex) => setStep(stepIndex)}
+                                onStepClick={(stepIndex: number) => setStep(stepIndex)}
                                 stepIndices={indicatorSteps.indices}
                             />
                         </div>

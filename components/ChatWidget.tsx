@@ -102,7 +102,7 @@ export default function BellaChatWidget({ onClose, onDataExtracted, formData }: 
   const hasInitialized = useRef(false);
 
   useEffect(() => {
-    aiRef.current = new GoogleGenAI({ apiKey: process.env.API_KEY || import.meta.env.VITE_API_KEY || '' });
+    aiRef.current = new GoogleGenAI({ apiKey: import.meta.env.VITE_API_KEY || '' });
     outputAudioContextRef.current = new ((window as any).AudioContext || (window as any).webkitAudioContext)({ sampleRate: 24000 });
     inputAudioContextRef.current = new ((window as any).AudioContext || (window as any).webkitAudioContext)({ sampleRate: 16000 });
 
@@ -513,24 +513,24 @@ export default function BellaChatWidget({ onClose, onDataExtracted, formData }: 
                   )}
                   <div ref={chatEndRef} />
                 </div>
-                <form onSubmit={handleSend} className="border-t border-border/30 bg-white/70 backdrop-blur-2xl p-4">
-                  <div className="flex items-end gap-3">
+                <form onSubmit={handleSend} className="border-t border-border/20 bg-gradient-to-t from-white via-white/95 to-white/90 backdrop-blur-xl p-4 shadow-[0_-4px_20px_-2px_rgba(0,0,0,0.05)]">
+                  <div className="flex items-end gap-2.5">
                     <button 
                       type="button" 
                       onClick={() => fileInputRef.current?.click()} 
-                      className="h-11 w-11 flex-shrink-0 flex items-center justify-center rounded-full hover:bg-black/5 active:scale-95 transition-all duration-200 text-muted-foreground hover:text-foreground disabled:opacity-40" 
+                      className="h-10 w-10 flex-shrink-0 flex items-center justify-center rounded-xl hover:bg-primary/10 active:scale-95 transition-all duration-200 text-muted-foreground hover:text-primary disabled:opacity-40" 
                       disabled={isLive || isConnecting}
                       title="Attach file"
                     >
-                      <Paperclip className="h-5 w-5" />
+                      <Paperclip className="h-4 w-4" />
                     </button>
                     <input type="file" ref={fileInputRef} onChange={handleFileChange} className="hidden" accept="image/*,application/pdf" />
-                    <div className="flex-1 flex items-center rounded-3xl border border-border/40 bg-white/90 backdrop-blur-sm px-5 py-3 min-h-[52px] shadow-sm focus-within:border-primary/60 focus-within:shadow-lg focus-within:ring-2 focus-within:ring-primary/10 transition-all duration-300">
+                    <div className="flex-1 flex items-center rounded-2xl border border-border/50 bg-white shadow-sm px-4 py-2.5 min-h-[48px] focus-within:border-primary focus-within:shadow-md focus-within:ring-2 focus-within:ring-primary/20 transition-all duration-200">
                       <textarea
                         ref={textareaRef}
                         rows={1}
-                        className="flex-1 bg-transparent text-[15px] focus:outline-none placeholder:text-muted-foreground/50 resize-none leading-relaxed placeholder:font-normal"
-                        placeholder="Message Bella..."
+                        className="flex-1 bg-transparent text-[15px] focus:outline-none placeholder:text-muted-foreground/60 resize-none leading-relaxed placeholder:font-normal"
+                        placeholder="Type your message..."
                         value={input}
                         onChange={(e) => setInput(e.target.value)}
                         onKeyDown={(e) => {
@@ -545,10 +545,10 @@ export default function BellaChatWidget({ onClose, onDataExtracted, formData }: 
                         type="button" 
                         onClick={handleLiveToggle} 
                         className={cn(
-                          "ml-3 flex-shrink-0 flex h-9 w-9 items-center justify-center rounded-full text-white transition-all duration-200 active:scale-90 shadow-sm",
+                          "ml-2 flex-shrink-0 flex h-8 w-8 items-center justify-center rounded-xl text-white transition-all duration-200 active:scale-90",
                           isLive 
-                            ? "animate-pulse bg-red-500 hover:bg-red-600 shadow-lg ring-2 ring-red-500/30" 
-                            : "bg-primary/90 hover:bg-primary shadow-md hover:shadow-lg", 
+                            ? "animate-pulse bg-red-500 hover:bg-red-600 shadow-md ring-2 ring-red-500/30" 
+                            : "bg-primary hover:bg-primary/90 shadow-sm", 
                           isConnecting ? "bg-muted cursor-not-allowed opacity-50" : ""
                         )} 
                         title={isLive ? "Stop conversation" : "Start live conversation"} 
@@ -560,10 +560,10 @@ export default function BellaChatWidget({ onClose, onDataExtracted, formData }: 
                     <button 
                       type="submit" 
                       className={cn(
-                        "h-11 w-11 flex-shrink-0 flex items-center justify-center rounded-full text-sm font-medium text-white transition-all duration-200 active:scale-95 shadow-md",
+                        "h-10 w-10 flex-shrink-0 flex items-center justify-center rounded-xl text-sm font-medium text-white transition-all duration-200 active:scale-95",
                         (input.trim() && !isLive) 
-                          ? "bg-primary hover:bg-primary/90 shadow-lg hover:shadow-xl ring-2 ring-primary/20" 
-                          : "bg-muted/40 cursor-not-allowed opacity-50 shadow-none"
+                          ? "bg-primary hover:bg-primary/90 shadow-md hover:shadow-lg ring-2 ring-primary/20" 
+                          : "bg-gray-300 cursor-not-allowed opacity-40 shadow-none"
                       )} 
                       disabled={!input.trim() || isLive || isConnecting}
                       title="Send message"

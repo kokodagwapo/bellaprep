@@ -5,8 +5,4 @@ import react from '@vitejs/plugin-react'
 export default defineConfig({
   base: '/bellaNew/',
   plugins: [react()],
-  define: {
-    // Map process.env.API_KEY to import.meta.env.VITE_API_KEY for compatibility
-    'process.env.API_KEY': JSON.stringify(process.env.VITE_API_KEY || process.env.API_KEY || '')
-  }
 })
