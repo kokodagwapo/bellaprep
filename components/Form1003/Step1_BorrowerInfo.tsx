@@ -50,6 +50,7 @@ const AddressInput: React.FC<{
 }> = ({ label, id, value, onChange, fullWidth = false, placeholder, onValidationChange }) => {
     const addressInputRef = useRef<HTMLInputElement>(null);
     const autocompleteRef = useRef<any>(null);
+    const isVerifiedRef = useRef(false);
     const [isVerified, setIsVerified] = useState(false);
     const [mapsLoaded, setMapsLoaded] = useState(false);
 
@@ -116,11 +117,13 @@ const AddressInput: React.FC<{
                 
                 if (place.formatted_address && place.geometry?.location) {
                     onChange(id, place.formatted_address);
+                    isVerifiedRef.current = true;
                     setIsVerified(true);
                     if (onValidationChange) {
                         onValidationChange(true);
                     }
                 } else {
+                    isVerifiedRef.current = false;
                     setIsVerified(false);
                     if (onValidationChange) {
                         onValidationChange(false);
@@ -163,8 +166,9 @@ const AddressInput: React.FC<{
                     onChange={(e) => {
                         const newValue = e.target.value;
                         onChange(id, newValue);
-                        // Reset verification when manually editing
-                        if (isVerified) {
+                        // Reset verification when manually editing (only if it was verified)
+                        if (isVerifiedRef.current) {
+                            isVerifiedRef.current = false;
                             setIsVerified(false);
                         }
                     }}
