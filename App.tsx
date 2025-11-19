@@ -243,8 +243,8 @@ const App: React.FC = () => {
                             />
                         </div>
                         )}
-                        <div className="bg-card rounded-xl sm:rounded-2xl border border-border transition-all duration-300 overflow-hidden shadow-md sm:shadow-lg hover:shadow-xl">
-                            <div className="p-4 sm:p-6 md:p-8 lg:p-12 min-h-[400px] sm:min-h-[500px] md:min-h-[550px] flex flex-col justify-between">
+                        <div className="bg-gradient-to-br from-card via-card to-card/95 rounded-2xl sm:rounded-3xl border border-border/60 transition-all duration-300 overflow-hidden shadow-xl sm:shadow-2xl hover:shadow-2xl backdrop-blur-sm">
+                            <div className="p-4 sm:p-6 md:p-8 lg:p-12 min-h-[400px] sm:min-h-[500px] md:min-h-[550px] flex flex-col justify-between bg-white/50">
                                 <div key={step} className="animate-fade-in w-full flex-1 flex flex-col justify-center">
                                     {renderPrepFlow()}
                                 </div>
