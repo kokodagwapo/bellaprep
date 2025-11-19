@@ -222,8 +222,8 @@ const App: React.FC = () => {
   return (
     <>
       <Sidebar open={open} setOpen={setOpen} animate={true}>
-        <SidebarBody className="justify-between gap-10 bg-white border-r border-border" style={{ backgroundColor: '#ffffff', color: '#000000', opacity: 1 }}>
-          <div className="flex flex-col flex-1 overflow-y-auto overflow-x-hidden" style={{ color: '#000000' }}>
+        <SidebarBody className="justify-between gap-10 bg-white border-r border-border" style={{ backgroundColor: '#ffffff', background: '#ffffff', color: '#000000', opacity: 1 }}>
+          <div className="flex flex-col flex-1 overflow-y-auto overflow-x-hidden" style={{ color: '#000000', backgroundColor: '#ffffff' }}>
             {/* Logo */}
             <LogoSection />
             <div className="flex flex-col gap-1 md:gap-2">

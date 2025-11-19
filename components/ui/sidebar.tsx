@@ -188,14 +188,14 @@ export const SidebarLink = ({
     <a
       href={link.href}
       className={cn(
-        "flex items-center justify-start gap-3 group/sidebar py-3 px-4 rounded-xl transition-all duration-200 hover:bg-primary/10 active:bg-primary/20 touch-manipulation",
+        "flex items-center justify-start gap-3 group/sidebar py-3 px-4 rounded-xl transition-all duration-200 hover:bg-gray-100 active:bg-gray-200 touch-manipulation",
         "md:py-2 md:px-3 md:rounded-lg",
         className
       )}
-      style={{ color: '#000000' }}
+      style={{ color: '#000000', backgroundColor: 'transparent' }}
       {...props}
     >
-      <div className="flex-shrink-0 text-foreground group-hover/sidebar:text-primary transition-colors">
+      <div className="flex-shrink-0 text-foreground" style={{ color: '#000000' }}>
         {link.icon}
       </div>
       <motion.span
@@ -203,7 +203,7 @@ export const SidebarLink = ({
           display: animate ? (open ? "inline-block" : "none") : "inline-block",
           opacity: animate ? (open ? 1 : 0) : 1,
         }}
-        className="text-base md:text-lg font-semibold transition duration-150 whitespace-pre inline-block !p-0 !m-0 group-hover/sidebar:text-primary"
+        className="text-base md:text-lg font-semibold transition duration-150 whitespace-pre inline-block !p-0 !m-0"
         style={{ color: '#000000' }}
       >
         {link.label}
