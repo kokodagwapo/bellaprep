@@ -62,15 +62,13 @@ const Form1003: React.FC<Form1003Props> = ({ initialData }) => {
             </div>
           </>
         )}
-        <div className={`grid grid-cols-1 ${showWelcome ? '' : 'lg:grid-cols-3'} ${showWelcome ? '' : 'lg:gap-8 xl:gap-12'} items-start`}>
-            <div className={`${showWelcome ? 'w-full max-w-[1088px] mx-auto' : 'lg:col-span-2'} bg-gradient-to-br from-card via-card to-card/95 rounded-2xl sm:rounded-3xl border border-border/60 transition-all duration-300 overflow-hidden shadow-xl sm:shadow-2xl hover:shadow-2xl backdrop-blur-sm p-4 sm:p-6 md:p-8 lg:p-12 min-h-[400px] sm:min-h-[500px] md:min-h-[550px] flex flex-col justify-between bg-white/50`}>
+        <div className="grid grid-cols-1 lg:grid-cols-3 lg:gap-8 xl:gap-12 items-start">
+            <div className="lg:col-span-2 bg-gradient-to-br from-card via-card to-card/95 rounded-2xl sm:rounded-3xl border border-border/60 transition-all duration-300 overflow-hidden shadow-xl sm:shadow-2xl hover:shadow-2xl backdrop-blur-sm p-4 sm:p-6 md:p-8 lg:p-12 min-h-[400px] sm:min-h-[500px] md:min-h-[550px] flex flex-col justify-between bg-white/50">
                 {renderStep()}
             </div>
-            {!showWelcome && (
-              <div className="hidden lg:block lg:col-span-1">
-                  <Form1003Checklist loanPurpose={formData.loanPurpose} formData={formData} />
-              </div>
-            )}
+            <div className="hidden lg:block lg:col-span-1">
+                <Form1003Checklist loanPurpose={formData.loanPurpose} formData={formData} />
+            </div>
         </div>
     </div>
   );

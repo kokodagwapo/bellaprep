@@ -1,11 +1,12 @@
 import React, { useState, useMemo } from 'react';
 import { Sidebar, SidebarBody, SidebarLink, useSidebar } from './components/ui/sidebar';
-import { Landmark, FilePlus2, FileText, AiIcon, LayoutList } from './components/icons';
+import { Landmark, FilePlus2, FileText, AiIcon, LayoutList, Home } from './components/icons';
 import StepIndicator from './components/StepIndicator';
 import Form1003 from './components/Form1003';
 import RequirementsChecklist from './components/Checklist';
 import BellaChatWidget from './components/ChatWidget';
 import DocumentList from './components/DocumentList';
+import LandingPage from './components/LandingPage';
 import { FormData, LoanPurpose } from './types';
 import { generateLoanSummary } from './services/geminiService';
 import { motion, AnimatePresence } from "framer-motion";
@@ -47,7 +48,7 @@ const LogoSection = () => {
   );
 };
 
-type View = 'prep' | 'form1003' | 'documents';
+type View = 'home' | 'prep' | 'form1003' | 'documents';
 
 const App: React.FC = () => {
   const [step, setStep] = useState(0);
@@ -72,7 +73,7 @@ const App: React.FC = () => {
   });
   const [isLoading, setIsLoading] = useState(false);
   const [submissionResult, setSubmissionResult] = useState('');
-  const [currentView, setCurrentView] = useState<View>('prep');
+  const [currentView, setCurrentView] = useState<View>('home');
   const [open, setOpen] = useState(false);
   const [isChatOpen, setIsChatOpen] = useState(false);
 
@@ -184,6 +185,7 @@ const App: React.FC = () => {
   const showStepIndicator = step > 0 && step < filteredFlow.length - 1 && currentView === 'prep';
 
   const links = [
+    { label: "Home", action: () => setCurrentView('home'), icon: <Home className="h-6 w-6 flex-shrink-0" /> },
     { label: "Prep4Loan", action: resetApplication, icon: <FilePlus2 className="h-6 w-6 flex-shrink-0" /> },
     { label: "Loan Application", action: () => setCurrentView('form1003'), icon: <FileText className="h-6 w-6 flex-shrink-0" /> },
     { label: "Document List", action: () => setCurrentView('documents'), icon: <LayoutList className="h-6 w-6 flex-shrink-0" /> },
@@ -223,7 +225,9 @@ const App: React.FC = () => {
       </Sidebar>
       <main className="flex-1 h-full overflow-y-auto" style={{ backgroundColor: '#ffffff' }}>
         <div className="min-h-full flex items-center justify-center p-3 sm:p-4 md:p-6 lg:p-8">
-            {currentView === 'form1003' ? (
+            {currentView === 'home' ? (
+                <LandingPage />
+            ) : currentView === 'form1003' ? (
                 <Form1003 initialData={formData} />
             ) : currentView === 'documents' ? (
                 <DocumentList formData={formData} />
