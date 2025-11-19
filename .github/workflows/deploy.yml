@@ -13,7 +13,7 @@ permissions:
 
 concurrency:
   group: "pages"
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   build:
@@ -29,32 +29,16 @@ jobs:
           cache: 'npm'
           cache-dependency-path: bellaNew/package-lock.json
       
-      - name: Clear build cache and old files
-        working-directory: ./bellaNew
-        run: |
-          echo "Clearing all build artifacts and caches..."
-          rm -rf dist
-          rm -rf node_modules/.vite
-          rm -rf .vite
-          rm -rf .cache
-          find . -name "*.map" -type f -delete || true
-          echo "Cache cleared successfully"
-      
       - name: Install dependencies
         working-directory: ./bellaNew
         run: npm ci
       
-      - name: Build with cache busting
+      - name: Build
         working-directory: ./bellaNew
         env:
           VITE_GOOGLE_MAPS_API_KEY: ${{ secrets.VITE_GOOGLE_MAPS_API_KEY }}
           VITE_API_KEY: ${{ secrets.VITE_API_KEY }}
-          NODE_ENV: production
-        run: |
-          echo "Building with fresh cache..."
-          npm run build
-          echo "Build completed. Files in dist:"
-          ls -la dist/ || true
+        run: npm run build
       
       - name: Setup Pages
         uses: actions/configure-pages@v4
@@ -63,26 +47,6 @@ jobs:
         uses: actions/upload-pages-artifact@v3
         with:
           path: './bellaNew/dist'
-          retention-days: 1
-      
-      - name: Verify build output
-        working-directory: ./bellaNew
-        run: |
-          echo "Verifying build output..."
-          if [ -d "dist" ]; then
-            echo "✓ dist directory exists"
-            echo "Files in dist:"
-            ls -lah dist/ | head -20
-            if [ -f "dist/index.html" ]; then
-              echo "✓ index.html found"
-            else
-              echo "✗ index.html NOT found!"
-              exit 1
-            fi
-          else
-            echo "✗ dist directory NOT found!"
-            exit 1
-          fi
 
   deploy:
     environment:
