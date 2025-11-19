@@ -34,13 +34,16 @@ const StepIndicator: React.FC<StepIndicatorProps> = ({ labels, currentStepIndex,
               >
                 <motion.div 
                   className="relative w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center mb-3 sm:mb-4 cursor-pointer touch-manipulation group"
-                  onClick={() => {
-                    if (onStepClick && stepIndices && stepIndices[index] !== undefined) {
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    if (onStepClick && stepIndices && stepIndices[index] !== undefined && stepIndices[index] >= 0) {
                       onStepClick(stepIndices[index]);
                     }
                   }}
                   whileHover={{ scale: 1.15 }}
                   whileTap={{ scale: 0.9 }}
+                  style={{ pointerEvents: 'auto' }}
                 >
                   {isCompleted ? (
                      <motion.div 
@@ -99,8 +102,9 @@ const StepIndicator: React.FC<StepIndicatorProps> = ({ labels, currentStepIndex,
                   className={`text-[11px] sm:text-xs font-semibold leading-tight transition-all duration-300 px-1 ${isActive ? 'text-green-600 scale-105 font-bold' : isCompleted ? 'text-green-600' : 'text-muted-foreground group-hover:text-green-500'}`}
                   animate={isActive ? { y: [0, -2, 0] } : {}}
                   transition={{ duration: 2, repeat: Infinity }}
+                  key={`label-${index}-${label}`}
                 >
-                  {label}
+                  {label || `Step ${index + 1}`}
                 </motion.p>
               </div>
               

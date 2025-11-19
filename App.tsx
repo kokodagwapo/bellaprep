@@ -269,7 +269,12 @@ const App: React.FC = () => {
                             <StepIndicator 
                                 labels={indicatorSteps.labels} 
                                 currentStepIndex={currentIndicatorIndex}
-                                onStepClick={(stepIndex: number) => setStep(stepIndex)}
+                                onStepClick={(stepIndex: number) => {
+                                    // Validate step index is within bounds
+                                    if (stepIndex >= 0 && stepIndex < filteredFlow.length) {
+                                        setStep(stepIndex);
+                                    }
+                                }}
                                 stepIndices={indicatorSteps.indices}
                             />
                         </div>

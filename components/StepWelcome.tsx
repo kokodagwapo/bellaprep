@@ -16,8 +16,8 @@ const StepWelcome: React.FC<StepWelcomeProps> = ({ onNext }) => {
   };
 
   return (
-    <div className="text-center flex flex-col justify-center items-center relative" style={{minHeight: '400px', pointerEvents: 'auto'}}>
-      <div className="px-2">
+    <div className="text-center flex flex-col justify-center items-center relative w-full" style={{minHeight: '400px', pointerEvents: 'auto', visibility: 'visible', opacity: 1}}>
+      <div className="px-2 w-full">
         <motion.div 
           animate={{ opacity: 1, display: 'flex' }}
           className="flex flex-col items-center gap-2 mb-4 sm:mb-6"
@@ -43,16 +43,19 @@ const StepWelcome: React.FC<StepWelcomeProps> = ({ onNext }) => {
         <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground mb-2 sm:mb-3">Discover Mortgage Possibilities</h1>
         <p className="text-muted-foreground text-base sm:text-lg mb-6 sm:mb-8 px-2">Just answer a few questions and you'll get real mortgage rates in minutes. It's that easy.</p>
       </div>
-      <div className="px-4 sm:px-0 mt-4 sm:mt-6 w-full flex justify-center relative z-10">
+      <div className="px-4 sm:px-0 mt-4 sm:mt-6 w-full flex justify-center relative" style={{zIndex: 10, visibility: 'visible', opacity: 1}}>
         <button
           onClick={handleClick}
-          className="w-full sm:w-auto sm:min-w-[200px] bg-primary text-primary-foreground font-bold py-4 sm:py-4 px-8 sm:px-10 rounded-xl sm:rounded-2xl hover:bg-primary/90 active:bg-primary/85 transition duration-300 transform hover:scale-105 active:scale-95 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary shadow-lg hover:shadow-xl text-base sm:text-lg touch-manipulation min-h-[48px] sm:min-h-[52px] disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer relative z-10"
+          className="w-full sm:w-auto sm:min-w-[200px] bg-primary text-primary-foreground font-bold py-4 sm:py-4 px-8 sm:px-10 rounded-xl sm:rounded-2xl hover:bg-primary/90 active:bg-primary/85 transition duration-300 transform hover:scale-105 active:scale-95 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary shadow-lg hover:shadow-xl text-base sm:text-lg touch-manipulation min-h-[48px] sm:min-h-[52px] disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
           disabled={!onNext}
           style={{ 
             pointerEvents: 'auto',
             WebkitTapHighlightColor: 'transparent',
             position: 'relative',
-            zIndex: 10
+            zIndex: 10,
+            visibility: 'visible',
+            opacity: 1,
+            display: 'block'
           }}
         >
           Get Started
