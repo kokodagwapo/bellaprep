@@ -14,9 +14,10 @@ const StepNavigation: React.FC<StepNavigationProps> = ({ onNext, onBack, nextLab
         <button
           onClick={onNext}
           disabled={isNextDisabled}
-          className="w-full sm:w-auto sm:flex-1 bg-primary text-primary-foreground font-bold py-3 sm:py-3 px-6 sm:px-6 rounded-xl sm:rounded-xl hover:bg-primary/90 transition duration-300 disabled:bg-primary/60 disabled:opacity-70 disabled:cursor-not-allowed transform hover:scale-105 active:scale-95 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-ring text-base sm:text-base shadow-sm hover:shadow-md touch-manipulation min-h-[48px] sm:min-h-[44px]"
+          className="w-full sm:w-auto sm:flex-1 bg-primary text-primary-foreground font-bold py-3.5 sm:py-3 px-8 sm:px-8 rounded-xl sm:rounded-xl hover:bg-primary/90 transition duration-300 disabled:bg-primary/60 disabled:opacity-70 disabled:cursor-not-allowed transform hover:scale-105 active:scale-95 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary text-base sm:text-base shadow-md hover:shadow-lg touch-manipulation min-h-[52px] sm:min-h-[48px] relative overflow-hidden group"
         >
-          {nextLabel}
+          <span className="relative z-10">{nextLabel}</span>
+          <span className="absolute inset-0 bg-gradient-to-r from-primary/0 via-white/10 to-primary/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></span>
         </button>
       )}
       {onBack && (

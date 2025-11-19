@@ -49,7 +49,7 @@ const Form1003: React.FC<Form1003Props> = ({ initialData }) => {
             <ProgressBar currentStep={step + 1} totalSteps={totalSteps} />
         </div>
         <div className="grid grid-cols-1 lg:grid-cols-3 lg:gap-8 xl:gap-12 items-start">
-            <div className="lg:col-span-2 bg-card p-4 sm:p-6 md:p-8 rounded-lg border border-border shadow-sm">
+            <div className="lg:col-span-2 bg-white p-4 sm:p-6 md:p-8 lg:p-10 rounded-xl sm:rounded-2xl border border-border/60 shadow-md hover:shadow-lg transition-shadow duration-300">
                 {renderStep()}
             </div>
             <div className="hidden lg:block lg:col-span-1">

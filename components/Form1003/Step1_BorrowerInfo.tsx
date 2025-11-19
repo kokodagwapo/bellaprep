@@ -50,7 +50,9 @@ const Step1BorrowerInfo: React.FC<Step1Props> = ({ data, onDataChange, onNext })
                 <InputField label="Email Address" id="email" value={data.email} onChange={handleFieldChange} inputType="email" placeholder="your.email@example.com" />
                 <InputField label="Phone Number" id="phoneNumber" value={data.phoneNumber} onChange={handleFieldChange} inputType="tel" placeholder="(555) 123-4567" />
             </div>
-            <StepNavigation onNext={onNext} isNextDisabled={!isComplete} />
+            <div className="mt-8 sm:mt-10 pt-6 border-t border-border/50">
+                <StepNavigation onNext={onNext} isNextDisabled={!isComplete} />
+            </div>
         </div>
     );
 };
