@@ -20,7 +20,13 @@ const StepWelcome: React.FC<StepWelcomeProps> = ({ onNext }) => {
           animate={{ opacity: 1, display: 'flex' }}
           className="flex flex-col items-center gap-2 mb-4 sm:mb-6"
         >
-          <p className="text-xs sm:text-sm text-muted-foreground font-medium tracking-wide uppercase">Business Process Solutions</p>
+          <motion.span
+            animate={{ opacity: 1, display: 'flex' }}
+            className="text-[10px] sm:text-xs font-medium text-muted-foreground text-center whitespace-nowrap"
+            style={{ color: '#6b7280' }}
+          >
+            Business Process Solutions
+          </motion.span>
         </motion.div>
         <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground mb-2 sm:mb-3">Discover Mortgage Possibilities</h1>
         <p className="text-muted-foreground text-base sm:text-lg mb-6 sm:mb-8 px-2">Just answer a few questions and you'll get real mortgage rates in minutes. It's that easy.</p>
