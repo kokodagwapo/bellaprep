@@ -20,9 +20,52 @@ const StepLocation: React.FC<StepLocationProps> = ({ data, onChange, onNext, onB
   const autocompleteRef = useRef<any>(null);
   const [isValid, setIsValid] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const [mapsLoaded, setMapsLoaded] = useState(false);
+
+  // Load Google Maps API script
+  useEffect(() => {
+    if (window.google && window.google.maps) {
+      setMapsLoaded(true);
+      return;
+    }
+
+    const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY || '';
+    if (!apiKey) {
+      console.warn('Google Maps API key not found. Please set VITE_GOOGLE_MAPS_API_KEY in your environment variables.');
+      // Allow manual input without autocomplete if no API key
+      setMapsLoaded(false);
+      return;
+    }
+
+    // Check if script is already loading
+    if (document.querySelector(`script[src*="maps.googleapis.com"]`)) {
+      const checkInterval = setInterval(() => {
+        if (window.google && window.google.maps) {
+          setMapsLoaded(true);
+          clearInterval(checkInterval);
+        }
+      }, 100);
+      return () => clearInterval(checkInterval);
+    }
+
+    const script = document.createElement('script');
+    script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=places&loading=async`;
+    script.async = true;
+    script.defer = true;
+    script.onload = () => setMapsLoaded(true);
+    script.onerror = () => {
+      console.error('Failed to load Google Maps API');
+      setMapsLoaded(false);
+    };
+    document.head.appendChild(script);
+
+    return () => {
+      // Cleanup if component unmounts
+    };
+  }, []);
 
   useEffect(() => {
-    if (locationInputRef.current && window.google && window.google.maps) {
+    if (locationInputRef.current && mapsLoaded && window.google && window.google.maps) {
       const autocomplete = new window.google.maps.places.Autocomplete(
         locationInputRef.current,
         {
@@ -85,24 +128,7 @@ const StepLocation: React.FC<StepLocationProps> = ({ data, onChange, onNext, onB
         }
       };
     }
-  }, []);
-
-  useEffect(() => {
-    // Check if Google Maps is loaded
-    if (!window.google && locationInputRef.current) {
-      const checkGoogle = setInterval(() => {
-        if (window.google && window.google.maps) {
-          clearInterval(checkGoogle);
-          // Re-run the effect
-          if (locationInputRef.current) {
-            locationInputRef.current.dispatchEvent(new Event('focus'));
-          }
-        }
-      }, 100);
-
-      return () => clearInterval(checkGoogle);
-    }
-  }, []);
+  }, [mapsLoaded, onChange]);
 
   useEffect(() => {
     // Validate existing location
@@ -126,7 +152,7 @@ const StepLocation: React.FC<StepLocationProps> = ({ data, onChange, onNext, onB
           ref={locationInputRef}
           id="location"
           type="text"
-          placeholder="Start typing city name..."
+          placeholder={mapsLoaded ? "Start typing city name..." : "Enter city and state (e.g., Naples, FL)"}
           value={data.location}
           onChange={(e) => onChange('location', e.target.value)}
           className="w-full px-4 py-3 sm:py-3 text-base sm:text-lg border border-input bg-background rounded-xl sm:rounded-lg focus:outline-none focus:ring-2 focus:ring-ring focus:border-primary transition duration-200 touch-manipulation min-h-[44px]"
