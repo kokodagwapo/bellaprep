@@ -1,4 +1,5 @@
 import React from 'react';
+import { motion } from 'framer-motion';
 import StepNavigation from './StepNavigation';
 
 interface StepWelcomeProps {
@@ -15,6 +16,12 @@ const StepWelcome: React.FC<StepWelcomeProps> = ({ onNext }) => {
   return (
     <div className="text-center flex flex-col justify-center items-center" style={{minHeight: '400px'}}>
       <div className="px-2">
+        <motion.div 
+          animate={{ opacity: 1, display: 'flex' }}
+          className="flex flex-col items-center gap-2 mb-4 sm:mb-6"
+        >
+          <p className="text-xs sm:text-sm text-muted-foreground font-medium tracking-wide uppercase">Business Process Solutions</p>
+        </motion.div>
         <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground mb-2 sm:mb-3">Discover Mortgage Possibilities</h1>
         <p className="text-muted-foreground text-base sm:text-lg mb-6 sm:mb-8 px-2">Just answer a few questions and you'll get real mortgage rates in minutes. It's that easy.</p>
       </div>
