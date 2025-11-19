@@ -11,7 +11,7 @@ const LandingPage: React.FC = () => {
     },
     {
       icon: <FileText className="h-8 w-8 text-primary" />,
-      title: "Loan Application",
+      title: "Home Journey",
       description: "Complete your URLA 1003 form with our guided, step-by-step process."
     },
     {

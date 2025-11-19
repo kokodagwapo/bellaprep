@@ -187,7 +187,7 @@ const App: React.FC = () => {
   const links = [
     { label: "Home", action: () => setCurrentView('home'), icon: <Home className="h-6 w-6 flex-shrink-0" /> },
     { label: "Prep4Loan", action: resetApplication, icon: <FilePlus2 className="h-6 w-6 flex-shrink-0" /> },
-    { label: "Loan Application", action: () => setCurrentView('form1003'), icon: <FileText className="h-6 w-6 flex-shrink-0" /> },
+    { label: "Home Journey", action: () => setCurrentView('form1003'), icon: <FileText className="h-6 w-6 flex-shrink-0" /> },
     { label: "Document List", action: () => setCurrentView('documents'), icon: <LayoutList className="h-6 w-6 flex-shrink-0" /> },
     { label: "My Loans", action: () => {}, icon: <Landmark className="h-6 w-6 flex-shrink-0" /> },
   ];
