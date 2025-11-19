@@ -29,15 +29,6 @@ jobs:
           cache: 'npm'
           cache-dependency-path: bellaNew/package-lock.json
       
-      - name: Clear GitHub Actions cache
-        uses: actions/cache@v3
-        with:
-          path: |
-            bellaNew/node_modules
-            bellaNew/.vite
-            bellaNew/dist
-          key: ${{ runner.os }}-clear-cache-${{ github.run_id }}
-      
       - name: Clear build cache and old files
         working-directory: ./bellaNew
         run: |
@@ -73,6 +64,25 @@ jobs:
         with:
           path: './bellaNew/dist'
           retention-days: 1
+      
+      - name: Verify build output
+        working-directory: ./bellaNew
+        run: |
+          echo "Verifying build output..."
+          if [ -d "dist" ]; then
+            echo "✓ dist directory exists"
+            echo "Files in dist:"
+            ls -lah dist/ | head -20
+            if [ -f "dist/index.html" ]; then
+              echo "✓ index.html found"
+            else
+              echo "✗ index.html NOT found!"
+              exit 1
+            fi
+          else
+            echo "✗ dist directory NOT found!"
+            exit 1
+          fi
 
   deploy:
     environment:
