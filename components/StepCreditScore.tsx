@@ -6,6 +6,8 @@ import { SelectionButton } from './StepHeader';
 interface StepCreditScoreProps {
   data: { creditScore: CreditScore | '' };
   onChange: (field: string, value: CreditScore) => void;
+  onNext?: () => void;
+  onBack?: () => void;
 }
 
 const creditScoreOptions = [
@@ -15,7 +17,7 @@ const creditScoreOptions = [
   { value: CreditScore.FAIR },
 ];
 
-const StepCreditScore: React.FC<StepCreditScoreProps> = ({ data, onChange }) => {
+const StepCreditScore: React.FC<StepCreditScoreProps> = ({ data, onChange, onNext, onBack }) => {
   return (
     <div>
       <StepHeader title="What is your estimated credit score?" />

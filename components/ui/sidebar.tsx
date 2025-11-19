@@ -78,6 +78,7 @@ export const SidebarBody = (props: React.ComponentProps<typeof motion.div>) => {
 export const DesktopSidebar = ({
   className,
   children,
+  style,
   ...props
 }: React.ComponentProps<typeof motion.div>) => {
   const { open, setOpen, animate } = useSidebar();
@@ -87,9 +88,14 @@ export const DesktopSidebar = ({
         "h-full px-4 py-4 hidden md:flex md:flex-col w-[280px] flex-shrink-0",
         className
       )}
+      style={{ ...style, backgroundColor: '#ffffff', opacity: 1 }}
+      initial={{ opacity: 1, backgroundColor: '#ffffff' }}
       animate={{
         width: animate ? (open ? "280px" : "70px") : "280px",
+        backgroundColor: '#ffffff',
+        opacity: 1,
       }}
+      transition={{ opacity: { duration: 0 }, backgroundColor: { duration: 0 } }}
       onMouseEnter={() => setOpen(true)}
       onMouseLeave={() => setOpen(false)}
       {...props}
@@ -166,9 +172,10 @@ export const SidebarLink = ({
     <a
       href={link.href}
       className={cn(
-        "flex items-center justify-start gap-3 group/sidebar py-2 px-3 rounded-lg hover:bg-secondary",
+        "flex items-center justify-start gap-3 group/sidebar py-2 px-3 rounded-lg",
         className
       )}
+      style={{ color: '#000000' }}
       {...props}
     >
       {link.icon}
@@ -177,7 +184,8 @@ export const SidebarLink = ({
           display: animate ? (open ? "inline-block" : "none") : "inline-block",
           opacity: animate ? (open ? 1 : 0) : 1,
         }}
-        className="text-foreground text-lg font-semibold group-hover/sidebar:translate-x-1 transition duration-150 whitespace-pre inline-block !p-0 !m-0"
+        className="text-lg font-semibold transition duration-150 whitespace-pre inline-block !p-0 !m-0"
+        style={{ color: '#000000' }}
       >
         {link.label}
       </motion.span>

@@ -5,6 +5,7 @@ import { cn } from "../lib/utils";
 import type { FormData } from '../types';
 import { decode, decodeAudioData, encode } from '../utils/audioUtils';
 import { knowledgeBase } from "../bellaKnowledgeBase";
+import { getRequirements } from "../data/requirements";
 import { 
     getBellaChatReply, 
     analyzeTextForData,
@@ -34,9 +35,20 @@ interface BellaChatWidgetProps {
 function ChatBubble({ message }: { message: Message; [key: string]: any; }) {
   const isBella = message.sender === "bella";
   return (
-    <div className={cn("flex items-end gap-2", isBella ? "" : "justify-end")}>
-      {isBella && ( <div className="h-7 w-7 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center flex-shrink-0"><AiIcon className="h-4 w-4 text-primary"/></div> )}
-      <div className={cn("max-w-[75%] rounded-2xl px-3 py-2 text-sm leading-relaxed shadow-sm", isBella ? "bg-primary/10 text-foreground rounded-bl-sm" : "bg-card border border-border text-foreground rounded-br-sm")}>{message.text}</div>
+    <div className={cn("flex items-end gap-3", isBella ? "" : "justify-end")}>
+      {isBella && ( 
+        <div className="h-8 w-8 rounded-full bg-gradient-to-br from-primary/20 to-primary/10 backdrop-blur-sm border border-primary/30 flex items-center justify-center flex-shrink-0 shadow-sm">
+          <AiIcon className="h-4 w-4 text-primary"/>
+        </div> 
+      )}
+      <div className={cn(
+        "max-w-[75%] rounded-3xl px-4 py-2.5 text-sm leading-relaxed shadow-sm backdrop-blur-sm transition-all duration-200",
+        isBella 
+          ? "bg-primary/8 text-foreground rounded-bl-md border border-primary/10" 
+          : "bg-white/80 text-foreground rounded-br-md border border-border/50 shadow-sm"
+      )}>
+        {message.text}
+      </div>
     </div>
   );
 }
@@ -462,22 +474,28 @@ export default function BellaChatWidget({ onClose, onDataExtracted, formData }: 
 
   return (
     <motion.div 
-        initial={{ opacity: 0, y: 50, scale: 0.95 }}
+        initial={{ opacity: 0, y: 20, scale: 0.96 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
-        exit={{ opacity: 0, y: 50, scale: 0.95 }}
+        exit={{ opacity: 0, y: 20, scale: 0.96 }}
+        transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
         className="fixed inset-0 sm:inset-auto sm:bottom-4 sm:right-4 z-50">
-      <div className="w-full h-full sm:w-[380px] sm:max-w-full rounded-none sm:rounded-3xl shadow-2xl bg-card border-border flex flex-col overflow-hidden text-foreground sm:h-[700px]">
-        <div className="bg-primary text-primary-foreground px-4 py-3 flex items-center gap-3 flex-shrink-0">
-          <div className="relative h-10 w-10 rounded-full bg-white/20 flex items-center justify-center border-2 border-white/80 shadow-sm">
-            <AiIcon className="h-6 w-6 text-white"/>
+      <div className="w-full h-full sm:w-[400px] sm:max-w-full rounded-none sm:rounded-[28px] shadow-[0_20px_60px_-12px_rgba(0,0,0,0.25)] bg-white/95 backdrop-blur-xl border border-border/50 flex flex-col overflow-hidden text-foreground sm:h-[720px]">
+        <div className="bg-primary text-primary-foreground px-5 py-4 flex items-center gap-3 flex-shrink-0">
+          <div className="relative h-10 w-10 rounded-full bg-white/20 flex items-center justify-center border border-white/30">
+            <AiIcon className="h-5 w-5 text-white"/>
           </div>
           <div className="flex-1 leading-tight">
-            <div className="flex items-center gap-1"><span className="font-semibold text-sm">Bella</span><span className="ml-1 rounded-full bg-white/15 px-2 py-[2px] text-[10px] font-medium">AI Assistant</span></div>
+            <div className="flex items-center gap-2">
+              <span className="font-semibold text-[15px] tracking-tight">Bella</span>
+              <span className="rounded-full bg-white/15 px-2.5 py-1 text-[10px] font-medium border border-white/25">AI Assistant</span>
+            </div>
           </div>
-          <button onClick={onClose} className="p-1 rounded-full hover:bg-white/10 transition-colors" aria-label="Close"><X className="h-4 w-4 text-white/90" /></button>
+          <button onClick={onClose} className="p-1.5 rounded-full hover:bg-white/10 transition-all duration-200 active:scale-95" aria-label="Close">
+            <X className="h-4 w-4 text-white" />
+          </button>
         </div>
 
-        <div className="relative flex-1 bg-background overflow-hidden">
+        <div className="relative flex-1 bg-white/40 backdrop-blur-sm overflow-hidden">
           <AnimatePresence mode="wait">
             {isLive || isConnecting ? (
                 <VoiceAgentView
@@ -487,24 +505,32 @@ export default function BellaChatWidget({ onClose, onDataExtracted, formData }: 
                     onStop={stopLiveConversation}
                 />
             ) : view === "chat" ? (
-              <motion.div key="chat-view" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.2 }} className="flex flex-col h-full">
-                <div className="flex-1 overflow-y-auto px-4 py-3 space-y-3">
+              <motion.div key="chat-view" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.25, ease: "easeOut" }} className="flex flex-col h-full">
+                <div className="flex-1 overflow-y-auto px-5 py-4 space-y-4">
                   {messages.map((msg) => ( <ChatBubble key={msg.id} message={msg} /> ))}
                    {isProcessing && messages[messages.length - 1]?.text.includes("typing") && (
                     <ChatBubble key="typing" message={{ id: 999, sender: "bella", text: "Bella is typing..." }} />
                   )}
                   <div ref={chatEndRef} />
                 </div>
-                <form onSubmit={handleSend} className="border-t border-border bg-card p-2.5">
-                  <div className="flex items-end gap-2">
-                    <button type="button" onClick={() => fileInputRef.current?.click()} className="h-10 w-10 flex-shrink-0 flex items-center justify-center rounded-full hover:bg-secondary text-muted-foreground" disabled={isLive || isConnecting}><Paperclip className="h-5 w-5" /></button>
+                <form onSubmit={handleSend} className="border-t border-border/30 bg-white/70 backdrop-blur-2xl p-4">
+                  <div className="flex items-end gap-3">
+                    <button 
+                      type="button" 
+                      onClick={() => fileInputRef.current?.click()} 
+                      className="h-11 w-11 flex-shrink-0 flex items-center justify-center rounded-full hover:bg-black/5 active:scale-95 transition-all duration-200 text-muted-foreground hover:text-foreground disabled:opacity-40" 
+                      disabled={isLive || isConnecting}
+                      title="Attach file"
+                    >
+                      <Paperclip className="h-5 w-5" />
+                    </button>
                     <input type="file" ref={fileInputRef} onChange={handleFileChange} className="hidden" accept="image/*,application/pdf" />
-                    <div className="flex-1 flex items-center rounded-2xl border border-border bg-background px-3 py-1.5 min-h-[40px]">
+                    <div className="flex-1 flex items-center rounded-3xl border border-border/40 bg-white/90 backdrop-blur-sm px-5 py-3 min-h-[52px] shadow-sm focus-within:border-primary/60 focus-within:shadow-lg focus-within:ring-2 focus-within:ring-primary/10 transition-all duration-300">
                       <textarea
                         ref={textareaRef}
                         rows={1}
-                        className="flex-1 bg-transparent text-sm focus:outline-none placeholder:text-muted-foreground resize-none"
-                        placeholder="Type or use voice..."
+                        className="flex-1 bg-transparent text-[15px] focus:outline-none placeholder:text-muted-foreground/50 resize-none leading-relaxed placeholder:font-normal"
+                        placeholder="Message Bella..."
                         value={input}
                         onChange={(e) => setInput(e.target.value)}
                         onKeyDown={(e) => {
@@ -515,37 +541,228 @@ export default function BellaChatWidget({ onClose, onDataExtracted, formData }: 
                         }}
                         disabled={isLive || isConnecting}
                       />
-                      <button type="button" onClick={handleLiveToggle} className={cn("ml-2 flex-shrink-0 flex h-8 w-8 items-center justify-center rounded-full text-white", isLive ? "animate-pulse bg-red-500" : "bg-primary hover:bg-primary/90", isConnecting ? "bg-muted cursor-not-allowed" : "")} title={isLive ? "Stop conversation" : "Start live conversation"} disabled={isConnecting}>
+                      <button 
+                        type="button" 
+                        onClick={handleLiveToggle} 
+                        className={cn(
+                          "ml-3 flex-shrink-0 flex h-9 w-9 items-center justify-center rounded-full text-white transition-all duration-200 active:scale-90 shadow-sm",
+                          isLive 
+                            ? "animate-pulse bg-red-500 hover:bg-red-600 shadow-lg ring-2 ring-red-500/30" 
+                            : "bg-primary/90 hover:bg-primary shadow-md hover:shadow-lg", 
+                          isConnecting ? "bg-muted cursor-not-allowed opacity-50" : ""
+                        )} 
+                        title={isLive ? "Stop conversation" : "Start live conversation"} 
+                        disabled={isConnecting}
+                      >
                         <Mic className="h-4 w-4" />
                       </button>
                     </div>
-                    <button type="submit" className={cn("h-10 w-10 flex-shrink-0 flex items-center justify-center rounded-full text-sm font-medium text-primary-foreground transition-colors", (input.trim() && !isLive) ? "bg-primary hover:bg-primary/90" : "bg-muted cursor-not-allowed")} disabled={!input.trim() || isLive || isConnecting}><Send className="h-4 w-4"/></button>
+                    <button 
+                      type="submit" 
+                      className={cn(
+                        "h-11 w-11 flex-shrink-0 flex items-center justify-center rounded-full text-sm font-medium text-white transition-all duration-200 active:scale-95 shadow-md",
+                        (input.trim() && !isLive) 
+                          ? "bg-primary hover:bg-primary/90 shadow-lg hover:shadow-xl ring-2 ring-primary/20" 
+                          : "bg-muted/40 cursor-not-allowed opacity-50 shadow-none"
+                      )} 
+                      disabled={!input.trim() || isLive || isConnecting}
+                      title="Send message"
+                    >
+                      <Send className="h-4 w-4"/>
+                    </button>
                   </div>
                 </form>
               </motion.div>
             ) : (
-              <motion.div key="form-view" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.2 }} className="flex flex-col h-full bg-card">
-                 <div className="flex items-center justify-between px-4 py-3 border-b border-border text-foreground flex-shrink-0">
-                    <button className="flex items-center gap-1 text-xs" onClick={() => setView("chat")}><ArrowLeft className="h-4 w-4" /><span>Back to Chat</span></button>
+              <motion.div key="form-view" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.25, ease: "easeOut" }} className="flex flex-col h-full bg-white/50">
+                 <div className="flex items-center justify-between px-5 py-3 border-b border-border/30 text-foreground flex-shrink-0 bg-white/60 backdrop-blur-sm">
+                    <button className="flex items-center gap-1.5 text-xs font-medium hover:text-primary transition-colors" onClick={() => setView("chat")}>
+                      <ArrowLeft className="h-4 w-4" />
+                      <span>Back to Chat</span>
+                    </button>
                 </div>
-                <div className="flex-1 overflow-y-auto px-4 py-4">
-                    <h2 className="text-sm font-semibold text-foreground text-center mb-4">Application Summary</h2>
-                    <div className="space-y-4 text-xs border border-border bg-background rounded-xl p-4">
-                        <FormField label="Full Name" value={formData.fullName} />
-                        <FormField label="Email" value={formData.email} />
-                        <FormField label="Phone Number" value={formData.phoneNumber} />
-                        <FormField label="Annual Income" value={formData.income} />
+                <div className="flex-1 overflow-y-auto px-5 py-5 space-y-5">
+                    {/* Progress Overview */}
+                    <div className="space-y-4">
+                      <h2 className="text-base font-bold text-foreground">Application Progress</h2>
+                      
+                      {/* Pre-Evaluation Progress */}
+                      <div className="bg-white/80 backdrop-blur-sm rounded-2xl border border-border/40 p-4 shadow-sm">
+                        <div className="flex items-center justify-between mb-3">
+                          <div className="flex items-center gap-2">
+                            <div className="h-2 w-2 rounded-full bg-primary"></div>
+                            <span className="text-sm font-semibold text-foreground">Pre-Evaluation</span>
+                          </div>
+                          <span className="text-xs font-medium text-primary">{(() => {
+                            const requirements = getRequirements(formData.loanPurpose);
+                            const completed = requirements.filter(r => r.isCompleted(formData)).length;
+                            return Math.round((completed / requirements.length) * 100);
+                          })()}%</span>
+                        </div>
+                        <div className="w-full h-2 bg-muted rounded-full overflow-hidden">
+                          <motion.div 
+                            className="h-full bg-gradient-to-r from-primary to-primary/80 rounded-full"
+                            initial={{ width: 0 }}
+                            animate={{ width: `${(() => {
+                              const requirements = getRequirements(formData.loanPurpose);
+                              const completed = requirements.filter(r => r.isCompleted(formData)).length;
+                              return (completed / requirements.length) * 100;
+                            })()}%` }}
+                            transition={{ duration: 0.5, ease: "easeOut" }}
+                          />
+                        </div>
+                        <p className="text-xs text-muted-foreground mt-2">
+                          {(() => {
+                            const requirements = getRequirements(formData.loanPurpose);
+                            const completed = requirements.filter(r => r.isCompleted(formData)).length;
+                            return `${completed} of ${requirements.length} requirements completed`;
+                          })()}
+                        </p>
+                      </div>
+
+                      {/* URLA 1003 Progress */}
+                      <div className="bg-white/80 backdrop-blur-sm rounded-2xl border border-border/40 p-4 shadow-sm">
+                        <div className="flex items-center justify-between mb-3">
+                          <div className="flex items-center gap-2">
+                            <div className="h-2 w-2 rounded-full bg-primary"></div>
+                            <span className="text-sm font-semibold text-foreground">URLA Form 1003</span>
+                          </div>
+                          <span className="text-xs font-medium text-primary">{(() => {
+                            const steps = [
+                              formData.fullName && formData.email && formData.phoneNumber && formData.dob && formData.borrowerAddress,
+                              formData.income && formData.income > 0,
+                              formData.propertyType && formData.propertyUse && formData.location,
+                              formData.isFirstTimeBuyer !== null && formData.isMilitary !== null,
+                            ];
+                            const completed = steps.filter(Boolean).length;
+                            return Math.round((completed / steps.length) * 100);
+                          })()}%</span>
+                        </div>
+                        <div className="w-full h-2 bg-muted rounded-full overflow-hidden">
+                          <motion.div 
+                            className="h-full bg-gradient-to-r from-primary to-primary/80 rounded-full"
+                            initial={{ width: 0 }}
+                            animate={{ width: `${(() => {
+                              const steps = [
+                                formData.fullName && formData.email && formData.phoneNumber && formData.dob && formData.borrowerAddress,
+                                formData.income && formData.income > 0,
+                                formData.propertyType && formData.propertyUse && formData.location,
+                                formData.isFirstTimeBuyer !== null && formData.isMilitary !== null,
+                              ];
+                              const completed = steps.filter(Boolean).length;
+                              return (completed / steps.length) * 100;
+                            })()}%` }}
+                            transition={{ duration: 0.5, ease: "easeOut" }}
+                          />
+                        </div>
+                        <p className="text-xs text-muted-foreground mt-2">
+                          {(() => {
+                            const steps = [
+                              formData.fullName && formData.email && formData.phoneNumber && formData.dob && formData.borrowerAddress,
+                              formData.income && formData.income > 0,
+                              formData.propertyType && formData.propertyUse && formData.location,
+                              formData.isFirstTimeBuyer !== null && formData.isMilitary !== null,
+                            ];
+                            const completed = steps.filter(Boolean).length;
+                            return `${completed} of ${steps.length} sections completed`;
+                          })()}
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Document Requirements */}
+                    <div className="space-y-3">
+                      <h3 className="text-sm font-bold text-foreground">Document Requirements</h3>
+                      <div className="bg-white/80 backdrop-blur-sm rounded-2xl border border-border/40 p-4 shadow-sm space-y-3">
+                        {getRequirements(formData.loanPurpose).map((req) => {
+                          const isCompleted = req.isCompleted(formData);
+                          return (
+                            <motion.div 
+                              key={req.key}
+                              initial={{ opacity: 0, x: -10 }}
+                              animate={{ opacity: 1, x: 0 }}
+                              className="flex items-center gap-3 py-2"
+                            >
+                              <div className={`h-5 w-5 rounded-full flex items-center justify-center flex-shrink-0 border-2 transition-all duration-200 ${
+                                isCompleted 
+                                  ? 'bg-primary border-primary shadow-sm' 
+                                  : 'border-border bg-white'
+                              }`}>
+                                {isCompleted && (
+                                  <motion.svg 
+                                    xmlns="http://www.w3.org/2000/svg" 
+                                    className="h-3 w-3 text-white" 
+                                    fill="none" 
+                                    viewBox="0 0 24 24" 
+                                    stroke="currentColor"
+                                    initial={{ scale: 0 }}
+                                    animate={{ scale: 1 }}
+                                    transition={{ type: "spring", stiffness: 500, damping: 30 }}
+                                  >
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
+                                  </motion.svg>
+                                )}
+                              </div>
+                              <span className={`text-xs font-medium transition-colors ${
+                                isCompleted ? 'text-foreground line-through opacity-60' : 'text-foreground'
+                              }`}>
+                                {req.label}
+                              </span>
+                            </motion.div>
+                          );
+                        })}
+                      </div>
+                    </div>
+
+                    {/* Achievement Badge */}
+                    {(() => {
+                      const requirements = getRequirements(formData.loanPurpose);
+                      const completed = requirements.filter(r => r.isCompleted(formData)).length;
+                      const total = requirements.length;
+                      const percentage = (completed / total) * 100;
+                      
+                      if (percentage === 100) {
+                        return (
+                          <motion.div 
+                            initial={{ scale: 0.8, opacity: 0 }}
+                            animate={{ scale: 1, opacity: 1 }}
+                            className="bg-gradient-to-br from-primary/10 to-primary/5 rounded-2xl border-2 border-primary/30 p-4 text-center"
+                          >
+                            <div className="text-3xl mb-2">🎉</div>
+                            <p className="text-sm font-bold text-foreground">All Requirements Complete!</p>
+                            <p className="text-xs text-muted-foreground mt-1">You're ready to proceed with your application.</p>
+                          </motion.div>
+                        );
+                      } else if (percentage >= 75) {
+                        return (
+                          <div className="bg-primary/5 rounded-2xl border border-primary/20 p-4 text-center">
+                            <div className="text-2xl mb-2">⭐</div>
+                            <p className="text-xs font-semibold text-foreground">Almost There!</p>
+                            <p className="text-[10px] text-muted-foreground mt-1">{total - completed} more to go</p>
+                          </div>
+                        );
+                      } else if (percentage >= 50) {
+                        return (
+                          <div className="bg-primary/5 rounded-2xl border border-primary/20 p-4 text-center">
+                            <div className="text-2xl mb-2">💪</div>
+                            <p className="text-xs font-semibold text-foreground">Great Progress!</p>
+                            <p className="text-[10px] text-muted-foreground mt-1">Keep it up!</p>
+                          </div>
+                        );
+                      }
+                      return null;
+                    })()}
+
+                    {/* Quick Summary */}
+                    <div className="bg-white/80 backdrop-blur-sm rounded-2xl border border-border/40 p-4 shadow-sm">
+                      <h3 className="text-xs font-bold text-foreground mb-3">Quick Summary</h3>
+                      <div className="grid grid-cols-2 gap-3 text-xs">
                         <FormField label="Loan Purpose" value={formData.loanPurpose} />
                         <FormField label="Property Type" value={formData.propertyType} />
-                        <FormField label="Property Use" value={formData.propertyUse} />
                         <FormField label="Purchase Price" value={formData.purchasePrice} />
                         <FormField label="Down Payment" value={formData.downPayment} />
-                        <FormField label="Credit Score" value={formData.creditScore} />
-                        <FormField label="Location" value={formData.location} />
-                        <FormField label="First Time Buyer" value={formData.isFirstTimeBuyer} />
-                        <FormField label="Military Service" value={formData.isMilitary} />
+                      </div>
                     </div>
-                    <p className="text-center text-muted-foreground text-[11px] mt-4">This form updates automatically as you chat with Bella.</p>
                 </div>
               </motion.div>
             )}
@@ -553,9 +770,15 @@ export default function BellaChatWidget({ onClose, onDataExtracted, formData }: 
         </div>
 
         {!isLive && !isConnecting && (
-        <div className="flex items-stretch border-t border-border bg-card text-[11px] flex-shrink-0">
-          <button type="button" onClick={() => setView("chat")} className={cn("flex-1 flex flex-col items-center justify-center py-1.5 gap-0.5", view === "chat" ? "text-primary" : "text-muted-foreground")}><MessageSquare className="h-3.5 w-3.5" /><span>Chat</span></button>
-          <button type="button" onClick={() => setView("form")} className={cn("flex-1 flex flex-col items-center justify-center py-1.5 gap-0.5 border-l border-border", view === "form" ? "text-primary" : "text-muted-foreground")}><LayoutList className="h-3.5 w-3.5" /><span>Forms</span></button>
+        <div className="flex items-stretch border-t border-border/50 bg-white/80 backdrop-blur-xl text-[12px] flex-shrink-0">
+          <button type="button" onClick={() => setView("chat")} className={cn("flex-1 flex flex-col items-center justify-center py-3 gap-1 transition-all duration-200 active:scale-95", view === "chat" ? "text-primary font-medium" : "text-muted-foreground")}>
+            <MessageSquare className="h-4 w-4" />
+            <span>Chat</span>
+          </button>
+          <button type="button" onClick={() => setView("form")} className={cn("flex-1 flex flex-col items-center justify-center py-3 gap-1 border-l border-border/50 transition-all duration-200 active:scale-95", view === "form" ? "text-primary font-medium" : "text-muted-foreground")}>
+            <LayoutList className="h-4 w-4" />
+            <span>Forms</span>
+          </button>
         </div>
         )}
       </div>

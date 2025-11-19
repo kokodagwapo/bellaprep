@@ -3,6 +3,7 @@ import react from '@vitejs/plugin-react'
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  base: '/bellaNew/',
   plugins: [react()],
   define: {
     // Map process.env.API_KEY to import.meta.env.VITE_API_KEY for compatibility
