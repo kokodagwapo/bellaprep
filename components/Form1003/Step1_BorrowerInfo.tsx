@@ -56,43 +56,85 @@ const AddressInput: React.FC<{
 
     // Load Google Maps API script
     useEffect(() => {
-        if (window.google && window.google.maps) {
+        // Check if already loaded
+        if (window.google && window.google.maps && window.google.maps.places) {
+            console.log('Google Maps already loaded');
             setMapsLoaded(true);
             return;
         }
 
         const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY || '';
+        console.log('Google Maps API Key check:', apiKey ? 'Found' : 'Not found');
+        
         if (!apiKey) {
             console.warn('Google Maps API key not found. Please set VITE_GOOGLE_MAPS_API_KEY in your environment variables.');
+            // For development, you can use a test key or allow manual entry
             setMapsLoaded(false);
             return;
         }
 
-        // Check if script is already loading
-        if (document.querySelector(`script[src*="maps.googleapis.com"]`)) {
+        // Check if script is already loading or loaded
+        const existingScript = document.querySelector(`script[src*="maps.googleapis.com"]`);
+        if (existingScript) {
+            console.log('Google Maps script already exists, waiting for load...');
             const checkInterval = setInterval(() => {
-                if (window.google && window.google.maps) {
+                if (window.google && window.google.maps && window.google.maps.places) {
+                    console.log('Google Maps loaded from existing script');
                     setMapsLoaded(true);
                     clearInterval(checkInterval);
                 }
             }, 100);
+            
+            // Timeout after 10 seconds
+            setTimeout(() => {
+                clearInterval(checkInterval);
+                if (!window.google || !window.google.maps) {
+                    console.error('Google Maps failed to load after timeout');
+                }
+            }, 10000);
+            
             return () => clearInterval(checkInterval);
         }
 
+        console.log('Loading Google Maps API script...');
         const script = document.createElement('script');
-        script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=places&loading=async`;
+        script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=places`;
         script.async = true;
         script.defer = true;
-        script.onload = () => setMapsLoaded(true);
-        script.onerror = () => {
-            console.error('Failed to load Google Maps API');
+        script.onload = () => {
+            console.log('Google Maps API script loaded successfully');
+            if (window.google && window.google.maps && window.google.maps.places) {
+                setMapsLoaded(true);
+            } else {
+                console.error('Google Maps API loaded but places library not available');
+                setMapsLoaded(false);
+            }
+        };
+        script.onerror = (error) => {
+            console.error('Failed to load Google Maps API:', error);
             setMapsLoaded(false);
         };
         document.head.appendChild(script);
     }, []);
 
     useEffect(() => {
-        if (addressInputRef.current && mapsLoaded && window.google && window.google.maps) {
+        if (!addressInputRef.current) {
+            console.log('Address input ref not available');
+            return;
+        }
+        
+        if (!mapsLoaded) {
+            console.log('Maps not loaded yet, waiting...');
+            return;
+        }
+        
+        if (!window.google || !window.google.maps || !window.google.maps.places) {
+            console.error('Google Maps Places API not available');
+            return;
+        }
+
+        console.log('Initializing Google Maps Autocomplete...');
+        try {
             const autocomplete = new window.google.maps.places.Autocomplete(
                 addressInputRef.current,
                 {
@@ -102,14 +144,17 @@ const AddressInput: React.FC<{
                 }
             );
 
+            console.log('Autocomplete initialized successfully');
             autocompleteRef.current = autocomplete;
 
             autocomplete.addListener('place_changed', () => {
                 const place = autocomplete.getPlace();
+                console.log('Place selected:', place);
                 
                 if (place.formatted_address && place.geometry && place.geometry.location) {
                     // Verify this is a valid address with coordinates
                     const formattedAddress = place.formatted_address;
+                    console.log('Valid address selected:', formattedAddress);
                     onChange(id, formattedAddress);
                     setIsValid(true);
                     setErrorMessage('');
@@ -117,6 +162,7 @@ const AddressInput: React.FC<{
                         onValidationChange(true);
                     }
                 } else {
+                    console.warn('Invalid place selected:', place);
                     setIsValid(false);
                     setErrorMessage('Please select a valid address from the suggestions');
                     if (onValidationChange) {
@@ -146,6 +192,7 @@ const AddressInput: React.FC<{
             addressInputRef.current.addEventListener('input', handleInput);
             
             return () => {
+                console.log('Cleaning up autocomplete listeners');
                 if (addressInputRef.current) {
                     addressInputRef.current.removeEventListener('input', handleInput);
                 }
@@ -153,6 +200,8 @@ const AddressInput: React.FC<{
                     window.google.maps.event.clearInstanceListeners(autocompleteRef.current);
                 }
             };
+        } catch (error) {
+            console.error('Error initializing autocomplete:', error);
         }
     }, [mapsLoaded, id, onChange, onValidationChange]);
 
@@ -187,6 +236,13 @@ const AddressInput: React.FC<{
             />
             {errorMessage && (
                 <p className="mt-1.5 text-xs sm:text-sm text-red-500">{errorMessage}</p>
+            )}
+            {!mapsLoaded && (
+                <p className="mt-1.5 text-xs sm:text-sm text-muted-foreground">
+                    {import.meta.env.VITE_GOOGLE_MAPS_API_KEY 
+                        ? 'Loading address suggestions...' 
+                        : 'Address autocomplete unavailable. Please enter address manually.'}
+                </p>
             )}
             {isValid && value && mapsLoaded && (
                 <p className="mt-1.5 text-xs sm:text-sm text-primary flex items-center gap-1">
