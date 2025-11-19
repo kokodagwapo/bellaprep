@@ -53,7 +53,7 @@ const RequirementsChecklist: React.FC<RequirementsChecklistProps> = ({ loanPurpo
   const requirements = getRequirements(loanPurpose);
 
   return (
-    <div className="space-y-6 -mt-36 sm:-mt-36">
+    <div className="space-y-6">
       <div className="space-y-2">
         <h3 className="text-xl sm:text-2xl font-bold font-heading text-foreground tracking-tight">
           Your Requirements

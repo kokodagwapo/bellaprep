@@ -241,7 +241,7 @@ const App: React.FC = () => {
                         </div>
                     )}
                     <div className="grid grid-cols-1 lg:grid-cols-3 lg:gap-12 xl:gap-16 items-start">
-                        <div className="hidden lg:block lg:col-span-1 pt-6 lg:pt-24">
+                        <div className="hidden lg:block lg:col-span-1 pt-6 lg:pt-12">
                             <RequirementsChecklist loanPurpose={formData.loanPurpose} formData={formData} />
                         </div>
                         <div className="w-full lg:col-span-2">
