@@ -777,7 +777,7 @@ export default function BellaChatWidget({ onClose, onDataExtracted, formData }: 
           </button>
           <button type="button" onClick={() => setView("form")} className={cn("flex-1 flex flex-col items-center justify-center py-3 gap-1 border-l border-border/50 transition-all duration-200 active:scale-95", view === "form" ? "text-primary font-medium" : "text-muted-foreground")}>
             <LayoutList className="h-4 w-4" />
-            <span>Forms</span>
+            <span>Checklist</span>
           </button>
         </div>
         )}
