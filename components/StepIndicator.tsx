@@ -10,15 +10,15 @@ interface StepIndicatorProps {
 
 const StepIndicator: React.FC<StepIndicatorProps> = ({ labels, currentStepIndex, onStepClick, stepIndices }) => {
   return (
-    <div className="w-full overflow-x-auto pb-3 -mx-2 px-2 scrollbar-hide">
-      <div className="flex items-start justify-start sm:justify-center w-full min-w-max sm:min-w-0 py-3 sm:py-5">
+    <div className="w-full pb-3 px-2">
+      <div className="flex items-start justify-center w-full py-3 sm:py-5 flex-wrap gap-2 sm:gap-4">
         {labels.map((label, index) => {
           const isActive = index === currentStepIndex;
           const isCompleted = index < currentStepIndex;
 
           return (
             <React.Fragment key={index}>
-              <div className="flex flex-col items-center text-center flex-shrink-0" style={{width: labels.length <= 4 ? `calc(100% / ${labels.length})` : '90px', minWidth: labels.length > 4 ? '90px' : 'auto'}}>
+              <div className="flex flex-col items-center text-center flex-shrink-0" style={{width: labels.length <= 6 ? `calc((100% - ${(labels.length - 1) * 16}px) / ${labels.length})` : 'auto', minWidth: labels.length > 6 ? '70px' : 'auto', maxWidth: labels.length > 6 ? '90px' : 'none'}}>
                 <motion.div 
                   className="relative w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center mb-3 sm:mb-4 cursor-pointer touch-manipulation group"
                   onClick={() => {
@@ -80,7 +80,7 @@ const StepIndicator: React.FC<StepIndicatorProps> = ({ labels, currentStepIndex,
               </div>
               
               {index < labels.length - 1 && (
-                <div className="flex-1 h-1 mt-4 sm:mt-5 mx-2 sm:mx-3 relative bg-gradient-to-r from-border via-border/80 to-border rounded-full overflow-hidden min-w-[30px] sm:min-w-[40px]">
+                <div className="h-1 mt-4 sm:mt-5 relative bg-gradient-to-r from-border via-border/80 to-border rounded-full overflow-hidden" style={{width: labels.length <= 6 ? '20px' : '15px', minWidth: labels.length > 6 ? '15px' : '20px', flexShrink: 0}}>
                   <motion.div 
                     className="absolute inset-y-0 left-0 bg-gradient-to-r from-primary via-primary/90 to-primary rounded-full shadow-sm"
                     initial={{ width: 0 }}

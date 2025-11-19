@@ -228,13 +228,10 @@ const App: React.FC = () => {
             ) : currentView === 'documents' ? (
                 <DocumentList formData={formData} />
             ) : (
-                <div className="w-full max-w-[1088px] mx-auto grid grid-cols-1 lg:grid-cols-3 lg:gap-12 xl:gap-16 items-start">
-                    <div className="hidden lg:block lg:col-span-1 pt-6 lg:pt-24">
-                        <RequirementsChecklist loanPurpose={formData.loanPurpose} formData={formData} />
-                    </div>
-                    <div className="w-full lg:col-span-2">
-                        {showStepIndicator && (
-                        <div className="mb-4 sm:mb-6 md:mb-8 mt-4 sm:mt-6 md:mt-8">
+                <div className="w-full max-w-[1088px] mx-auto">
+                    {/* Step Indicator at the top */}
+                    {showStepIndicator && (
+                        <div className="mb-4 sm:mb-6 md:mb-8 mt-2 sm:mt-4 md:mt-6">
                             <StepIndicator 
                                 labels={indicatorSteps.labels} 
                                 currentStepIndex={currentIndicatorIndex}
@@ -242,7 +239,12 @@ const App: React.FC = () => {
                                 stepIndices={indicatorSteps.indices}
                             />
                         </div>
-                        )}
+                    )}
+                    <div className="grid grid-cols-1 lg:grid-cols-3 lg:gap-12 xl:gap-16 items-start">
+                        <div className="hidden lg:block lg:col-span-1 pt-6 lg:pt-24">
+                            <RequirementsChecklist loanPurpose={formData.loanPurpose} formData={formData} />
+                        </div>
+                        <div className="w-full lg:col-span-2">
                         <div className="bg-gradient-to-br from-card via-card to-card/95 rounded-2xl sm:rounded-3xl border border-border/60 transition-all duration-300 overflow-hidden shadow-xl sm:shadow-2xl hover:shadow-2xl backdrop-blur-sm">
                             <div className="p-4 sm:p-6 md:p-8 lg:p-12 min-h-[400px] sm:min-h-[500px] md:min-h-[550px] flex flex-col justify-between bg-white/50">
                                 <div key={step} className="animate-fade-in w-full flex-1 flex flex-col justify-center">
@@ -274,6 +276,7 @@ const App: React.FC = () => {
                                     </div>
                                 )}
                             </div>
+                        </div>
                         </div>
                     </div>
                 </div>
