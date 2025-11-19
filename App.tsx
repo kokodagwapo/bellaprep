@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { Sidebar, SidebarBody, SidebarLink, useSidebar } from './components/ui/sidebar';
 import { Landmark, FilePlus2, FileText, AiIcon, LayoutList, Home } from './components/icons';
 import StepIndicator from './components/StepIndicator';
@@ -76,6 +76,32 @@ const App: React.FC = () => {
   const [currentView, setCurrentView] = useState<View>('home');
   const [open, setOpen] = useState(false);
   const [isChatOpen, setIsChatOpen] = useState(false);
+  const mainContentRef = useRef<HTMLDivElement>(null);
+
+  // Scroll to top when view changes
+  useEffect(() => {
+    if (mainContentRef.current) {
+      mainContentRef.current.scrollTo({ top: 0, behavior: 'smooth' });
+    } else {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }, [currentView]);
+
+  // Scroll to top when step changes in prep flow
+  useEffect(() => {
+    if (currentView === 'prep' && mainContentRef.current) {
+      mainContentRef.current.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }, [step, currentView]);
+
+  // Scroll to top on initial mount
+  useEffect(() => {
+    if (mainContentRef.current) {
+      mainContentRef.current.scrollTo({ top: 0, behavior: 'auto' });
+    } else {
+      window.scrollTo({ top: 0, behavior: 'auto' });
+    }
+  }, []);
 
   const filteredFlow = useMemo(() => {
     return appFlow.filter(flowStep =>
@@ -223,7 +249,7 @@ const App: React.FC = () => {
           </div>
         </SidebarBody>
       </Sidebar>
-      <main className="flex-1 h-full overflow-y-auto" style={{ backgroundColor: '#ffffff' }}>
+      <main ref={mainContentRef} className="flex-1 h-full overflow-y-auto" style={{ backgroundColor: '#ffffff' }}>
         <div className="min-h-full flex items-center justify-center p-3 sm:p-4 md:p-6 lg:p-8">
             {currentView === 'home' ? (
                 <LandingPage 
