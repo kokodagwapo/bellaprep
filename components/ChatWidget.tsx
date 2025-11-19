@@ -43,7 +43,7 @@ function ChatBubble({ message }: { message: Message; [key: string]: any; }) {
     >
       {isBella && ( 
         <motion.div 
-          className="h-9 w-9 rounded-full bg-gradient-to-br from-green-500 via-green-400 to-green-600 backdrop-blur-sm border-2 border-green-300/50 flex items-center justify-center flex-shrink-0 shadow-lg shadow-green-500/20"
+          className="h-9 w-9 rounded-full bg-primary flex items-center justify-center flex-shrink-0 shadow-lg"
           initial={{ scale: 0 }}
           animate={{ scale: 1 }}
           transition={{ type: "spring", stiffness: 500, damping: 30 }}
@@ -53,9 +53,9 @@ function ChatBubble({ message }: { message: Message; [key: string]: any; }) {
       )}
       <motion.div 
         className={cn(
-          "max-w-[80%] rounded-2xl px-4 py-3 text-[15px] leading-relaxed shadow-lg backdrop-blur-md transition-all duration-200",
+          "max-w-[80%] rounded-lg px-4 py-3 text-[15px] leading-relaxed shadow-lg transition-all duration-200",
           isBella 
-            ? "bg-gradient-to-br from-green-50 to-emerald-50/80 text-foreground rounded-bl-sm border border-green-200/60 shadow-green-500/10" 
+            ? "bg-primary/10 text-foreground rounded-bl-sm border border-primary/20" 
             : "bg-white text-foreground rounded-br-sm border border-gray-200/80 shadow-gray-500/10"
         )}
         whileHover={{ scale: 1.02 }}
@@ -493,9 +493,9 @@ export default function BellaChatWidget({ onClose, onDataExtracted, formData }: 
         exit={{ opacity: 0, y: 20, scale: 0.96 }}
         transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
         className="fixed inset-0 sm:inset-auto sm:bottom-4 sm:right-4 z-50">
-      <div className="w-full h-full sm:w-[420px] sm:max-w-full rounded-none sm:rounded-[32px] shadow-[0_25px_80px_-15px_rgba(0,0,0,0.3)] bg-white/98 backdrop-blur-2xl border border-gray-200/60 flex flex-col overflow-hidden text-foreground sm:h-[750px]">
+      <div className="w-full h-full sm:w-[420px] sm:max-w-full rounded-none sm:rounded-lg shadow-[0_25px_80px_-15px_rgba(0,0,0,0.3)] bg-white border border-gray-200/60 flex flex-col overflow-hidden text-foreground sm:h-[750px]">
         <motion.div 
-          className="bg-gradient-to-r from-green-600 via-green-500 to-green-600 text-white px-6 py-5 flex items-center gap-3 flex-shrink-0 shadow-lg shadow-green-500/20"
+          className="bg-primary text-white px-6 py-5 flex items-center gap-3 flex-shrink-0 shadow-lg"
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4 }}
@@ -520,7 +520,7 @@ export default function BellaChatWidget({ onClose, onDataExtracted, formData }: 
           </div>
           <motion.button 
             onClick={onClose} 
-            className="p-2 rounded-xl hover:bg-white/15 transition-all duration-200 active:scale-90" 
+            className="p-2 rounded-md hover:bg-white/15 transition-all duration-200 active:scale-90" 
             aria-label="Close"
             whileHover={{ rotate: 90 }}
             whileTap={{ scale: 0.9 }}
@@ -529,7 +529,7 @@ export default function BellaChatWidget({ onClose, onDataExtracted, formData }: 
           </motion.button>
         </motion.div>
 
-        <div className="relative flex-1 bg-gradient-to-b from-gray-50/50 via-white to-white overflow-hidden">
+        <div className="relative flex-1 bg-white overflow-hidden">
           <AnimatePresence mode="wait">
             {isLive || isConnecting ? (
                 <VoiceAgentView
@@ -556,9 +556,9 @@ export default function BellaChatWidget({ onClose, onDataExtracted, formData }: 
                       className="flex items-center gap-2 px-4 py-2"
                     >
                       <div className="flex gap-1">
-                        <motion.div className="h-2 w-2 rounded-full bg-green-500" animate={{ y: [0, -8, 0] }} transition={{ duration: 0.6, repeat: Infinity, delay: 0 }} />
-                        <motion.div className="h-2 w-2 rounded-full bg-green-500" animate={{ y: [0, -8, 0] }} transition={{ duration: 0.6, repeat: Infinity, delay: 0.2 }} />
-                        <motion.div className="h-2 w-2 rounded-full bg-green-500" animate={{ y: [0, -8, 0] }} transition={{ duration: 0.6, repeat: Infinity, delay: 0.4 }} />
+                        <motion.div className="h-2 w-2 rounded-full bg-primary" animate={{ y: [0, -8, 0] }} transition={{ duration: 0.6, repeat: Infinity, delay: 0 }} />
+                        <motion.div className="h-2 w-2 rounded-full bg-primary" animate={{ y: [0, -8, 0] }} transition={{ duration: 0.6, repeat: Infinity, delay: 0.2 }} />
+                        <motion.div className="h-2 w-2 rounded-full bg-primary" animate={{ y: [0, -8, 0] }} transition={{ duration: 0.6, repeat: Infinity, delay: 0.4 }} />
                       </div>
                       <span className="text-sm text-muted-foreground">Bella is typing...</span>
                     </motion.div>
@@ -567,7 +567,7 @@ export default function BellaChatWidget({ onClose, onDataExtracted, formData }: 
                 </div>
                 <motion.form 
                   onSubmit={handleSend} 
-                  className="border-t border-gray-200/80 bg-white/95 backdrop-blur-2xl p-5 shadow-[0_-8px_30px_-10px_rgba(0,0,0,0.08)]"
+                  className="border-t border-gray-200/80 bg-white p-5 shadow-[0_-8px_30px_-10px_rgba(0,0,0,0.08)]"
                   initial={{ y: 20, opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
                   transition={{ delay: 0.2 }}
@@ -576,7 +576,7 @@ export default function BellaChatWidget({ onClose, onDataExtracted, formData }: 
                     <motion.button 
                       type="button" 
                       onClick={() => fileInputRef.current?.click()} 
-                      className="h-11 w-11 flex-shrink-0 flex items-center justify-center rounded-2xl hover:bg-green-50 active:scale-95 transition-all duration-200 text-gray-600 hover:text-green-600 disabled:opacity-40 border border-gray-200/60 hover:border-green-300" 
+                      className="h-11 w-11 flex-shrink-0 flex items-center justify-center rounded-lg hover:bg-primary/10 active:scale-95 transition-all duration-200 text-gray-600 hover:text-primary disabled:opacity-40 border border-gray-200/60 hover:border-primary/30" 
                       disabled={isLive || isConnecting}
                       title="Attach file"
                       whileHover={{ scale: 1.05 }}
@@ -585,7 +585,7 @@ export default function BellaChatWidget({ onClose, onDataExtracted, formData }: 
                       <Paperclip className="h-5 w-5" />
                     </motion.button>
                     <input type="file" ref={fileInputRef} onChange={handleFileChange} className="hidden" accept="image/*,application/pdf" />
-                    <div className="flex-1 flex items-center rounded-2xl border-2 border-gray-200/80 bg-white shadow-sm px-5 py-3 min-h-[52px] focus-within:border-green-500 focus-within:shadow-lg focus-within:ring-4 focus-within:ring-green-500/10 transition-all duration-300">
+                    <div className="flex-1 flex items-center rounded-lg border-2 border-gray-200/80 bg-white shadow-sm px-5 py-3 min-h-[52px] focus-within:border-primary focus-within:shadow-lg focus-within:ring-4 focus-within:ring-primary/10 transition-all duration-300">
                       <textarea
                         ref={textareaRef}
                         rows={1}
@@ -605,10 +605,10 @@ export default function BellaChatWidget({ onClose, onDataExtracted, formData }: 
                         type="button" 
                         onClick={handleLiveToggle} 
                         className={cn(
-                          "ml-3 flex-shrink-0 flex h-9 w-9 items-center justify-center rounded-xl text-white transition-all duration-200",
+                          "ml-3 flex-shrink-0 flex h-9 w-9 items-center justify-center rounded-md text-white transition-all duration-200",
                           isLive 
                             ? "animate-pulse bg-red-500 hover:bg-red-600 shadow-lg ring-2 ring-red-500/40" 
-                            : "bg-green-500 hover:bg-green-600 shadow-md", 
+                            : "bg-primary hover:bg-primary/90 shadow-md", 
                           isConnecting ? "bg-gray-400 cursor-not-allowed opacity-50" : ""
                         )} 
                         title={isLive ? "Stop conversation" : "Start live conversation"} 
@@ -622,9 +622,9 @@ export default function BellaChatWidget({ onClose, onDataExtracted, formData }: 
                     <motion.button 
                       type="submit" 
                       className={cn(
-                        "h-11 w-11 flex-shrink-0 flex items-center justify-center rounded-2xl text-sm font-semibold text-white transition-all duration-200 shadow-lg",
+                        "h-11 w-11 flex-shrink-0 flex items-center justify-center rounded-lg text-sm font-semibold text-white transition-all duration-200 shadow-lg",
                         (input.trim() && !isLive) 
-                          ? "bg-gradient-to-r from-green-600 to-green-500 hover:from-green-700 hover:to-green-600 shadow-green-500/30 hover:shadow-xl hover:scale-105 ring-2 ring-green-500/20" 
+                          ? "bg-primary hover:bg-primary/90 hover:shadow-xl hover:scale-105 ring-2 ring-primary/20" 
                           : "bg-gray-300 cursor-not-allowed opacity-40 shadow-none"
                       )} 
                       disabled={!input.trim() || isLive || isConnecting}
@@ -639,7 +639,7 @@ export default function BellaChatWidget({ onClose, onDataExtracted, formData }: 
               </motion.div>
             ) : (
               <motion.div key="form-view" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.25, ease: "easeOut" }} className="flex flex-col h-full bg-white/50">
-                 <div className="flex items-center justify-between px-5 py-3 border-b border-border/30 text-foreground flex-shrink-0 bg-white/60 backdrop-blur-sm">
+                 <div className="flex items-center justify-between px-5 py-3 border-b border-border/30 text-foreground flex-shrink-0 bg-white">
                     <button className="flex items-center gap-1.5 text-xs font-medium hover:text-primary transition-colors" onClick={() => setView("chat")}>
                       <ArrowLeft className="h-4 w-4" />
                       <span>Back to Chat</span>
@@ -651,7 +651,7 @@ export default function BellaChatWidget({ onClose, onDataExtracted, formData }: 
                       <h2 className="text-base font-bold text-foreground">Application Progress</h2>
                       
                       {/* Pre-Evaluation Progress */}
-                      <div className="bg-white/80 backdrop-blur-sm rounded-2xl border border-border/40 p-4 shadow-sm">
+                      <div className="bg-white rounded-lg border border-border/40 p-4 shadow-sm">
                         <div className="flex items-center justify-between mb-3">
                           <div className="flex items-center gap-2">
                             <div className="h-2 w-2 rounded-full bg-primary"></div>
@@ -685,7 +685,7 @@ export default function BellaChatWidget({ onClose, onDataExtracted, formData }: 
                       </div>
 
                       {/* URLA 1003 Progress */}
-                      <div className="bg-white/80 backdrop-blur-sm rounded-2xl border border-border/40 p-4 shadow-sm">
+                      <div className="bg-white rounded-lg border border-border/40 p-4 shadow-sm">
                         <div className="flex items-center justify-between mb-3">
                           <div className="flex items-center gap-2">
                             <div className="h-2 w-2 rounded-full bg-primary"></div>
@@ -737,7 +737,7 @@ export default function BellaChatWidget({ onClose, onDataExtracted, formData }: 
                     {/* Document Requirements */}
                     <div className="space-y-3">
                       <h3 className="text-sm font-bold text-foreground">Document Requirements</h3>
-                      <div className="bg-white/80 backdrop-blur-sm rounded-2xl border border-border/40 p-4 shadow-sm space-y-3">
+                      <div className="bg-white rounded-lg border border-border/40 p-4 shadow-sm space-y-3">
                         {getRequirements(formData.loanPurpose).map((req) => {
                           const isCompleted = req.isCompleted(formData);
                           return (
@@ -835,7 +835,7 @@ export default function BellaChatWidget({ onClose, onDataExtracted, formData }: 
 
         {!isLive && !isConnecting && (
         <motion.div 
-          className="flex items-stretch border-t border-gray-200/80 bg-white/95 backdrop-blur-2xl text-[13px] flex-shrink-0 shadow-[0_-4px_20px_-2px_rgba(0,0,0,0.05)]"
+          className="flex items-stretch border-t border-gray-200/80 bg-white text-[13px] flex-shrink-0 shadow-[0_-4px_20px_-2px_rgba(0,0,0,0.05)]"
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.3 }}
@@ -846,7 +846,7 @@ export default function BellaChatWidget({ onClose, onDataExtracted, formData }: 
             className={cn(
               "flex-1 flex flex-col items-center justify-center py-4 gap-1.5 transition-all duration-300 relative",
               view === "chat" 
-                ? "text-green-600 font-semibold" 
+                ? "text-primary font-semibold" 
                 : "text-gray-500 hover:text-gray-700"
             )}
             whileHover={{ scale: 1.02 }}
@@ -854,12 +854,12 @@ export default function BellaChatWidget({ onClose, onDataExtracted, formData }: 
           >
             {view === "chat" && (
               <motion.div 
-                className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-green-500 to-green-400 rounded-t-full"
+                className="absolute top-0 left-0 right-0 h-1 bg-primary rounded-t-full"
                 layoutId="activeTab"
                 transition={{ type: "spring", stiffness: 500, damping: 30 }}
               />
             )}
-            <MessageSquare className={cn("h-5 w-5 transition-all", view === "chat" ? "text-green-600" : "text-gray-400")} />
+            <MessageSquare className={cn("h-5 w-5 transition-all", view === "chat" ? "text-primary" : "text-gray-400")} />
             <span className="font-medium">Chat</span>
           </motion.button>
           <div className="w-px bg-gray-200/60" />
@@ -869,7 +869,7 @@ export default function BellaChatWidget({ onClose, onDataExtracted, formData }: 
             className={cn(
               "flex-1 flex flex-col items-center justify-center py-4 gap-1.5 transition-all duration-300 relative",
               view === "form" 
-                ? "text-green-600 font-semibold" 
+                ? "text-primary font-semibold" 
                 : "text-gray-500 hover:text-gray-700"
             )}
             whileHover={{ scale: 1.02 }}
@@ -877,12 +877,12 @@ export default function BellaChatWidget({ onClose, onDataExtracted, formData }: 
           >
             {view === "form" && (
               <motion.div 
-                className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-green-500 to-green-400 rounded-t-full"
+                className="absolute top-0 left-0 right-0 h-1 bg-primary rounded-t-full"
                 layoutId="activeTab"
                 transition={{ type: "spring", stiffness: 500, damping: 30 }}
               />
             )}
-            <LayoutList className={cn("h-5 w-5 transition-all", view === "form" ? "text-green-600" : "text-gray-400")} />
+            <LayoutList className={cn("h-5 w-5 transition-all", view === "form" ? "text-primary" : "text-gray-400")} />
             <span className="font-medium">Checklist</span>
           </motion.button>
         </motion.div>
@@ -890,5 +890,4 @@ export default function BellaChatWidget({ onClose, onDataExtracted, formData }: 
       </div>
     </motion.div>
   );
-}
 }

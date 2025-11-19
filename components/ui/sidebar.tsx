@@ -88,11 +88,35 @@ export const DesktopSidebar = ({
         "h-full px-4 py-4 hidden md:flex md:flex-col w-[280px] flex-shrink-0",
         className
       )}
-      style={{ ...style, backgroundColor: '#ffffff', opacity: 1 }}
-      initial={{ opacity: 1, backgroundColor: '#ffffff' }}
+      style={{ 
+        ...style,
+        backgroundColor: '#ffffff', 
+        background: '#ffffff', 
+        backgroundImage: 'none',
+        backgroundSize: 'auto',
+        backgroundRepeat: 'no-repeat',
+        backgroundPosition: '0% 0%',
+        opacity: 1, 
+        backdropFilter: 'none', 
+        WebkitBackdropFilter: 'none', 
+        filter: 'none', 
+        WebkitFilter: 'none'
+      }}
+      initial={{ 
+        opacity: 1, 
+        backgroundColor: '#ffffff', 
+        background: '#ffffff',
+        backgroundImage: 'none',
+        filter: 'none',
+        backdropFilter: 'none'
+      }}
       animate={{
         width: animate ? (open ? "280px" : "70px") : "280px",
         backgroundColor: '#ffffff',
+        background: '#ffffff',
+        backgroundImage: 'none',
+        filter: 'none',
+        backdropFilter: 'none',
         opacity: 1,
       }}
       transition={{ opacity: { duration: 0 }, backgroundColor: { duration: 0 } }}
@@ -151,6 +175,7 @@ export const MobileSidebar = ({
                   "fixed h-full w-[85%] max-w-sm inset-y-0 left-0 bg-white shadow-2xl z-[100] flex flex-col overflow-hidden",
                   className
                 )}
+                style={{ backdropFilter: 'none', WebkitBackdropFilter: 'none', filter: 'none', WebkitFilter: 'none', backgroundColor: '#ffffff', background: '#ffffff', opacity: 1 }}
               >
                 <div className="flex items-center justify-between px-4 py-4 border-b border-border bg-white">
                   <div className="h-8 w-8 rounded-lg bg-primary flex-shrink-0" />

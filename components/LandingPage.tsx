@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { FilePlus2, FileText, LayoutList, Shield, Zap, Users, CheckCircle2, UploadCloud, Smartphone, Scan } from './icons';
+import { FilePlus2, FileText, LayoutList, Shield, Zap, CheckCircle2, UploadCloud, Smartphone, Scan } from './icons';
 import { HeroHighlight, Highlight } from './ui/hero-highlight';
 
 interface LandingPageProps {
@@ -28,7 +28,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onNavigateToPrep, onNavigateT
     {
       icon: <div className="flex items-center gap-2"><Scan className="h-8 w-8 text-primary" /><UploadCloud className="h-6 w-6 text-primary" /><Smartphone className="h-6 w-6 text-primary" /></div>,
       title: "OCR Technology",
-      description: "Upload documents via mobile or desktop. Our advanced OCR automatically extracts and verifies information from driver's licenses, W-2s, and paystubs."
+      description: "Advanced OCR automatically extracts and verifies information from driver's licenses, W-2s, and paystubs."
     },
     {
       icon: <LayoutList className="h-8 w-8 text-primary" />,
@@ -38,17 +38,12 @@ const LandingPage: React.FC<LandingPageProps> = ({ onNavigateToPrep, onNavigateT
     {
       icon: <Shield className="h-8 w-8 text-primary" />,
       title: "SOC2 Ready",
-      description: "Bank-level security with full compliance to industry standards."
+      description: "Bank-level security with full compliance to industry standards. Your data is protected with enterprise-grade encryption and SOC2 compliance."
     },
     {
       icon: <Zap className="h-8 w-8 text-primary" />,
       title: "Fast Processing",
       description: "AI-powered assistance to help you complete your application quickly."
-    },
-    {
-      icon: <Users className="h-8 w-8 text-primary" />,
-      title: "Expert Support",
-      description: "Get help from our AI assistant Bella, available 24/7."
     }
   ];
 
@@ -139,7 +134,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onNavigateToPrep, onNavigateT
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => onNavigateToForm1003?.()}
-                className="w-full sm:w-auto sm:min-w-[240px] bg-white/80 backdrop-blur-sm text-primary border-2 border-primary/30 font-bold py-5 sm:py-5 px-10 sm:px-12 rounded-2xl sm:rounded-3xl hover:bg-white hover:border-primary transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-primary/20 shadow-lg hover:shadow-xl text-base sm:text-lg touch-manipulation min-h-[60px] sm:min-h-[56px]"
+                className="w-full sm:w-auto sm:min-w-[240px] bg-white text-primary border-2 border-primary/30 font-bold py-5 sm:py-5 px-10 sm:px-12 rounded-2xl sm:rounded-3xl hover:bg-white hover:border-primary transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-primary/20 shadow-lg hover:shadow-xl text-base sm:text-lg touch-manipulation min-h-[60px] sm:min-h-[56px]"
               >
                 Start Application
               </motion.button>
@@ -174,7 +169,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onNavigateToPrep, onNavigateT
               viewport={{ once: true }}
               transition={{ delay: index * 0.2, duration: 0.8 }}
               whileHover={{ y: -12, scale: 1.02, transition: { duration: 0.3 } }}
-              className="group relative bg-white backdrop-blur-sm rounded-[2rem] border-2 border-gray-200 p-10 sm:p-12 shadow-xl hover:shadow-2xl transition-all duration-500 overflow-hidden"
+              className="group relative bg-white rounded-[2rem] border-2 border-gray-200 p-10 sm:p-12 shadow-xl hover:shadow-2xl transition-all duration-500 overflow-hidden"
             >
               <div className="relative z-10">
                 <div className="flex items-center justify-center w-24 h-24 rounded-3xl bg-gray-100 mb-8 group-hover:scale-110 group-hover:rotate-3 transition-all duration-500 group-hover:shadow-2xl">
@@ -236,7 +231,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onNavigateToPrep, onNavigateT
               viewport={{ once: true }}
               transition={{ delay: index * 0.1, duration: 0.6 }}
               whileHover={{ y: -8, transition: { duration: 0.3 } }}
-              className="group relative bg-white backdrop-blur-sm rounded-3xl border border-gray-200 p-8 sm:p-10 shadow-lg hover:shadow-2xl transition-all duration-500 overflow-hidden"
+              className="group relative bg-white rounded-3xl border border-gray-200 p-8 sm:p-10 shadow-lg hover:shadow-2xl transition-all duration-500 overflow-hidden"
             >
               <div className="relative z-10">
                 <div className="flex items-center justify-center w-20 h-20 rounded-2xl bg-gray-100 mb-6 group-hover:scale-110 transition-transform duration-300">
@@ -258,7 +253,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onNavigateToPrep, onNavigateT
 
       {/* Benefits Section */}
       <div className="relative mb-16 sm:mb-20 md:mb-24 mx-4">
-        <div className="relative bg-white backdrop-blur-xl rounded-3xl border border-gray-200 p-10 sm:p-14 md:p-20 shadow-2xl">
+        <div className="relative bg-white rounded-3xl border border-gray-200 p-10 sm:p-14 md:p-20 shadow-2xl">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}

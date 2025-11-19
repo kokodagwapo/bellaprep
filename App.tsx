@@ -222,7 +222,7 @@ const App: React.FC = () => {
   return (
     <>
       <Sidebar open={open} setOpen={setOpen} animate={true}>
-        <SidebarBody className="justify-between gap-10 bg-white border-r border-border" style={{ backgroundColor: '#ffffff', background: '#ffffff', color: '#000000', opacity: 1 }}>
+        <SidebarBody className="justify-between gap-10 bg-white border-r border-border" style={{ backgroundColor: '#ffffff', background: '#ffffff', color: '#000000', opacity: 1, backdropFilter: 'none', WebkitBackdropFilter: 'none', filter: 'none', WebkitFilter: 'none' }}>
           <div className="flex flex-col flex-1 overflow-y-auto overflow-x-hidden" style={{ color: '#000000', backgroundColor: '#ffffff' }}>
             {/* Logo */}
             <LogoSection />
@@ -279,8 +279,8 @@ const App: React.FC = () => {
                             <RequirementsChecklist loanPurpose={formData.loanPurpose} formData={formData} />
                         </div>
                         <div className="w-full lg:col-span-2">
-                        <div className="bg-gradient-to-br from-card via-card to-card/95 rounded-2xl sm:rounded-3xl border border-border/60 transition-all duration-300 overflow-hidden shadow-xl sm:shadow-2xl hover:shadow-2xl backdrop-blur-sm">
-                            <div className="p-4 sm:p-6 md:p-8 lg:p-12 min-h-[400px] sm:min-h-[500px] md:min-h-[550px] flex flex-col justify-between bg-white/50">
+                        <div className="bg-white rounded-2xl sm:rounded-3xl border border-border/60 transition-all duration-300 overflow-hidden shadow-xl sm:shadow-2xl hover:shadow-2xl">
+                            <div className="p-4 sm:p-6 md:p-8 lg:p-12 min-h-[400px] sm:min-h-[500px] md:min-h-[550px] flex flex-col justify-between bg-white">
                                 <div key={step} className="animate-fade-in w-full flex-1 flex flex-col justify-center">
                                     {renderPrepFlow()}
                                 </div>
@@ -340,7 +340,7 @@ const App: React.FC = () => {
           animate={{ scale: 1, y: 0 }}
           exit={{ scale: 0, y: 50 }}
           onClick={() => setIsChatOpen(true)}
-          className="fixed bottom-6 right-6 z-30 h-16 w-16 rounded-full bg-white/50 backdrop-blur-sm shadow-lg border border-border flex items-center justify-center hover:scale-110 transition-transform"
+          className="fixed bottom-6 right-6 z-30 h-16 w-16 rounded-full bg-white shadow-lg border border-border flex items-center justify-center hover:scale-110 transition-transform"
           aria-label="Open Bella AI Assistant"
         >
           <AiIcon className="w-8 h-8 text-foreground" />
