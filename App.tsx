@@ -226,7 +226,10 @@ const App: React.FC = () => {
       <main className="flex-1 h-full overflow-y-auto" style={{ backgroundColor: '#ffffff' }}>
         <div className="min-h-full flex items-center justify-center p-3 sm:p-4 md:p-6 lg:p-8">
             {currentView === 'home' ? (
-                <LandingPage />
+                <LandingPage 
+                  onNavigateToPrep={resetApplication}
+                  onNavigateToForm1003={() => setCurrentView('form1003')}
+                />
             ) : currentView === 'form1003' ? (
                 <Form1003 initialData={formData} />
             ) : currentView === 'documents' ? (

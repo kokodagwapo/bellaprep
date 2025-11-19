@@ -2,7 +2,12 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { FilePlus2, FileText, LayoutList, Shield, Zap, Users, CheckCircle2 } from './icons';
 
-const LandingPage: React.FC = () => {
+interface LandingPageProps {
+  onNavigateToPrep?: () => void;
+  onNavigateToForm1003?: () => void;
+}
+
+const LandingPage: React.FC<LandingPageProps> = ({ onNavigateToPrep, onNavigateToForm1003 }) => {
   const mainProducts = [
     {
       icon: <FilePlus2 className="h-10 w-10 text-primary" />,
@@ -118,7 +123,7 @@ const LandingPage: React.FC = () => {
           <motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            onClick={() => window.location.hash = '#prep4loan'}
+            onClick={() => onNavigateToPrep?.()}
             className="group relative w-full sm:w-auto sm:min-w-[240px] bg-primary text-primary-foreground font-bold py-5 sm:py-5 px-10 sm:px-12 rounded-2xl sm:rounded-3xl hover:bg-primary/95 transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-primary/30 shadow-xl hover:shadow-2xl text-base sm:text-lg touch-manipulation min-h-[60px] sm:min-h-[56px] overflow-hidden"
           >
             <span className="relative z-10">Get Started</span>
@@ -127,7 +132,7 @@ const LandingPage: React.FC = () => {
           <motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            onClick={() => window.location.hash = '#loan-application'}
+            onClick={() => onNavigateToForm1003?.()}
             className="w-full sm:w-auto sm:min-w-[240px] bg-white/80 backdrop-blur-sm text-primary border-2 border-primary/30 font-bold py-5 sm:py-5 px-10 sm:px-12 rounded-2xl sm:rounded-3xl hover:bg-white hover:border-primary transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-primary/20 shadow-lg hover:shadow-xl text-base sm:text-lg touch-manipulation min-h-[60px] sm:min-h-[56px]"
           >
             Start Application
@@ -185,10 +190,10 @@ const LandingPage: React.FC = () => {
                   onClick={() => {
                     if (index === 0) {
                       // Navigate to Prep4Loan
-                      window.location.hash = '#prep4loan';
+                      onNavigateToPrep?.();
                     } else {
                       // Navigate to Home Journey
-                      window.location.hash = '#loan-application';
+                      onNavigateToForm1003?.();
                     }
                   }}
                   className="w-full bg-primary text-primary-foreground font-bold py-4 px-8 rounded-2xl hover:bg-primary/90 transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-primary/30 shadow-lg hover:shadow-xl text-base sm:text-lg touch-manipulation"
@@ -310,7 +315,7 @@ const LandingPage: React.FC = () => {
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              onClick={() => window.location.hash = '#prep4loan'}
+              onClick={() => onNavigateToPrep?.()}
               className="group relative w-full sm:w-auto sm:min-w-[280px] bg-primary text-primary-foreground font-bold py-5 sm:py-6 px-12 sm:px-16 rounded-2xl sm:rounded-3xl hover:bg-primary/95 transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-primary/30 shadow-xl hover:shadow-2xl text-lg sm:text-xl touch-manipulation min-h-[64px] sm:min-h-[60px] overflow-hidden"
             >
               <span className="relative z-10">Begin Your Journey</span>
