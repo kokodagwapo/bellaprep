@@ -1,82 +1,49 @@
 import React from 'react';
 import { FormData, LoanPurpose } from '../types';
 import { getRequirements, Requirement } from '../data/requirements';
-import { motion } from 'framer-motion';
 
 interface RequirementsChecklistProps {
   loanPurpose: LoanPurpose | '';
   formData: FormData;
 }
 
-const RequirementItem: React.FC<{ requirement: Requirement; isCompleted: boolean; index: number }> = ({ requirement, isCompleted, index }) => (
-    <motion.li 
-        className="flex items-center space-x-4 group"
-        initial={{ opacity: 0, x: -20 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ delay: index * 0.1, duration: 0.3 }}
-    >
-        <motion.div 
-            className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center flex-shrink-0 border-2 transition-all duration-300 ${
-                isCompleted 
-                    ? 'bg-primary border-primary shadow-lg shadow-primary/20' 
-                    : 'border-border bg-card group-hover:border-primary/50 group-hover:bg-primary/5'
-            }`}
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.95 }}
-        >
+const RequirementItem: React.FC<{ requirement: Requirement; isCompleted: boolean }> = ({ requirement, isCompleted }) => (
+    <div className="flex items-start space-x-3">
+        <div className={`mt-1 w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 border-2 ${isCompleted ? 'bg-primary border-primary' : 'border-border'}`}>
             {isCompleted && (
-                <motion.svg 
-                    xmlns="http://www.w3.org/2000/svg" 
-                    className="h-4 w-4 sm:h-5 sm:w-5 text-primary-foreground" 
-                    fill="none" 
-                    viewBox="0 0 24 24" 
-                    stroke="currentColor"
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1 }}
-                    transition={{ type: "spring", stiffness: 500, damping: 30 }}
-                >
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
-                </motion.svg>
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 text-primary-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                </svg>
             )}
-        </motion.div>
-        <span className={`font-semibold text-sm sm:text-base transition-all duration-300 ${
-            isCompleted 
-                ? 'text-muted-foreground line-through' 
-                : 'text-foreground group-hover:text-primary'
-        }`}>
-            {requirement.label}
-        </span>
-    </motion.li>
+        </div>
+        <div>
+            <p className={`font-semibold text-sm ${isCompleted ? 'text-muted-foreground' : 'text-foreground'}`}>
+                {requirement.label}
+            </p>
+        </div>
+    </div>
 );
 
 const RequirementsChecklist: React.FC<RequirementsChecklistProps> = ({ loanPurpose, formData }) => {
   const requirements = getRequirements(loanPurpose);
 
   return (
-    <div className="space-y-6">
-      <div className="space-y-2">
-        <h3 className="text-xl sm:text-2xl font-bold font-heading text-foreground tracking-tight">
-          Your Requirements
-        </h3>
-        <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
-          As you provide information via the form, chat, or document uploads, this list will update automatically.
-        </p>
-      </div>
-      <ul className="space-y-6 relative pl-2">
-        <motion.li 
-            className="absolute left-5 top-6 h-[calc(100%-1.5rem)] w-0.5 bg-border -z-10"
-            initial={{ scaleY: 0 }}
-            animate={{ scaleY: 1 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-        />
-        {requirements.map((req, index) => (
+    <div className="space-y-4 p-6 bg-secondary/50 rounded-lg border border-border">
+      <h3 className="text-lg font-bold font-heading text-foreground">Your Requirements</h3>
+      <p className="text-xs text-muted-foreground">
+        As you provide information via the form, chat, or document uploads, this list will update automatically.
+      </p>
+      <ul className="space-y-4">
+        {requirements.map((req) => (
             <RequirementItem 
                 key={req.key}
                 requirement={req} 
                 isCompleted={req.isCompleted(formData)}
-                index={index}
             />
         ))}
+         <li className="pt-4 border-t border-border">
+            <p className="text-xs text-muted-foreground">This is not an exhaustive list. Additional documentation may be required.</p>
+        </li>
       </ul>
     </div>
   );
