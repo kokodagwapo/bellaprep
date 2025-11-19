@@ -29,16 +29,32 @@ jobs:
           cache: 'npm'
           cache-dependency-path: bellaNew/package-lock.json
       
+      - name: Clear build cache and old files
+        working-directory: ./bellaNew
+        run: |
+          echo "Clearing all build artifacts and caches..."
+          rm -rf dist
+          rm -rf node_modules/.vite
+          rm -rf .vite
+          rm -rf .cache
+          find . -name "*.map" -type f -delete || true
+          echo "Cache cleared successfully"
+      
       - name: Install dependencies
         working-directory: ./bellaNew
         run: npm ci
       
-      - name: Build
+      - name: Build with cache busting
         working-directory: ./bellaNew
         env:
           VITE_GOOGLE_MAPS_API_KEY: ${{ secrets.VITE_GOOGLE_MAPS_API_KEY }}
           VITE_API_KEY: ${{ secrets.VITE_API_KEY }}
-        run: npm run build
+          NODE_ENV: production
+        run: |
+          echo "Building with fresh cache..."
+          npm run build
+          echo "Build completed. Files in dist:"
+          ls -la dist/ || true
       
       - name: Setup Pages
         uses: actions/configure-pages@v4
@@ -47,6 +63,7 @@ jobs:
         uses: actions/upload-pages-artifact@v3
         with:
           path: './bellaNew/dist'
+          retention-days: 1
 
   deploy:
     environment:
