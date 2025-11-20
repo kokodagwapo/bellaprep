@@ -111,7 +111,7 @@ const App: React.FC = () => {
   const resetApplication = () => {
     setStep(0);
     setCurrentView('prep');
-    // Scroll to top on mobile
+    // Scroll to top on mobile and desktop
     setTimeout(() => {
       if (mainContentRef.current) {
         mainContentRef.current.scrollTo({ top: 0, behavior: 'smooth' });
