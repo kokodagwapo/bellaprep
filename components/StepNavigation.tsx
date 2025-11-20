@@ -11,7 +11,7 @@ const StepNavigation: React.FC<StepNavigationProps> = ({ onNext, onBack, nextLab
   return (
     <div className="mt-6 sm:mt-8 pt-4 sm:pt-6 border-t border-border/50">
       <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
-        {onBack && (
+      {onBack && (
           <button
             onClick={onBack}
             className="w-full sm:w-auto sm:flex-1 text-primary font-medium py-3 px-6 rounded-lg sm:rounded-xl bg-white border border-gray-300 hover:bg-gray-50 active:bg-gray-100 transition-colors duration-200 inline-flex items-center justify-center shadow-sm hover:shadow-md touch-manipulation min-h-[48px] sm:min-h-[44px]"
@@ -21,7 +21,7 @@ const StepNavigation: React.FC<StepNavigationProps> = ({ onNext, onBack, nextLab
             </svg>
             Back
           </button>
-        )}
+      )}
         {onNext && (
           <button
             onClick={onNext}
@@ -31,9 +31,9 @@ const StepNavigation: React.FC<StepNavigationProps> = ({ onNext, onBack, nextLab
             {nextLabel}
           </button>
         )}
-      </div>
     </div>
-  );
+  </div>
+);
 };
 
 export default StepNavigation;

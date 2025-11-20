@@ -175,12 +175,12 @@ const Step4Declarations: React.FC<Step4Props> = ({ data, onDataChange, onNext, o
                 {/* First-Time Buyer and Military */}
                 <div className="pt-6 border-t border-border">
                     <h3 className="text-sm font-semibold text-foreground mb-4">Program Eligibility</h3>
-                    <DeclarationQuestion
-                        question="Are you a first-time homebuyer?"
-                        field="isFirstTimeBuyer"
+                <DeclarationQuestion
+                    question="Are you a first-time homebuyer?"
+                    field="isFirstTimeBuyer"
                         value={data.isFirstTimeBuyer ?? null}
-                        onChange={handleFieldChange}
-                    />
+                    onChange={handleFieldChange}
+                />
                     {qualifiesForFirstTimeBuyer && (
                         <div className="bg-green-50 border-l-4 border-green-400 p-3 text-green-800 rounded-md flex items-start gap-2 -mt-2 mb-4">
                             <Lightbulb className="h-4 w-4 text-green-600 flex-shrink-0 mt-0.5" />
@@ -189,12 +189,12 @@ const Step4Declarations: React.FC<Step4Props> = ({ data, onDataChange, onNext, o
                             </p>
                         </div>
                     )}
-                    <DeclarationQuestion
-                        question="Have you or your deceased spouse ever served in the US Military?"
-                        field="isMilitary"
+                <DeclarationQuestion
+                    question="Have you or your deceased spouse ever served in the US Military?"
+                    field="isMilitary"
                         value={data.isMilitary ?? null}
-                        onChange={handleFieldChange}
-                    />
+                    onChange={handleFieldChange}
+                />
                     {qualifiesForVA && (
                         <div className="bg-green-50 border-l-4 border-green-400 p-3 text-green-800 rounded-md flex items-start gap-2 -mt-2">
                             <Lightbulb className="h-4 w-4 text-green-600 flex-shrink-0 mt-0.5" />

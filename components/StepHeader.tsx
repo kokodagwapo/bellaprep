@@ -8,11 +8,11 @@ interface StepHeaderProps {
 
 const StepHeader: React.FC<StepHeaderProps> = ({ title, subtitle }) => (
   <div className="text-center mb-4 sm:mb-8 md:mb-10 px-2">
-    <h2 className="text-xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-foreground font-heading mb-1.5 sm:mb-3">
+    <h2 className="text-xl sm:text-3xl md:text-4xl lg:text-5xl font-light text-foreground font-heading mb-1.5 sm:mb-3">
       {title}
     </h2>
     {subtitle && (
-      <p className="text-sm sm:text-base md:text-lg text-gray-600 px-2">
+      <p className="text-sm sm:text-base md:text-lg text-gray-600 px-2 font-light">
         {subtitle}
       </p>
     )}
@@ -47,7 +47,7 @@ const SelectionButton: React.FC<SelectionButtonProps> = ({ label, icon, isSelect
                 </div>
               </div>
             )}
-            <span className={`font-semibold text-base sm:text-lg md:text-xl flex-1 ${
+            <span className={`font-light text-base sm:text-lg md:text-xl flex-1 ${
               isSelected ? 'text-primary' : 'text-gray-900'
             }`}>
               {label}

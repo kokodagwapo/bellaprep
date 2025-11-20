@@ -140,7 +140,7 @@ const Form1003: React.FC<Form1003Props> = ({ initialData }) => {
                   }}
                   stepIndices={indicatorSteps.indices}
                 />
-              </div>
+            </div>
             )}
           </>
         )}

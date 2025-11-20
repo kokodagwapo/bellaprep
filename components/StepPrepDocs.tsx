@@ -207,22 +207,22 @@ const StepPrepDocs: React.FC<StepPrepDocsProps> = ({ onDataChange, onNext, onBac
           ))}
         </div>
 
-        <div 
-          onClick={() => fileInputRef.current?.click()}
+            <div 
+                onClick={() => fileInputRef.current?.click()}
           className="flex flex-col items-center justify-center border-2 border-dashed border-border rounded-lg p-8 text-center cursor-pointer hover:bg-secondary/50 transition-colors"
-        >
+            >
           <UploadCloud className="h-12 w-12 text-muted-foreground mb-3" />
           <p className="font-semibold text-foreground text-lg">Click to upload documents</p>
           <p className="text-sm text-muted-foreground mt-2">PDF, JPG, or PNG</p>
           <p className="text-xs text-muted-foreground mt-1">OCR will auto-extract: Address, DOB, Employer, Income, Balances</p>
-          <input 
-            type="file" 
-            ref={fileInputRef}
-            multiple
-            onChange={(e) => handleFileUpload(e.target.files)}
-            className="hidden"
-            accept="image/*,application/pdf"
-          />
+                <input 
+                    type="file" 
+                    ref={fileInputRef}
+                    multiple
+                    onChange={(e) => handleFileUpload(e.target.files)}
+                    className="hidden"
+                    accept="image/*,application/pdf"
+                />
         </div>
       </div>
       

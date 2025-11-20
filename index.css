@@ -178,3 +178,36 @@ body::before {
   opacity: 0.6;
 }
 
+/* Hero Marquee Animations */
+@keyframes marquee-fade-up {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  50% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+}
+
+@keyframes soft-glow {
+  0%, 100% {
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 0.6;
+  }
+}
+
+.marquee-text {
+  animation: marquee-fade-up 4s ease-in-out infinite;
+}
+
+.soft-glow {
+  animation: soft-glow 4s ease-in-out infinite;
+}
+
