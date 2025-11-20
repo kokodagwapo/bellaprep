@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { motion } from 'framer-motion';
 import { FilePlus2, FileText, LayoutList, Shield, Zap, CheckCircle2, UploadCloud, Smartphone, Scan } from './icons';
 import { HeroHighlight, Highlight } from './ui/hero-highlight';
@@ -9,24 +9,6 @@ interface LandingPageProps {
 }
 
 const LandingPage: React.FC<LandingPageProps> = ({ onNavigateToPrep, onNavigateToForm1003 }) => {
-  const [frontImageIndex, setFrontImageIndex] = useState(0);
-  const [slidingImageIndex, setSlidingImageIndex] = useState<number | null>(null);
-
-  // Rotate images to front every 12 seconds
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setFrontImageIndex((prev) => {
-        const next = (prev + 1) % 4;
-        // Mark the new front image as sliding in
-        setSlidingImageIndex(next);
-        // Clear the sliding state after animation completes
-        setTimeout(() => setSlidingImageIndex(null), 3000);
-        return next;
-      });
-    }, 12000); // 12 seconds
-
-    return () => clearInterval(interval);
-  }, []);
 
   const mainProducts = [
     {
@@ -198,98 +180,27 @@ const LandingPage: React.FC<LandingPageProps> = ({ onNavigateToPrep, onNavigateT
       >
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col lg:flex-row items-center lg:items-start gap-8 lg:gap-12">
-            {/* Title and Description Section - Left */}
+            {/* Empty space on left - Images hidden */}
+            <div className="hidden lg:block lg:w-1/2"></div>
+
+            {/* Title and Description Section - Centered */}
             <motion.div
-              initial={{ opacity: 0, x: -20 }}
+              initial={{ opacity: 0, x: 20 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.7, ease: [0.25, 0.46, 0.45, 0.94] }}
-              className="flex-shrink-0 lg:w-1/2 text-center lg:text-left"
+              className="flex-shrink-0 lg:w-1/2 text-center"
             >
               <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold text-foreground mb-4 sm:mb-5 tracking-tight">
                 See It In Action
               </h2>
-              <p className="text-base sm:text-lg md:text-xl text-muted-foreground max-w-xl mx-auto lg:mx-0 leading-relaxed mb-4" style={{ color: '#6b7280' }}>
+              <p className="text-base sm:text-lg md:text-xl text-muted-foreground max-w-xl mx-auto leading-relaxed mb-4" style={{ color: '#6b7280' }}>
                 Explore our platform through interactive screenshots showcasing the seamless mortgage application experience. Watch as each feature comes to life.
               </p>
-              <p className="text-base sm:text-lg md:text-xl text-muted-foreground max-w-xl mx-auto lg:mx-0 leading-relaxed" style={{ color: '#6b7280' }}>
+              <p className="text-base sm:text-lg md:text-xl text-muted-foreground max-w-xl mx-auto leading-relaxed" style={{ color: '#6b7280' }}>
                 Our intuitive interface guides you through every step, from initial pre-qualification to final document submission, making the mortgage process simpler and more transparent than ever before.
               </p>
             </motion.div>
-
-            {/* Images Section - Right */}
-            <div 
-              className="relative flex-shrink-0 lg:w-1/2"
-              style={{ height: '600px', width: '100%', overflow: 'visible' }}
-            >
-              <div 
-                className="absolute inset-0 flex items-center justify-center overflow-visible z-0"
-                style={{ height: '100%', width: '100%' }}
-              >
-          {[1, 2, 3, 4].map((index) => {
-            // Stack images with cascading effect
-            const imageIndex = index - 1; // Convert to 0-based
-            const relativePosition = (imageIndex - frontImageIndex + 4) % 4;
-            
-            // Cascading offsets: each image offset by 40px horizontally and vertically
-            const cascadeOffsetX = relativePosition * 40; // Horizontal offset for cascade
-            const cascadeOffsetY = relativePosition * 40; // Vertical offset for cascade
-            
-            // Z-index: front image highest, others decrease
-            const dynamicZIndex = 10 - relativePosition;
-            
-            // Opacity: all visible but slightly fade back images
-            const opacity = 1 - (relativePosition * 0.15); // Front image fully opaque, others slightly fade
-            
-            // Scale: front image largest, others slightly smaller
-            const finalScale = 1.05 - (relativePosition * 0.05); // Front image 1.05, others decrease
-
-            // Center images in their container with cascade offset
-            const finalX = cascadeOffsetX; // Cascade offset from center
-            const finalY = cascadeOffsetY; // Cascade offset from center
-
-            // Check if this image is currently sliding in from the right
-            const isSlidingIn = slidingImageIndex === imageIndex && relativePosition === 0;
-            // Starting X position: slide from right (800px) if sliding in, otherwise at final position
-            const startX = isSlidingIn ? 800 : finalX;
-
-            return (
-              <motion.img
-                key={`${index}-${frontImageIndex}`}
-                src={`${import.meta.env.BASE_URL}app-image-${index}.png`}
-                alt={`App screenshot ${index}`}
-                className="absolute w-full max-w-[1000px] sm:max-w-[1200px] md:max-w-[1400px] lg:max-w-[1600px] xl:max-w-[1800px] h-auto object-contain rounded-2xl"
-                animate={{
-                  x: finalX,
-                  y: finalY,
-                  zIndex: dynamicZIndex,
-                  opacity: opacity,
-                  scale: finalScale,
-                }}
-                transition={{
-                  opacity: { duration: 3, ease: [0.25, 0.46, 0.45, 0.94] },
-                  scale: { duration: 3, ease: [0.25, 0.46, 0.45, 0.94] },
-                  x: { duration: 3, ease: [0.25, 0.46, 0.45, 0.94] },
-                  y: { duration: 3, ease: [0.25, 0.46, 0.45, 0.94] },
-                }}
-                style={{
-                  border: '4mm solid white',
-                  boxShadow: relativePosition === 0
-                    ? '0 30px 60px -12px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(0, 0, 0, 0.05)' 
-                    : '0 25px 50px -12px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(0, 0, 0, 0.05)',
-                  transformOrigin: 'center center',
-                }}
-                initial={{ 
-                  x: startX,
-                  y: finalY,
-                  opacity: isSlidingIn ? 0 : opacity,
-                  scale: finalScale,
-                }}
-              />
-            );
-          })}
-              </div>
-            </div>
           </div>
         </div>
       </div>

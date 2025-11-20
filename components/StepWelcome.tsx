@@ -8,16 +8,32 @@ interface StepWelcomeProps {
 
 const StepWelcome: React.FC<StepWelcomeProps> = ({ onNext }) => {
   const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
     e.stopPropagation();
+    console.log('Get Started clicked', { onNext, type: typeof onNext });
     if (onNext && typeof onNext === 'function') {
-      onNext();
+      try {
+        onNext();
+      } catch (error) {
+        console.error('Error in onNext:', error);
+      }
+    } else {
+      console.warn('onNext is not a function:', onNext);
     }
   };
 
   const handleTouch = (e: React.TouchEvent<HTMLButtonElement>) => {
+    e.preventDefault();
     e.stopPropagation();
+    console.log('Get Started touched', { onNext, type: typeof onNext });
     if (onNext && typeof onNext === 'function') {
-      onNext();
+      try {
+        onNext();
+      } catch (error) {
+        console.error('Error in onNext:', error);
+      }
+    } else {
+      console.warn('onNext is not a function:', onNext);
     }
   };
 
@@ -53,16 +69,17 @@ const StepWelcome: React.FC<StepWelcomeProps> = ({ onNext }) => {
         <button
           onClick={handleClick}
           onTouchEnd={handleTouch}
+          onMouseDown={handleClick}
           type="button"
-          className="w-full sm:w-auto sm:min-w-[200px] bg-primary text-white font-bold py-4 sm:py-4 px-8 sm:px-10 rounded-xl sm:rounded-2xl hover:bg-primary/90 active:bg-primary/85 transition duration-300 focus:outline-none focus:ring-2 focus:ring-primary shadow-lg text-base sm:text-lg touch-manipulation min-h-[48px] sm:min-h-[52px] disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
-          disabled={!onNext}
+          className="w-full sm:w-auto sm:min-w-[200px] bg-primary text-white font-bold py-4 sm:py-4 px-8 sm:px-10 rounded-xl sm:rounded-2xl hover:bg-primary/90 active:bg-primary/85 transition duration-300 focus:outline-none focus:ring-2 focus:ring-primary shadow-lg text-base sm:text-lg touch-manipulation min-h-[48px] sm:min-h-[52px] cursor-pointer"
           style={{ 
             pointerEvents: 'auto',
             WebkitTapHighlightColor: 'transparent',
             touchAction: 'manipulation',
             position: 'relative',
             zIndex: 1001,
-            isolation: 'isolate'
+            isolation: 'isolate',
+            cursor: 'pointer'
           }}
         >
           Get Started
