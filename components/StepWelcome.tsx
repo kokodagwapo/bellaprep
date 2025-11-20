@@ -101,7 +101,7 @@ const StepWelcome: React.FC<StepWelcomeProps> = ({ onNext }) => {
         <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground mb-2 sm:mb-3">Discover Mortgage Possibilities</h1>
         <p className="text-muted-foreground text-base sm:text-lg mb-6 sm:mb-8 px-2">Just answer a few questions and you'll get real mortgage rates in minutes. It's that easy.</p>
       </div>
-      <div className="px-4 sm:px-0 mt-4 sm:mt-6 w-full flex justify-center relative" style={{zIndex: 100, visibility: 'visible', opacity: 1, pointerEvents: 'auto'}}>
+      <div className="px-4 sm:px-0 mt-4 sm:mt-6 w-full flex justify-center relative" style={{zIndex: 100, visibility: 'visible', opacity: 1, pointerEvents: 'auto', position: 'relative'}}>
         <button
           onClick={handleClick}
           onTouchEnd={handleTouch}
@@ -115,8 +115,11 @@ const StepWelcome: React.FC<StepWelcomeProps> = ({ onNext }) => {
             position: 'relative',
             zIndex: 1001,
             isolation: 'isolate',
-            cursor: 'pointer'
+            cursor: 'pointer',
+            userSelect: 'none',
+            WebkitUserSelect: 'none'
           }}
+          aria-label="Get Started"
         >
           Get Started
         </button>

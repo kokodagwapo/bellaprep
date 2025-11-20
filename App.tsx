@@ -111,7 +111,14 @@ const App: React.FC = () => {
   const resetApplication = () => {
     setStep(0);
     setCurrentView('prep');
-    // Optionally reset form data here if desired
+    // Scroll to top on mobile and desktop
+    setTimeout(() => {
+      if (mainContentRef.current) {
+        mainContentRef.current.scrollTo({ top: 0, behavior: 'smooth' });
+      } else {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    }, 100);
   };
 
   const nextStep = () => setStep(prev => Math.min(prev + 1, filteredFlow.length - 1));
@@ -204,7 +211,11 @@ const App: React.FC = () => {
         StepConfirmation: { isLoading: isLoading, result: submissionResult, onProceed: handleProceedToApplication },
     };
     
-    return <CurrentStepComponent {...stepProps[CurrentStepComponent.name]} />;
+    // Get component name, with fallback to commonProps if not found
+    const componentName = CurrentStepComponent.name || CurrentStepComponent.displayName || '';
+    const props = stepProps[componentName] || commonProps;
+    
+    return <CurrentStepComponent {...props} />;
   };
   
   const indicatorSteps = useMemo(() => {
@@ -301,31 +312,6 @@ const App: React.FC = () => {
                                 <div key={step} className="animate-fade-in w-full flex-1 flex flex-col justify-center relative" style={{ zIndex: 10, pointerEvents: 'auto' }}>
                                     {renderPrepFlow()}
                                 </div>
-                                {/* Navigation Buttons */}
-                                {step > 0 && step < filteredFlow.length - 1 && (
-                                    <div className="mt-6 sm:mt-8 pt-4 sm:pt-6 border-t border-border/50">
-                                        <div className="flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-between gap-3 sm:gap-4">
-                                            <button
-                                                onClick={prevStep}
-                                                className="flex items-center justify-center gap-2 px-4 sm:px-6 py-3 sm:py-3 rounded-xl sm:rounded-xl bg-primary text-primary-foreground font-medium hover:bg-primary/90 transition-all duration-200 active:scale-95 shadow-sm hover:shadow-md w-full sm:w-auto sm:min-w-[120px] text-base sm:text-base touch-manipulation min-h-[48px] sm:min-h-[44px]"
-                                            >
-                                                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                                                </svg>
-                                                Back
-                                            </button>
-                                            <button
-                                                onClick={nextStep}
-                                                className="flex items-center justify-center gap-2 px-4 sm:px-6 py-3 sm:py-3 rounded-xl sm:rounded-xl bg-primary text-primary-foreground font-semibold hover:bg-primary/90 transition-all duration-200 active:scale-95 shadow-sm hover:shadow-md w-full sm:w-auto sm:min-w-[120px] text-base sm:text-base touch-manipulation min-h-[48px] sm:min-h-[44px]"
-                                            >
-                                                Next
-                                                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                                                </svg>
-                                            </button>
-                                        </div>
-                                    </div>
-                                )}
                             </div>
                         </div>
                         </div>
