@@ -224,6 +224,131 @@ const Hero: React.FC = () => {
 
       </div>
 
+      {/* Family with House and Beautiful Yard - Outside background container for visibility */}
+      <motion.div
+        className="absolute bottom-0 left-[2%] sm:left-[5%] md:left-[8%]"
+        style={{ 
+          width: 'clamp(350px, 40vw, 550px)',
+          height: 'clamp(250px, 30vw, 450px)',
+          bottom: 'clamp(30px, 5vh, 90px)',
+          zIndex: 9,
+          pointerEvents: 'none'
+        }}
+        initial={{ opacity: 0, scale: 0.8, y: 20 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        transition={{ duration: 1.5, delay: 0.8, ease: "easeOut" }}
+      >
+        <svg 
+          viewBox="0 0 400 360" 
+          className="w-full h-full"
+          style={{ 
+            filter: 'drop-shadow(0 4px 12px rgba(0, 0, 0, 0.25))',
+            opacity: 0.95
+          }}
+        >
+          {/* Beautiful Yard - Grass */}
+          <rect x="0" y="280" width="400" height="80" fill="#10b981" opacity="0.4" />
+          <path
+            d="M0,280 Q100,270 200,275 T400,280 L400,360 L0,360 Z"
+            fill="#34d399"
+            opacity="0.3"
+          />
+          
+          {/* Yard Flowers */}
+          {[
+            { x: 50, y: 300, size: 8 },
+            { x: 120, y: 310, size: 6 },
+            { x: 280, y: 305, size: 7 },
+            { x: 350, y: 315, size: 6 },
+          ].map((flower, i) => (
+            <g key={i}>
+              <circle cx={flower.x} cy={flower.y} r={flower.size} fill="#fbbf24" opacity="0.7" />
+              <circle cx={flower.x - 3} cy={flower.y - 2} r={flower.size * 0.6} fill="#f59e0b" opacity="0.8" />
+              <circle cx={flower.x + 3} cy={flower.y - 2} r={flower.size * 0.6} fill="#f59e0b" opacity="0.8" />
+              <circle cx={flower.x} cy={flower.y - 4} r={flower.size * 0.6} fill="#f59e0b" opacity="0.8" />
+            </g>
+          ))}
+
+          {/* House */}
+          <g>
+            {/* House Base */}
+            <rect x="120" y="180" width="160" height="100" fill="#e5e7eb" stroke="#9ca3af" strokeWidth="2" />
+            
+            {/* Roof */}
+            <polygon points="100,180 200,120 300,180" fill="#dc2626" stroke="#991b1b" strokeWidth="2" />
+            
+            {/* Roof Shingles */}
+            <line x1="150" y1="150" x2="150" y2="180" stroke="#991b1b" strokeWidth="1" opacity="0.5" />
+            <line x1="200" y1="120" x2="200" y2="180" stroke="#991b1b" strokeWidth="1" opacity="0.5" />
+            <line x1="250" y1="150" x2="250" y2="180" stroke="#991b1b" strokeWidth="1" opacity="0.5" />
+            
+            {/* Door */}
+            <rect x="180" y="220" width="40" height="60" fill="#92400e" stroke="#78350f" strokeWidth="2" />
+            <circle cx="210" cy="250" r="3" fill="#fbbf24" />
+            
+            {/* Windows */}
+            <rect x="140" y="200" width="30" height="30" fill="#bfdbfe" stroke="#3b82f6" strokeWidth="2" />
+            <line x1="155" y1="200" x2="155" y2="230" stroke="#3b82f6" strokeWidth="1.5" />
+            <line x1="140" y1="215" x2="170" y2="215" stroke="#3b82f6" strokeWidth="1.5" />
+            
+            <rect x="230" y="200" width="30" height="30" fill="#bfdbfe" stroke="#3b82f6" strokeWidth="2" />
+            <line x1="245" y1="200" x2="245" y2="230" stroke="#3b82f6" strokeWidth="1.5" />
+            <line x1="230" y1="215" x2="260" y2="215" stroke="#3b82f6" strokeWidth="1.5" />
+            
+            {/* Chimney */}
+            <rect x="240" y="140" width="25" height="40" fill="#6b7280" stroke="#4b5563" strokeWidth="1.5" />
+            <rect x="242" y="135" width="21" height="8" fill="#374151" />
+          </g>
+
+          {/* Tree */}
+          <g>
+            {/* Tree Trunk */}
+            <rect x="320" y="200" width="20" height="80" fill="#92400e" />
+            {/* Tree Foliage */}
+            <circle cx="330" cy="200" r="35" fill="#10b981" opacity="0.8" />
+            <circle cx="310" cy="190" r="25" fill="#059669" opacity="0.7" />
+            <circle cx="350" cy="190" r="25" fill="#059669" opacity="0.7" />
+          </g>
+
+          {/* Family - Parents and Child */}
+          <g>
+            {/* Parent 1 (Left) */}
+            <circle cx="80" cy="250" r="12" fill="#fbbf24" opacity="0.9" />
+            <rect x="72" y="262" width="16" height="30" fill="#3b82f6" rx="2" />
+            <line x1="72" y1="262" x2="60" y2="280" stroke="#1e40af" strokeWidth="2" />
+            <line x1="88" y1="262" x2="100" y2="280" stroke="#1e40af" strokeWidth="2" />
+            <line x1="80" y1="292" x2="70" y2="310" stroke="#1e40af" strokeWidth="2" />
+            <line x1="80" y1="292" x2="90" y2="310" stroke="#1e40af" strokeWidth="2" />
+            
+            {/* Parent 2 (Right) */}
+            <circle cx="130" cy="250" r="12" fill="#fbbf24" opacity="0.9" />
+            <rect x="122" y="262" width="16" height="30" fill="#ec4899" rx="2" />
+            <line x1="122" y1="262" x2="110" y2="280" stroke="#be185d" strokeWidth="2" />
+            <line x1="138" y1="262" x2="150" y2="280" stroke="#be185d" strokeWidth="2" />
+            <line x1="130" y1="292" x2="120" y2="310" stroke="#be185d" strokeWidth="2" />
+            <line x1="130" y1="292" x2="140" y2="310" stroke="#be185d" strokeWidth="2" />
+            
+            {/* Child (Center) */}
+            <circle cx="105" cy="270" r="8" fill="#fbbf24" opacity="0.9" />
+            <rect x="100" y="278" width="10" height="20" fill="#8b5cf6" rx="2" />
+            <line x1="100" y1="278" x2="92" y2="290" stroke="#6d28d9" strokeWidth="1.5" />
+            <line x1="110" y1="278" x2="118" y2="290" stroke="#6d28d9" strokeWidth="1.5" />
+            <line x1="105" y1="298" x2="98" y2="310" stroke="#6d28d9" strokeWidth="1.5" />
+            <line x1="105" y1="298" x2="112" y2="310" stroke="#6d28d9" strokeWidth="1.5" />
+          </g>
+
+          {/* Yard Path */}
+          <path
+            d="M200,360 Q200,320 200,280"
+            stroke="#d1d5db"
+            strokeWidth="8"
+            fill="none"
+            strokeLinecap="round"
+            opacity="0.6"
+          />
+        </svg>
+      </motion.div>
+
       {/* Content */}
       <div className="relative z-10 w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         {/* Typewriter Text */}
