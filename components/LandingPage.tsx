@@ -98,10 +98,10 @@ const LandingPage: React.FC<LandingPageProps> = ({ onNavigateToPrep, onNavigateT
               />
             </motion.div>
             
-            <div className="relative flex flex-col items-center justify-center gap-8 lg:gap-12 max-w-6xl mx-auto">
-              {/* Hero Text Content with backdrop overlay - centered */}
-              <div className="relative z-20 text-center w-full" style={{ transform: 'translateY(0)' }}>
-              <div className="bg-white/95 backdrop-blur-sm rounded-xl p-4 sm:p-5 md:p-6 shadow-sm border border-gray-100 mx-auto" style={{ maxWidth: 'calc(100% - 192px)' }}>
+            <div className="relative flex flex-col lg:flex-row items-center gap-8 lg:gap-12 max-w-6xl mx-auto">
+              {/* Hero Text Content with backdrop overlay - on the right */}
+              <div className="relative z-20 text-center w-full lg:w-1/2 lg:ml-auto" style={{ transform: 'translateY(0)' }}>
+              <div className="bg-white/95 backdrop-blur-sm rounded-xl p-4 sm:p-5 md:p-6 border border-gray-100 mx-auto" style={{ maxWidth: 'calc(100% - 96px)', boxShadow: '0 10px 40px rgba(0, 0, 0, 0.1), 0 2px 8px rgba(0, 0, 0, 0.05)' }}>
                 <motion.h1 
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -115,7 +115,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onNavigateToPrep, onNavigateT
                   initial={{ opacity: 0, y: 15 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.35, duration: 0.7 }}
-                  className="text-xs sm:text-sm md:text-base text-muted-foreground max-w-[18rem] mx-auto lg:mx-0 mb-5 sm:mb-6 leading-relaxed font-light"
+                  className="text-xs sm:text-sm md:text-base text-muted-foreground max-w-[18rem] mx-auto mb-5 sm:mb-6 leading-relaxed font-light"
                   style={{ color: '#64748b' }}
                 >
                   Experience a seamless mortgage application process designed to save you time and simplify every step with intelligent guidance.
@@ -125,7 +125,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onNavigateToPrep, onNavigateT
                   initial={{ opacity: 0, y: 15 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.5, duration: 0.7 }}
-                  className="flex flex-col sm:flex-row gap-3 justify-center lg:justify-start items-stretch sm:items-center"
+                  className="flex flex-col sm:flex-row gap-3 justify-center items-stretch sm:items-center"
                 >
                   <motion.button
                     whileHover={{ scale: 1.02 }}
@@ -135,8 +135,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onNavigateToPrep, onNavigateT
                     style={{ WebkitTapHighlightColor: 'transparent' }}
                   >
                     <span className="relative z-10 flex items-center justify-center gap-2 text-sm font-medium">
-                      <User className="w-4 h-4" />
-                      Sign Up
+                      Prep4Loan
                     </span>
                   </motion.button>
                   <motion.button
@@ -147,10 +146,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onNavigateToPrep, onNavigateT
                     style={{ WebkitTapHighlightColor: 'transparent' }}
                   >
                     <span className="relative z-10 flex items-center justify-center gap-2 text-sm font-medium">
-                      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
-                      </svg>
-                      Sign In
+                      Home Journey
                     </span>
                   </motion.button>
                 </motion.div>
@@ -174,7 +170,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onNavigateToPrep, onNavigateT
             Business Process Solutions
           </h2>
           <p className="text-base sm:text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed" style={{ color: '#6b7280' }}>
-            Two powerful solutions to guide you through your mortgage journey
+            Streamline your mortgage process with our comprehensive suite of tools designed to simplify every step from pre-qualification to final approval
           </p>
         </motion.div>
         
