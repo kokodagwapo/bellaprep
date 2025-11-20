@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { FilePlus2, FileText, LayoutList, Shield, Zap, CheckCircle2, UploadCloud, Smartphone, Scan, User } from './icons';
 import { HeroHighlight, Highlight } from './ui/hero-highlight';
@@ -9,6 +9,9 @@ interface LandingPageProps {
 }
 
 const LandingPage: React.FC<LandingPageProps> = ({ onNavigateToPrep, onNavigateToForm1003 }) => {
+  const [isSignUp, setIsSignUp] = useState(false);
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
 
   const mainProducts = [
     {
@@ -74,81 +77,112 @@ const LandingPage: React.FC<LandingPageProps> = ({ onNavigateToPrep, onNavigateT
           >
             {/* Floating background image - left side, behind text */}
             <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 0.67 }}
-              transition={{ duration: 1, ease: [0.25, 0.46, 0.45, 0.94] }}
+              initial={{ opacity: 0, x: '-500px' }}
+              animate={{ opacity: 1, x: '0px' }}
+              transition={{ duration: 0.8, ease: [0.25, 0.46, 0.45, 0.94] }}
               className="hidden lg:block fixed pointer-events-none z-0"
               style={{ 
-                transform: 'scale(0.67)',
-                left: '-288px', // 3 inches = 288px
-                top: '-192px', // 2 inches up from top (was 4 inches, lowered by 2)
+                left: '-192px', // 2 inches = 192px
+                top: '-96px', // 1 inch up from top
+                transform: 'scale(0.38)',
               }}
             >
-              <img 
-                src={`${import.meta.env.BASE_URL}faceinimage.png`}
-                alt="Mobile app screenshots showcasing the mortgage application experience"
-                className="h-auto"
-                style={{ 
-                  filter: 'drop-shadow(0 20px 40px rgba(0, 0, 0, 0.15))',
-                  opacity: 0.9,
-                  width: 'auto',
-                  height: 'auto',
-                  maxWidth: 'none'
-                }}
-              />
+              <div className="relative">
+                <img 
+                  src={`${import.meta.env.BASE_URL}faceinimage.png`}
+                  alt="Mobile app screenshots showcasing the mortgage application experience"
+                  className="h-auto"
+                  style={{ 
+                    filter: 'drop-shadow(0 20px 40px rgba(0, 0, 0, 0.15))',
+                    opacity: 0.9,
+                    width: 'auto',
+                    height: 'auto',
+                    maxWidth: 'none',
+                    maskImage: 'linear-gradient(to bottom, black 60%, transparent 100%)',
+                    WebkitMaskImage: 'linear-gradient(to bottom, black 60%, transparent 100%)',
+                  }}
+                />
+                {/* Bottom gradient overlay */}
+                <div 
+                  className="absolute bottom-0 left-0 right-0 pointer-events-none"
+                  style={{
+                    height: '30%',
+                    background: 'linear-gradient(to bottom, transparent 0%, rgba(255, 255, 255, 0.8) 100%)',
+                  }}
+                />
+              </div>
             </motion.div>
             
             <div className="relative flex flex-col lg:flex-row items-center gap-8 lg:gap-12 max-w-6xl mx-auto">
               {/* Hero Text Content with backdrop overlay - on the right */}
               <div className="relative z-20 text-center w-full lg:w-1/2 lg:ml-auto" style={{ transform: 'translateY(0)' }}>
-              <div className="bg-white/95 backdrop-blur-sm rounded-xl p-4 sm:p-5 md:p-6 border border-gray-100 mx-auto" style={{ maxWidth: 'calc(100% - 96px)', boxShadow: '0 10px 40px rgba(0, 0, 0, 0.1), 0 2px 8px rgba(0, 0, 0, 0.05)' }}>
+              <div className="bg-white/95 backdrop-blur-sm rounded-xl p-4 sm:p-5 md:p-6 border border-gray-100 mx-auto" style={{ maxWidth: 'calc(100% - 96px)', boxShadow: '0 10px 40px rgba(0, 0, 0, 0.1), 0 2px 8px rgba(0, 0, 0, 0.05)', transform: 'translateX(240px) translateY(96px)' }}>
                 <motion.h1 
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.2, duration: 0.7, ease: [0.25, 0.46, 0.45, 0.94] }}
                   className="text-xl sm:text-2xl md:text-3xl font-semibold text-foreground mb-3 sm:mb-4 leading-tight tracking-tight"
                 >
-                  Your <Highlight className="text-xl sm:text-2xl md:text-3xl text-foreground">Home Journey</Highlight>.<br className="hidden sm:block" /> Faster. Clearer. Better.
+                  Your <Highlight className="text-2xl sm:text-3xl md:text-4xl text-foreground">Home Journey</Highlight>.<br className="hidden sm:block" /> Faster. Clearer. Better.
                 </motion.h1>
                 
-                <motion.p 
+                <motion.div
                   initial={{ opacity: 0, y: 15 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.35, duration: 0.7 }}
-                  className="text-xs sm:text-sm md:text-base text-muted-foreground max-w-[18rem] mx-auto mb-5 sm:mb-6 leading-relaxed font-light"
-                  style={{ color: '#64748b' }}
+                  className="space-y-4 mb-5 sm:mb-6 max-w-[18rem] mx-auto"
                 >
-                  Experience a seamless mortgage application process designed to save you time and simplify every step with intelligent guidance.
-                </motion.p>
+                  <input
+                    type="text"
+                    placeholder="Username"
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
+                    className="w-full px-4 py-2.5 sm:py-3 text-sm sm:text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all duration-200 touch-manipulation min-h-[44px]"
+                    style={{ fontSize: '16px' }}
+                  />
+                  <input
+                    type="password"
+                    placeholder="Password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="w-full px-4 py-2.5 sm:py-3 text-sm sm:text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all duration-200 touch-manipulation min-h-[44px]"
+                    style={{ fontSize: '16px' }}
+                  />
+                </motion.div>
 
                 <motion.div
                   initial={{ opacity: 0, y: 15 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.5, duration: 0.7 }}
-                  className="flex flex-col sm:flex-row gap-3 justify-center items-stretch sm:items-center"
+                  className="flex flex-col gap-3 justify-center items-stretch"
                 >
                   <motion.button
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
-                    onClick={() => onNavigateToPrep?.()}
-                    className="group relative w-full sm:w-auto bg-primary text-white font-medium py-2.5 sm:py-3 px-6 sm:px-8 rounded-lg hover:bg-primary/90 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary/30 text-sm touch-manipulation min-h-[44px] shadow-sm hover:shadow-md"
+                    onClick={() => {
+                      // Handle sign in/sign up logic here
+                      if (isSignUp) {
+                        // Sign up logic
+                        console.log('Sign up:', username);
+                      } else {
+                        // Sign in logic
+                        console.log('Sign in:', username);
+                      }
+                    }}
+                    className="group relative w-full bg-primary text-white font-medium py-2.5 sm:py-3 px-6 sm:px-8 rounded-lg hover:bg-primary/90 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary/30 text-sm touch-manipulation min-h-[44px] shadow-sm hover:shadow-md"
                     style={{ WebkitTapHighlightColor: 'transparent' }}
                   >
                     <span className="relative z-10 flex items-center justify-center gap-2 text-sm font-medium">
-                      Prep4Loan
+                      {isSignUp ? 'Sign Up' : 'Sign In'}
                     </span>
                   </motion.button>
-                  <motion.button
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                    onClick={() => onNavigateToForm1003?.()}
-                    className="group relative w-full sm:w-auto bg-white text-foreground border border-gray-300 font-medium py-2.5 sm:py-3 px-6 sm:px-8 rounded-lg hover:bg-gray-50 hover:border-gray-400 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-gray-300/30 text-sm touch-manipulation min-h-[44px] shadow-sm hover:shadow-md"
-                    style={{ WebkitTapHighlightColor: 'transparent' }}
+                  <button
+                    onClick={() => setIsSignUp(!isSignUp)}
+                    className="text-xs sm:text-sm text-muted-foreground hover:text-primary transition-colors duration-200 underline"
+                    style={{ color: '#64748b' }}
                   >
-                    <span className="relative z-10 flex items-center justify-center gap-2 text-sm font-medium">
-                      Home Journey
-                    </span>
-                  </motion.button>
+                    {isSignUp ? 'Already have an account? Sign In' : "Don't have an account? Sign Up"}
+                  </button>
                 </motion.div>
               </div>
             </div>
@@ -165,6 +199,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onNavigateToPrep, onNavigateT
           viewport={{ once: true, margin: "-50px" }}
           transition={{ duration: 0.7, ease: [0.25, 0.46, 0.45, 0.94] }}
           className="text-center mb-12 sm:mb-16 md:mb-20"
+          style={{ marginTop: '384px' }}
         >
           <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold text-foreground mb-4 sm:mb-5 tracking-tight">
             Business Process Solutions
@@ -345,4 +380,3 @@ const LandingPage: React.FC<LandingPageProps> = ({ onNavigateToPrep, onNavigateT
 };
 
 export default LandingPage;
-
