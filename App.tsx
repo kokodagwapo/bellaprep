@@ -265,7 +265,7 @@ const App: React.FC = () => {
                 <div className="w-full max-w-[1088px] mx-auto">
                     {/* Step Indicator at the top */}
                     {showStepIndicator && (
-                        <div className="mb-4 sm:mb-6 md:mb-8 mt-2 sm:mt-4 md:mt-6">
+                        <div className="mb-2 sm:mb-6 md:mb-8 mt-1 sm:mt-4 md:mt-6">
                             <StepIndicator 
                                 labels={indicatorSteps.labels} 
                                 currentStepIndex={currentIndicatorIndex}

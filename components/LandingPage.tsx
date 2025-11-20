@@ -82,9 +82,14 @@ const LandingPage: React.FC<LandingPageProps> = ({ onNavigateToPrep, onNavigateT
           containerClassName="h-auto min-h-[600px] sm:min-h-[700px] md:min-h-[800px] lg:min-h-[900px] rounded-none"
           className="w-full"
         >
-          <div className="relative w-full px-4 sm:px-6 lg:px-8" style={{ paddingTop: '2rem', paddingBottom: '3rem' }}>
+          <div 
+            className="relative w-full px-4 sm:px-6 lg:px-8 pb-8 sm:pb-6 md:pb-4" 
+            style={{ 
+              paddingTop: 'clamp(4rem, calc(4rem + env(safe-area-inset-top)), 5rem)'
+            }}
+          >
             {/* Hero Text Content with backdrop overlay */}
-            <div className="relative z-20 text-center max-w-4xl mx-auto" style={{ transform: 'translateY(-96px)' }}>
+            <div className="relative z-20 text-center max-w-4xl mx-auto" style={{ transform: 'translateY(0)' }}>
               <div className="bg-white/90 backdrop-blur-md rounded-2xl md:rounded-3xl p-6 sm:p-8 md:p-10 lg:p-12 shadow-xl border border-white/50">
                 {/* Logo/Badge Section - Top Center */}
                 <motion.div 
