@@ -329,7 +329,9 @@ const App: React.FC = () => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 bg-black/30 z-40" onClick={() => setIsChatOpen(false)} />
+          className="fixed inset-0 bg-black/30 z-40 hidden sm:block touch-none" 
+          onClick={() => setIsChatOpen(false)}
+        />
       )}
 
       <AnimatePresence>

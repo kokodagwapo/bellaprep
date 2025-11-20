@@ -145,11 +145,11 @@ export const MobileSidebar = ({
       >
         <div className="flex items-center justify-between z-20 w-full">
           <div className="flex items-center gap-2">
-            <div className="h-8 w-8 rounded-lg bg-primary flex-shrink-0" />
+            <div className="h-8 w-8 rounded-lg bg-primary flex-shrink-0 hidden" />
           </div>
           <button
             onClick={() => setOpen(!open)}
-            className="p-2 touch-manipulation"
+            className="p-2 touch-manipulation ml-auto"
             aria-label="Toggle menu"
             style={{ minHeight: '48px', minWidth: '48px' }}
           >

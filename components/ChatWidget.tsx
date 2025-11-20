@@ -53,7 +53,7 @@ function ChatBubble({ message }: { message: Message; [key: string]: any; }) {
       )}
       <motion.div 
         className={cn(
-          "max-w-[80%] rounded-lg px-4 py-3 text-[15px] leading-relaxed shadow-lg transition-all duration-200",
+          "max-w-[85%] sm:max-w-[80%] rounded-lg px-3 sm:px-4 py-2.5 sm:py-3 text-sm sm:text-[15px] leading-relaxed shadow-lg transition-all duration-200",
           isBella 
             ? "bg-primary/10 text-foreground rounded-bl-sm border border-primary/20" 
             : "bg-white text-foreground rounded-br-sm border border-gray-200/80 shadow-gray-500/10"
@@ -61,7 +61,7 @@ function ChatBubble({ message }: { message: Message; [key: string]: any; }) {
         whileHover={{ scale: 1.02 }}
         transition={{ type: "spring", stiffness: 400, damping: 25 }}
       >
-        <p className="text-foreground font-normal">{message.text}</p>
+        <p className="text-foreground font-normal break-words">{message.text}</p>
       </motion.div>
     </motion.div>
   );
@@ -492,26 +492,33 @@ export default function BellaChatWidget({ onClose, onDataExtracted, formData }: 
         animate={{ opacity: 1, y: 0, scale: 1 }}
         exit={{ opacity: 0, y: 20, scale: 0.96 }}
         transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-        className="fixed inset-0 sm:inset-auto sm:bottom-4 sm:right-4 z-50">
-      <div className="w-full h-full sm:w-[420px] sm:max-w-full rounded-none sm:rounded-lg shadow-[0_25px_80px_-15px_rgba(0,0,0,0.3)] bg-white border border-gray-200/60 flex flex-col overflow-hidden text-foreground sm:h-[750px]">
+        className="fixed inset-0 sm:inset-auto sm:bottom-4 sm:right-4 z-50"
+        style={{
+          paddingTop: 'env(safe-area-inset-top)',
+          paddingBottom: 'env(safe-area-inset-bottom)',
+          paddingLeft: 'env(safe-area-inset-left)',
+          paddingRight: 'env(safe-area-inset-right)'
+        }}>
+      <div className="w-full h-full sm:w-[420px] sm:max-w-full rounded-none sm:rounded-lg shadow-[0_25px_80px_-15px_rgba(0,0,0,0.3)] bg-white border border-gray-200/60 flex flex-col overflow-hidden text-foreground sm:h-[750px] sm:max-h-[90vh]">
         <motion.div 
-          className="bg-primary text-white px-6 py-5 flex items-center gap-3 flex-shrink-0 shadow-lg"
+          className="bg-primary text-white px-4 sm:px-6 py-4 sm:py-5 flex items-center gap-2 sm:gap-3 flex-shrink-0 shadow-lg"
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4 }}
+          style={{ paddingTop: 'max(1rem, env(safe-area-inset-top))' }}
         >
           <motion.div 
-            className="relative h-11 w-11 rounded-full bg-white/25 flex items-center justify-center border-2 border-white/40 shadow-lg backdrop-blur-sm"
+            className="relative h-10 w-10 sm:h-11 sm:w-11 rounded-full bg-white/25 flex items-center justify-center border-2 border-white/40 shadow-lg backdrop-blur-sm flex-shrink-0"
             whileHover={{ scale: 1.1, rotate: 5 }}
             transition={{ type: "spring", stiffness: 400 }}
           >
-            <AiIcon className="h-6 w-6 text-white"/>
+            <AiIcon className="h-5 w-5 sm:h-6 sm:w-6 text-white"/>
           </motion.div>
-          <div className="flex-1 leading-tight">
-            <div className="flex items-center gap-2.5">
-              <span className="font-bold text-[16px] tracking-tight">Bella</span>
+          <div className="flex-1 leading-tight min-w-0">
+            <div className="flex items-center gap-2 sm:gap-2.5 flex-wrap">
+              <span className="font-bold text-sm sm:text-[16px] tracking-tight">Bella</span>
               <motion.span 
-                className="rounded-full bg-white/20 px-3 py-1 text-[11px] font-semibold border border-white/30 backdrop-blur-sm"
+                className="rounded-full bg-white/20 px-2 sm:px-3 py-0.5 sm:py-1 text-[10px] sm:text-[11px] font-semibold border border-white/30 backdrop-blur-sm whitespace-nowrap"
                 whileHover={{ scale: 1.05 }}
               >
                 AI Assistant
@@ -548,7 +555,7 @@ export default function BellaChatWidget({ onClose, onDataExtracted, formData }: 
                 transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }} 
                 className="flex flex-col h-full"
               >
-                <div className="flex-1 overflow-y-auto px-6 py-6 space-y-5 custom-scrollbar">
+                <div className="flex-1 overflow-y-auto px-4 sm:px-6 py-4 sm:py-6 space-y-4 sm:space-y-5 custom-scrollbar" style={{ WebkitOverflowScrolling: 'touch' }}>
                   {messages.map((msg) => ( <ChatBubble key={msg.id} message={msg} /> ))}
                    {isProcessing && messages[messages.length - 1]?.text.includes("typing") && (
                     <motion.div
@@ -568,10 +575,11 @@ export default function BellaChatWidget({ onClose, onDataExtracted, formData }: 
                 </div>
                 <motion.form 
                   onSubmit={handleSend} 
-                  className="border-t border-gray-200/80 bg-white p-5 shadow-[0_-8px_30px_-10px_rgba(0,0,0,0.08)]"
+                  className="border-t border-gray-200/80 bg-white p-3 sm:p-5 shadow-[0_-8px_30px_-10px_rgba(0,0,0,0.08)]"
                   initial={{ y: 20, opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
                   transition={{ delay: 0.2 }}
+                  style={{ paddingBottom: 'max(0.75rem, env(safe-area-inset-bottom))' }}
                 >
                   <div className="flex items-end gap-3">
                     <motion.button 
@@ -587,11 +595,11 @@ export default function BellaChatWidget({ onClose, onDataExtracted, formData }: 
                       <Paperclip className="h-5 w-5 sm:h-5 sm:w-5" />
                     </motion.button>
                     <input type="file" ref={fileInputRef} onChange={handleFileChange} className="hidden" accept="image/*,application/pdf" />
-                    <div className="flex-1 flex items-center rounded-lg border-2 border-gray-200/80 bg-white shadow-sm px-5 py-3 min-h-[52px] focus-within:border-primary focus-within:shadow-lg focus-within:ring-4 focus-within:ring-primary/10 transition-all duration-300">
+                    <div className="flex-1 flex items-center rounded-lg border-2 border-gray-200/80 bg-white shadow-sm px-3 sm:px-5 py-2.5 sm:py-3 min-h-[48px] sm:min-h-[52px] focus-within:border-primary focus-within:shadow-lg focus-within:ring-4 focus-within:ring-primary/10 transition-all duration-300">
                       <textarea
                         ref={textareaRef}
                         rows={1}
-                        className="flex-1 bg-transparent text-[15px] focus:outline-none placeholder:text-gray-400 resize-none leading-relaxed placeholder:font-normal text-gray-900"
+                        className="flex-1 bg-transparent text-sm sm:text-[15px] focus:outline-none placeholder:text-gray-400 resize-none leading-relaxed placeholder:font-normal text-gray-900"
                         placeholder="Type your message..."
                         value={input}
                         onChange={(e) => setInput(e.target.value)}
@@ -602,6 +610,7 @@ export default function BellaChatWidget({ onClose, onDataExtracted, formData }: 
                             }
                         }}
                         disabled={isLive || isConnecting}
+                        style={{ fontSize: '16px' }}
                       />
                       <motion.button 
                         type="button" 
@@ -643,13 +652,17 @@ export default function BellaChatWidget({ onClose, onDataExtracted, formData }: 
               </motion.div>
             ) : (
               <motion.div key="form-view" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.25, ease: "easeOut" }} className="flex flex-col h-full bg-white/50">
-                 <div className="flex items-center justify-between px-5 py-3 border-b border-border/30 text-foreground flex-shrink-0 bg-white">
-                    <button className="flex items-center gap-1.5 text-xs font-medium hover:text-primary transition-colors" onClick={() => setView("chat")}>
+                 <div className="flex items-center justify-between px-4 sm:px-5 py-3 border-b border-border/30 text-foreground flex-shrink-0 bg-white">
+                    <button 
+                      className="flex items-center gap-1.5 text-xs sm:text-sm font-medium hover:text-primary transition-colors touch-manipulation min-h-[44px] px-2 -ml-2" 
+                      onClick={() => setView("chat")}
+                      style={{ minHeight: '48px' }}
+                    >
                       <ArrowLeft className="h-4 w-4" />
                       <span>Back to Chat</span>
                     </button>
                 </div>
-                <div className="flex-1 overflow-y-auto px-5 py-5 space-y-5">
+                <div className="flex-1 overflow-y-auto px-4 sm:px-5 py-4 sm:py-5 space-y-4 sm:space-y-5" style={{ WebkitOverflowScrolling: 'touch' }}>
                     {/* Progress Overview */}
                     <div className="space-y-4">
                       <h2 className="text-base font-bold text-foreground">Application Progress</h2>
@@ -839,22 +852,24 @@ export default function BellaChatWidget({ onClose, onDataExtracted, formData }: 
 
         {!isLive && !isConnecting && (
         <motion.div 
-          className="flex items-stretch border-t border-gray-200/80 bg-white text-[13px] flex-shrink-0 shadow-[0_-4px_20px_-2px_rgba(0,0,0,0.05)]"
+          className="flex items-stretch border-t border-gray-200/80 bg-white text-xs sm:text-[13px] flex-shrink-0 shadow-[0_-4px_20px_-2px_rgba(0,0,0,0.05)]"
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.3 }}
+          style={{ paddingBottom: 'max(0.5rem, env(safe-area-inset-bottom))' }}
         >
           <motion.button 
             type="button" 
             onClick={() => setView("chat")} 
             className={cn(
-              "flex-1 flex flex-col items-center justify-center py-4 gap-1.5 transition-all duration-300 relative",
+              "flex-1 flex flex-col items-center justify-center py-3 sm:py-4 gap-1 sm:gap-1.5 transition-all duration-300 relative touch-manipulation",
               view === "chat" 
                 ? "text-primary font-semibold" 
                 : "text-gray-500 hover:text-gray-700"
             )}
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
+            style={{ minHeight: '56px' }}
           >
             {view === "chat" && (
               <motion.div 
@@ -863,21 +878,22 @@ export default function BellaChatWidget({ onClose, onDataExtracted, formData }: 
                 transition={{ type: "spring", stiffness: 500, damping: 30 }}
               />
             )}
-            <MessageSquare className={cn("h-5 w-5 transition-all", view === "chat" ? "text-primary" : "text-gray-400")} />
-            <span className="font-medium">Chat</span>
+            <MessageSquare className={cn("h-5 w-5 sm:h-5 sm:w-5 transition-all", view === "chat" ? "text-primary" : "text-gray-400")} />
+            <span className="font-medium text-xs sm:text-sm">Chat</span>
           </motion.button>
           <div className="w-px bg-gray-200/60" />
           <motion.button 
             type="button" 
             onClick={() => setView("form")} 
             className={cn(
-              "flex-1 flex flex-col items-center justify-center py-4 gap-1.5 transition-all duration-300 relative",
+              "flex-1 flex flex-col items-center justify-center py-3 sm:py-4 gap-1 sm:gap-1.5 transition-all duration-300 relative touch-manipulation",
               view === "form" 
                 ? "text-primary font-semibold" 
                 : "text-gray-500 hover:text-gray-700"
             )}
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
+            style={{ minHeight: '56px' }}
           >
             {view === "form" && (
               <motion.div 
@@ -886,8 +902,8 @@ export default function BellaChatWidget({ onClose, onDataExtracted, formData }: 
                 transition={{ type: "spring", stiffness: 500, damping: 30 }}
               />
             )}
-            <LayoutList className={cn("h-5 w-5 transition-all", view === "form" ? "text-primary" : "text-gray-400")} />
-            <span className="font-medium">Checklist</span>
+            <LayoutList className={cn("h-5 w-5 sm:h-5 sm:w-5 transition-all", view === "form" ? "text-primary" : "text-gray-400")} />
+            <span className="font-medium text-xs sm:text-sm">Checklist</span>
           </motion.button>
         </motion.div>
         )}
