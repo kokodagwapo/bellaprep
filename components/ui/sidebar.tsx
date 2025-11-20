@@ -147,10 +147,14 @@ export const MobileSidebar = ({
           <div className="flex items-center gap-2">
             <div className="h-8 w-8 rounded-lg bg-primary flex-shrink-0" />
           </div>
-          <Menu
-            className="text-foreground cursor-pointer h-6 w-6 touch-manipulation"
+          <button
             onClick={() => setOpen(!open)}
-          />
+            className="p-2 touch-manipulation"
+            aria-label="Toggle menu"
+            style={{ minHeight: '48px', minWidth: '48px' }}
+          >
+            <Menu className="text-foreground cursor-pointer h-6 w-6" />
+          </button>
         </div>
         <AnimatePresence>
           {open && (
@@ -180,9 +184,10 @@ export const MobileSidebar = ({
                 <div className="flex items-center justify-between px-4 py-4 border-b border-border bg-white">
                   <div className="h-8 w-8 rounded-lg bg-primary flex-shrink-0" />
                   <button
-                    className="p-2 rounded-lg hover:bg-muted/50 transition-colors touch-manipulation"
+                    className="p-3 sm:p-2 rounded-lg hover:bg-muted/50 transition-colors touch-manipulation"
                     onClick={() => setOpen(false)}
                     aria-label="Close menu"
+                    style={{ minHeight: '48px', minWidth: '48px' }}
                   >
                     <X className="h-6 w-6 text-foreground" />
                   </button>

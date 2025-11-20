@@ -23,7 +23,7 @@ const StepNavigation: React.FC<StepNavigationProps> = ({ onNext, onBack, nextLab
       {onBack && (
           <button
             onClick={onBack}
-            className="w-full sm:w-auto sm:flex-1 text-primary-foreground font-medium py-3 sm:py-3 px-6 sm:px-6 rounded-xl sm:rounded-xl bg-primary hover:bg-primary/90 transition duration-300 inline-flex items-center justify-center text-base sm:text-base shadow-sm hover:shadow-md touch-manipulation min-h-[48px] sm:min-h-[44px]"
+            className="w-full sm:w-auto sm:flex-1 text-primary-foreground font-medium py-3 sm:py-3 px-6 sm:px-6 rounded-xl sm:rounded-xl bg-primary hover:bg-primary/90 transition duration-300 inline-flex items-center justify-center text-base sm:text-base shadow-sm hover:shadow-md touch-manipulation min-h-[48px] sm:min-h-[48px]"
           >
             <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />

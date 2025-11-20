@@ -10,11 +10,19 @@ interface LandingPageProps {
 
 const LandingPage: React.FC<LandingPageProps> = ({ onNavigateToPrep, onNavigateToForm1003 }) => {
   const [frontImageIndex, setFrontImageIndex] = useState(0);
+  const [slidingImageIndex, setSlidingImageIndex] = useState<number | null>(null);
 
   // Rotate images to front every 12 seconds
   useEffect(() => {
     const interval = setInterval(() => {
-      setFrontImageIndex((prev) => (prev + 1) % 4);
+      setFrontImageIndex((prev) => {
+        const next = (prev + 1) % 4;
+        // Mark the new front image as sliding in
+        setSlidingImageIndex(next);
+        // Clear the sliding state after animation completes
+        setTimeout(() => setSlidingImageIndex(null), 3000);
+        return next;
+      });
     }, 12000); // 12 seconds
 
     return () => clearInterval(interval);
@@ -235,6 +243,11 @@ const LandingPage: React.FC<LandingPageProps> = ({ onNavigateToPrep, onNavigateT
             const finalX = cascadeOffsetX; // Cascade offset from center
             const finalY = cascadeOffsetY; // Cascade offset from center
 
+            // Check if this image is currently sliding in from the right
+            const isSlidingIn = slidingImageIndex === imageIndex && relativePosition === 0;
+            // Starting X position: slide from right (800px) if sliding in, otherwise at final position
+            const startX = isSlidingIn ? 800 : finalX;
+
             return (
               <motion.img
                 key={`${index}-${frontImageIndex}`}
@@ -245,14 +258,14 @@ const LandingPage: React.FC<LandingPageProps> = ({ onNavigateToPrep, onNavigateT
                   x: finalX,
                   y: finalY,
                   zIndex: dynamicZIndex,
-                  opacity: opacity, // Cascading opacity
-                  scale: finalScale, // Cascading scale
+                  opacity: opacity,
+                  scale: finalScale,
                 }}
                 transition={{
-                  opacity: { duration: 3, ease: [0.25, 0.46, 0.45, 0.94] }, // Slow, cinematic fade transition
-                  scale: { duration: 3, ease: [0.25, 0.46, 0.45, 0.94] }, // Slow, cinematic scale transition
-                  x: { duration: 3, ease: [0.25, 0.46, 0.45, 0.94] }, // Slow, cinematic cascade movement
-                  y: { duration: 3, ease: [0.25, 0.46, 0.45, 0.94] }, // Slow, cinematic cascade movement
+                  opacity: { duration: 3, ease: [0.25, 0.46, 0.45, 0.94] },
+                  scale: { duration: 3, ease: [0.25, 0.46, 0.45, 0.94] },
+                  x: { duration: 3, ease: [0.25, 0.46, 0.45, 0.94] },
+                  y: { duration: 3, ease: [0.25, 0.46, 0.45, 0.94] },
                 }}
                 style={{
                   border: '4mm solid white',
@@ -262,15 +275,11 @@ const LandingPage: React.FC<LandingPageProps> = ({ onNavigateToPrep, onNavigateT
                   transformOrigin: 'center center',
                 }}
                 initial={{ 
-                  opacity: 0, 
-                  x: finalX, // Start at final position
-                  y: finalY, // Start at final position
-                  scale: finalScale 
+                  x: startX,
+                  y: finalY,
+                  opacity: isSlidingIn ? 0 : opacity,
+                  scale: finalScale,
                 }}
-                whileInView={{ 
-                  opacity: opacity 
-                }}
-                viewport={{ once: true }}
               />
             );
           })}

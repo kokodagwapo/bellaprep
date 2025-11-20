@@ -520,12 +520,13 @@ export default function BellaChatWidget({ onClose, onDataExtracted, formData }: 
           </div>
           <motion.button 
             onClick={onClose} 
-            className="p-2 rounded-md hover:bg-white/15 transition-all duration-200 active:scale-90" 
+            className="p-2.5 sm:p-2 rounded-md hover:bg-white/15 transition-all duration-200 active:scale-90 touch-manipulation" 
             aria-label="Close"
             whileHover={{ rotate: 90 }}
             whileTap={{ scale: 0.9 }}
+            style={{ minHeight: '48px', minWidth: '48px' }}
           >
-            <X className="h-5 w-5 text-white" />
+            <X className="h-5 w-5 sm:h-5 sm:w-5 text-white" />
           </motion.button>
         </motion.div>
 
@@ -576,13 +577,14 @@ export default function BellaChatWidget({ onClose, onDataExtracted, formData }: 
                     <motion.button 
                       type="button" 
                       onClick={() => fileInputRef.current?.click()} 
-                      className="h-11 w-11 flex-shrink-0 flex items-center justify-center rounded-lg hover:bg-primary/10 active:scale-95 transition-all duration-200 text-gray-600 hover:text-primary disabled:opacity-40 border border-gray-200/60 hover:border-primary/30" 
+                      className="h-12 w-12 sm:h-11 sm:w-11 flex-shrink-0 flex items-center justify-center rounded-lg hover:bg-primary/10 active:scale-95 transition-all duration-200 text-gray-600 hover:text-primary disabled:opacity-40 border border-gray-200/60 hover:border-primary/30 touch-manipulation" 
                       disabled={isLive || isConnecting}
                       title="Attach file"
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
+                      style={{ minHeight: '48px', minWidth: '48px' }}
                     >
-                      <Paperclip className="h-5 w-5" />
+                      <Paperclip className="h-5 w-5 sm:h-5 sm:w-5" />
                     </motion.button>
                     <input type="file" ref={fileInputRef} onChange={handleFileChange} className="hidden" accept="image/*,application/pdf" />
                     <div className="flex-1 flex items-center rounded-lg border-2 border-gray-200/80 bg-white shadow-sm px-5 py-3 min-h-[52px] focus-within:border-primary focus-within:shadow-lg focus-within:ring-4 focus-within:ring-primary/10 transition-all duration-300">
@@ -605,7 +607,7 @@ export default function BellaChatWidget({ onClose, onDataExtracted, formData }: 
                         type="button" 
                         onClick={handleLiveToggle} 
                         className={cn(
-                          "ml-3 flex-shrink-0 flex h-9 w-9 items-center justify-center rounded-md text-white transition-all duration-200",
+                          "ml-3 flex-shrink-0 flex h-12 w-12 sm:h-9 sm:w-9 items-center justify-center rounded-md text-white transition-all duration-200 touch-manipulation",
                           isLive 
                             ? "animate-pulse bg-red-500 hover:bg-red-600 shadow-lg ring-2 ring-red-500/40" 
                             : "bg-primary hover:bg-primary/90 shadow-md", 
@@ -615,14 +617,15 @@ export default function BellaChatWidget({ onClose, onDataExtracted, formData }: 
                         disabled={isConnecting}
                         whileHover={{ scale: 1.1 }}
                         whileTap={{ scale: 0.9 }}
+                        style={{ minHeight: '48px', minWidth: '48px' }}
                       >
-                        <Mic className="h-4 w-4" />
+                        <Mic className="h-5 w-5 sm:h-4 sm:w-4" />
                       </motion.button>
                     </div>
                     <motion.button 
                       type="submit" 
                       className={cn(
-                        "h-11 w-11 flex-shrink-0 flex items-center justify-center rounded-lg text-sm font-semibold text-white transition-all duration-200 shadow-lg",
+                        "h-12 w-12 sm:h-11 sm:w-11 flex-shrink-0 flex items-center justify-center rounded-lg text-sm font-semibold text-white transition-all duration-200 shadow-lg touch-manipulation",
                         (input.trim() && !isLive) 
                           ? "bg-primary hover:bg-primary/90 hover:shadow-xl hover:scale-105 ring-2 ring-primary/20" 
                           : "bg-gray-300 cursor-not-allowed opacity-40 shadow-none"
@@ -631,8 +634,9 @@ export default function BellaChatWidget({ onClose, onDataExtracted, formData }: 
                       title="Send message"
                       whileHover={(input.trim() && !isLive) ? { scale: 1.1, rotate: 5 } : {}}
                       whileTap={(input.trim() && !isLive) ? { scale: 0.95 } : {}}
+                      style={{ minHeight: '48px', minWidth: '48px' }}
                     >
-                      <Send className="h-5 w-5"/>
+                      <Send className="h-5 w-5 sm:h-5 sm:w-5"/>
                     </motion.button>
                   </div>
                 </motion.form>

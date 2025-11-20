@@ -35,7 +35,8 @@ const StepContact: React.FC<StepContactProps> = ({ data, onChange, onNext, onBac
             placeholder="your.email@example.com"
             value={data.email}
             onChange={(e) => onChange('email', e.target.value)}
-            className="w-full px-4 py-3 text-base sm:text-lg border border-input bg-background rounded-xl sm:rounded-lg focus:outline-none focus:ring-2 focus:ring-ring focus:border-primary transition duration-200 touch-manipulation min-h-[44px]"
+            className="w-full px-4 py-3 text-base sm:text-lg border border-input bg-background rounded-xl sm:rounded-lg focus:outline-none focus:ring-2 focus:ring-ring focus:border-primary transition duration-200 touch-manipulation min-h-[48px] sm:min-h-[44px]"
+            style={{ fontSize: '16px' }}
             aria-label="Email Address"
             required
           />
@@ -48,7 +49,8 @@ const StepContact: React.FC<StepContactProps> = ({ data, onChange, onNext, onBac
             placeholder="(555) 123-4567"
             value={data.phoneNumber}
             onChange={(e) => onChange('phoneNumber', e.target.value)}
-            className="w-full px-4 py-3 text-base sm:text-lg border border-input bg-background rounded-xl sm:rounded-lg focus:outline-none focus:ring-2 focus:ring-ring focus:border-primary transition duration-200 touch-manipulation min-h-[44px]"
+            className="w-full px-4 py-3 text-base sm:text-lg border border-input bg-background rounded-xl sm:rounded-lg focus:outline-none focus:ring-2 focus:ring-ring focus:border-primary transition duration-200 touch-manipulation min-h-[48px] sm:min-h-[44px]"
+            style={{ fontSize: '16px' }}
             aria-label="Phone Number"
             required
           />

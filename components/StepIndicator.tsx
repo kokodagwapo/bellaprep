@@ -32,8 +32,8 @@ const StepIndicator: React.FC<StepIndicatorProps> = ({ labels, currentStepIndex,
                   maxWidth: labels.length > 4 ? '100px' : 'none'
                 }}
               >
-                <motion.div 
-                  className="relative w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center mb-3 sm:mb-4 cursor-pointer touch-manipulation group"
+                <motion.button 
+                  className="relative w-12 h-12 sm:w-12 sm:h-12 flex items-center justify-center mb-3 sm:mb-4 cursor-pointer touch-manipulation group"
                   onClick={(e) => {
                     e.preventDefault();
                     e.stopPropagation();
@@ -43,7 +43,8 @@ const StepIndicator: React.FC<StepIndicatorProps> = ({ labels, currentStepIndex,
                   }}
                   whileHover={{ scale: 1.15 }}
                   whileTap={{ scale: 0.9 }}
-                  style={{ pointerEvents: 'auto' }}
+                  style={{ pointerEvents: 'auto', minHeight: '48px', minWidth: '48px' }}
+                  aria-label={`Go to step: ${label || `Step ${index + 1}`}`}
                 >
                   {isCompleted ? (
                      <motion.div 
@@ -97,7 +98,7 @@ const StepIndicator: React.FC<StepIndicatorProps> = ({ labels, currentStepIndex,
                   ) : (
                       <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-gradient-to-br from-gray-100 to-gray-200 border-2 border-gray-300 group-hover:border-green-300 group-hover:bg-green-50 transition-all duration-300"></div>
                   )}
-                </motion.div>
+                </motion.button>
                 <motion.p 
                   className={`text-[11px] sm:text-xs font-semibold leading-tight transition-all duration-300 px-1 ${isActive ? 'text-green-600 scale-105 font-bold' : isCompleted ? 'text-green-600' : 'text-muted-foreground group-hover:text-green-500'}`}
                   animate={isActive ? { y: [0, -2, 0] } : {}}

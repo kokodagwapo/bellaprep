@@ -345,10 +345,11 @@ const App: React.FC = () => {
           animate={{ scale: 1, y: 0 }}
           exit={{ scale: 0, y: 50 }}
           onClick={() => setIsChatOpen(true)}
-          className="fixed bottom-6 right-6 z-30 h-16 w-16 rounded-full bg-white shadow-lg border border-border flex items-center justify-center hover:scale-110 transition-transform"
+          className="fixed bottom-6 right-6 z-30 h-16 w-16 sm:h-14 sm:w-14 rounded-full bg-white shadow-lg border border-border flex items-center justify-center hover:scale-110 active:scale-95 transition-transform touch-manipulation"
+          style={{ minHeight: '64px', minWidth: '64px' }}
           aria-label="Open Bella AI Assistant"
         >
-          <AiIcon className="w-8 h-8 text-foreground" />
+          <AiIcon className="w-8 h-8 sm:w-7 sm:h-7 text-foreground" />
         </motion.button>
       )}
       </AnimatePresence>

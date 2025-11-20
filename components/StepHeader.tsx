@@ -50,6 +50,7 @@ const SelectionButton: React.FC<SelectionButtonProps> = ({ label, icon, isSelect
                 ? 'bg-gradient-to-br from-primary/10 to-primary/5 border-primary shadow-lg shadow-primary/20 ring-2 ring-primary/20'
                 : 'bg-card border-border hover:border-primary/30 hover:bg-primary/5 hover:shadow-md active:scale-[0.98]'
             }`}
+            style={{ minHeight: '64px' }}
         >
             {icon && (
               <div className={`p-2 sm:p-3 rounded-lg transition-all duration-300 flex-shrink-0 ${

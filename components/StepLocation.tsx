@@ -155,7 +155,8 @@ const StepLocation: React.FC<StepLocationProps> = ({ data, onChange, onNext, onB
           placeholder={mapsLoaded ? "Start typing city name..." : "Enter city and state (e.g., Naples, FL)"}
           value={data.location}
           onChange={(e) => onChange('location', e.target.value)}
-          className="w-full px-4 py-3 sm:py-3 text-base sm:text-lg border border-input bg-background rounded-xl sm:rounded-lg focus:outline-none focus:ring-2 focus:ring-ring focus:border-primary transition duration-200 touch-manipulation min-h-[44px]"
+          className="w-full px-4 py-3 sm:py-3 text-base sm:text-lg border border-input bg-background rounded-xl sm:rounded-lg focus:outline-none focus:ring-2 focus:ring-ring focus:border-primary transition duration-200 touch-manipulation min-h-[48px] sm:min-h-[44px]"
+          style={{ fontSize: '16px' }}
           aria-label="City and State"
           required
         />

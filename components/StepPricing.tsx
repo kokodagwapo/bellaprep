@@ -43,7 +43,8 @@ const StepPricing: React.FC<StepPricingProps> = ({ data, onChange, onNext, onBac
               placeholder="500,000"
               value={formatNumber(data.purchasePrice)}
               onChange={(e) => handleValueChange('purchasePrice', e.target.value)}
-              className="w-full px-3 sm:px-4 py-3 sm:py-3 pl-7 sm:pl-8 text-base sm:text-lg border border-input bg-background rounded-xl sm:rounded-xl focus:outline-none focus:ring-2 focus:ring-ring focus:border-primary transition duration-200 touch-manipulation min-h-[44px]"
+              className="w-full px-3 sm:px-4 py-3 sm:py-3 pl-7 sm:pl-8 text-base sm:text-lg border border-input bg-background rounded-xl sm:rounded-xl focus:outline-none focus:ring-2 focus:ring-ring focus:border-primary transition duration-200 touch-manipulation min-h-[48px] sm:min-h-[44px]"
+              style={{ fontSize: '16px' }}
               aria-label="Purchase Price"
             />
           </div>
@@ -61,7 +62,8 @@ const StepPricing: React.FC<StepPricingProps> = ({ data, onChange, onNext, onBac
               placeholder="100,000"
               value={formatNumber(data.downPayment)}
               onChange={(e) => handleValueChange('downPayment', e.target.value)}
-              className="w-full px-3 sm:px-4 py-3 sm:py-3 pl-7 sm:pl-8 text-base sm:text-lg border border-input bg-background rounded-xl sm:rounded-xl focus:outline-none focus:ring-2 focus:ring-ring focus:border-primary transition duration-200 touch-manipulation min-h-[44px]"
+              className="w-full px-3 sm:px-4 py-3 sm:py-3 pl-7 sm:pl-8 text-base sm:text-lg border border-input bg-background rounded-xl sm:rounded-xl focus:outline-none focus:ring-2 focus:ring-ring focus:border-primary transition duration-200 touch-manipulation min-h-[48px] sm:min-h-[44px]"
+              style={{ fontSize: '16px' }}
               aria-label="Down Payment"
             />
           </div>

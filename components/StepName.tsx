@@ -30,7 +30,8 @@ const StepName: React.FC<StepNameProps> = ({ data, onChange, onNext, onBack }) =
           placeholder="John Smith"
           value={data.fullName}
           onChange={(e) => onChange('fullName', e.target.value)}
-          className="w-full px-4 py-3 sm:py-3.5 text-base sm:text-lg border border-input bg-background rounded-xl sm:rounded-xl focus:outline-none focus:ring-2 focus:ring-ring focus:border-primary transition duration-200 touch-manipulation min-h-[44px]"
+          className="w-full px-4 py-3 sm:py-3.5 text-base sm:text-lg border border-input bg-background rounded-xl sm:rounded-xl focus:outline-none focus:ring-2 focus:ring-ring focus:border-primary transition duration-200 touch-manipulation min-h-[48px] sm:min-h-[44px]"
+          style={{ fontSize: '16px' }}
           aria-label="Full Name"
           required
         />
