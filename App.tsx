@@ -12,6 +12,36 @@ import { FormData, LoanPurpose } from './types';
 import { generateLoanSummary } from './services/geminiService';
 import { motion, AnimatePresence } from "framer-motion";
 import { appFlow, AppStep, getFilteredFlow } from './appFlow';
+// Import all step components for component-based lookup
+import StepWelcome from './components/StepWelcome';
+import StepLoanPurpose from './components/StepLoanPurpose';
+import StepPropertyType from './components/StepPropertyType';
+import StepPropertyUse from './components/StepPropertyUse';
+import StepPrimaryResidenceConfirmation from './components/StepPrimaryResidenceConfirmation';
+import StepSubjectProperty from './components/StepSubjectProperty';
+import StepCurrentHousingStatus from './components/StepCurrentHousingStatus';
+import StepEmploymentStatus from './components/StepEmploymentStatus';
+import StepTimeInJob from './components/StepTimeInJob';
+import StepDebtsLiabilities from './components/StepDebtsLiabilities';
+import StepAssetsFunds from './components/StepAssetsFunds';
+import StepAddCoBorrower from './components/StepAddCoBorrower';
+import StepCoBorrowerDetails from './components/StepCoBorrowerDetails';
+import StepPrimaryBorrowerOptimization from './components/StepPrimaryBorrowerOptimization';
+import StepPrepDocs from './components/StepPrepDocs';
+import StepDMVAddressVerification from './components/StepDMVAddressVerification';
+import StepAffordabilitySnapshot from './components/StepAffordabilitySnapshot';
+import StepReviewChecklist from './components/StepReviewChecklist';
+import StepPrep4LoanSummary from './components/StepPrep4LoanSummary';
+import StepCreditScore from './components/StepCreditScore';
+import StepPricing from './components/StepPricing';
+import StepRefinanceDetails from './components/StepRefinanceDetails';
+import StepBorrowAmount from './components/StepBorrowAmount';
+import StepLocation from './components/StepLocation';
+import StepFirstTimeBuyer from './components/StepFirstTimeBuyer';
+import StepMilitary from './components/StepMilitary';
+import StepName from './components/StepName';
+import StepContact from './components/StepContact';
+import StepConfirmation from './components/StepConfirmation';
 
 const LogoSection = () => {
   const { open, animate } = useSidebar();
@@ -178,42 +208,41 @@ const App: React.FC = () => {
       onChange: handleDataChange,
     };
     
-    // Customize props based on component needs
-    const stepProps: { [key: string]: any } = {
-        StepWelcome: { onNext: nextStep },
-        StepLoanPurpose: { data: formData, onChange: (f: string, v: any) => handleDataChange({[f]:v}), onNext: nextStep },
-        StepPropertyType: { data: formData, onChange: handleSelectionAndNext },
-        StepPropertyUse: { data: formData, onChange: handleSelectionAndNext },
-        StepPrimaryResidenceConfirmation: { ...commonProps, onChange: (f: string, v: any) => handleDataChange({[f]:v}) },
-        StepSubjectProperty: { ...commonProps, onChange: (f: string, v: any) => handleDataChange({[f]:v}) },
-        StepCurrentHousingStatus: { ...commonProps, onChange: (f: string, v: any) => handleDataChange({[f]:v}) },
-        StepEmploymentStatus: { ...commonProps, onChange: (f: string, v: any) => handleDataChange({[f]:v}) },
-        StepTimeInJob: { ...commonProps, onChange: (f: string, v: any) => handleDataChange({[f]:v}) },
-        StepDebtsLiabilities: { ...commonProps, onChange: (f: string, v: any) => handleDataChange({[f]:v}) },
-        StepAssetsFunds: { ...commonProps, onChange: (f: string, v: any) => handleDataChange({[f]:v}) },
-        StepAddCoBorrower: { ...commonProps, onChange: (f: string, v: any) => handleDataChange({[f]:v}) },
-        StepCoBorrowerDetails: { ...commonProps, onChange: (f: string, v: any) => handleDataChange({[f]:v}) },
-        StepPrimaryBorrowerOptimization: { ...commonProps, onChange: (f: string, v: any) => handleDataChange({[f]:v}) },
-        StepPrepDocs: { onDataChange: handleDataChange, onNext: nextStep, onBack: prevStep },
-        StepDMVAddressVerification: { ...commonProps, onChange: (f: string, v: any) => handleDataChange({[f]:v}) },
-        StepAffordabilitySnapshot: { ...commonProps, onChange: (f: string, v: any) => handleDataChange({[f]:v}) },
-        StepReviewChecklist: { ...commonProps, onChange: (f: string, v: any) => handleDataChange({[f]:v}), onEditStep: (idx: number) => setStep(idx) },
-        StepPrep4LoanSummary: { ...commonProps, onChange: (f: string, v: any) => handleDataChange({[f]:v}), onProceedToApplication: handleProceedToApplication },
-        StepPricing: { ...commonProps },
-        StepRefinanceDetails: { ...commonProps },
-        StepCreditScore: { data: formData, onChange: (f: string, v: any) => handleDataChange({[f]:v}), onNext: nextStep, onBack: prevStep },
-        StepBorrowAmount: { ...commonProps },
-        StepLocation: { ...commonProps, onChange: (f: string, v: any) => handleDataChange({[f]:v}) },
-        StepFirstTimeBuyer: { data: formData, onChange: handleSelectionAndNext },
-        StepMilitary: { data: formData, onChange: handleSelectionAndNext },
-        StepName: { ...commonProps, onChange: (f: string, v: any) => handleDataChange({[f]:v}) },
-        StepContact: { ...commonProps, onChange: (f: string, v: any) => handleDataChange({[f]:v}), onNext: handleSubmit },
-        StepConfirmation: { isLoading: isLoading, result: submissionResult, onProceed: handleProceedToApplication },
-    };
+    // Customize props based on component reference (not name)
+    const stepPropsMap = new Map<React.ComponentType<any>, any>([
+        [StepWelcome, { onNext: nextStep }],
+        [StepLoanPurpose, { data: formData, onChange: (f: string, v: any) => handleDataChange({[f]:v}), onNext: nextStep }],
+        [StepPropertyType, { data: formData, onChange: handleSelectionAndNext }],
+        [StepPropertyUse, { data: formData, onChange: handleSelectionAndNext }],
+        [StepPrimaryResidenceConfirmation, { ...commonProps, onChange: (f: string, v: any) => handleDataChange({[f]:v}) }],
+        [StepSubjectProperty, { ...commonProps, onChange: (f: string, v: any) => handleDataChange({[f]:v}) }],
+        [StepCurrentHousingStatus, { ...commonProps, onChange: (f: string, v: any) => handleDataChange({[f]:v}) }],
+        [StepEmploymentStatus, { ...commonProps, onChange: (f: string, v: any) => handleDataChange({[f]:v}) }],
+        [StepTimeInJob, { ...commonProps, onChange: (f: string, v: any) => handleDataChange({[f]:v}) }],
+        [StepDebtsLiabilities, { ...commonProps, onChange: (f: string, v: any) => handleDataChange({[f]:v}) }],
+        [StepAssetsFunds, { ...commonProps, onChange: (f: string, v: any) => handleDataChange({[f]:v}) }],
+        [StepAddCoBorrower, { ...commonProps, onChange: (f: string, v: any) => handleDataChange({[f]:v}) }],
+        [StepCoBorrowerDetails, { ...commonProps, onChange: (f: string, v: any) => handleDataChange({[f]:v}) }],
+        [StepPrimaryBorrowerOptimization, { ...commonProps, onChange: (f: string, v: any) => handleDataChange({[f]:v}) }],
+        [StepPrepDocs, { onDataChange: handleDataChange, onNext: nextStep, onBack: prevStep }],
+        [StepDMVAddressVerification, { ...commonProps, onChange: (f: string, v: any) => handleDataChange({[f]:v}) }],
+        [StepAffordabilitySnapshot, { ...commonProps, onChange: (f: string, v: any) => handleDataChange({[f]:v}) }],
+        [StepReviewChecklist, { ...commonProps, onChange: (f: string, v: any) => handleDataChange({[f]:v}), onEditStep: (idx: number) => setStep(idx) }],
+        [StepPrep4LoanSummary, { ...commonProps, onChange: (f: string, v: any) => handleDataChange({[f]:v}), onProceedToApplication: handleProceedToApplication }],
+        [StepPricing, { ...commonProps }],
+        [StepRefinanceDetails, { ...commonProps }],
+        [StepCreditScore, { data: formData, onChange: (f: string, v: any) => handleDataChange({[f]:v}), onNext: nextStep, onBack: prevStep }],
+        [StepBorrowAmount, { ...commonProps }],
+        [StepLocation, { ...commonProps, onChange: (f: string, v: any) => handleDataChange({[f]:v}) }],
+        [StepFirstTimeBuyer, { data: formData, onChange: handleSelectionAndNext }],
+        [StepMilitary, { data: formData, onChange: handleSelectionAndNext }],
+        [StepName, { ...commonProps, onChange: (f: string, v: any) => handleDataChange({[f]:v}) }],
+        [StepContact, { ...commonProps, onChange: (f: string, v: any) => handleDataChange({[f]:v}), onNext: handleSubmit }],
+        [StepConfirmation, { isLoading: isLoading, result: submissionResult, onProceed: handleProceedToApplication }],
+    ]);
     
-    // Get component name, with fallback to commonProps if not found
-    const componentName = CurrentStepComponent.name || CurrentStepComponent.displayName || '';
-    const props = stepProps[componentName] || commonProps;
+    // Use component reference-based lookup (reliable even with minification)
+    const props = stepPropsMap.get(CurrentStepComponent) || commonProps;
     
     return <CurrentStepComponent {...props} />;
   };
