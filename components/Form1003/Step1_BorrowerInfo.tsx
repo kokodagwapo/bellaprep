@@ -60,10 +60,16 @@ const AddressInput: React.FC<{
     // Initialize Mapbox
     useEffect(() => {
         const apiKey = import.meta.env.VITE_MAPBOX_API_KEY || '';
-        if (apiKey) {
+        if (apiKey && apiKey.trim().length > 0) {
             setMapboxLoaded(true);
+            console.log('✅ Mapbox API key loaded successfully');
         } else {
-            console.warn('Mapbox API key not found. Please set VITE_MAPBOX_API_KEY in your environment variables.');
+            console.error('❌ Mapbox API key not found. Please set VITE_MAPBOX_API_KEY in your environment variables.');
+            console.log('Environment check:', {
+                hasKey: !!import.meta.env.VITE_MAPBOX_API_KEY,
+                keyLength: import.meta.env.VITE_MAPBOX_API_KEY?.length || 0,
+                keyPrefix: import.meta.env.VITE_MAPBOX_API_KEY?.substring(0, 10) || 'N/A'
+            });
             setMapboxLoaded(false);
         }
     }, []);

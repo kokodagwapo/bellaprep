@@ -34,6 +34,31 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Verify API Keys (without exposing values)
+        run: |
+          echo "Checking API keys..."
+          if [ -z "${{ secrets.VITE_MAPBOX_API_KEY }}" ]; then
+            echo "❌ VITE_MAPBOX_API_KEY is not set"
+            exit 1
+          else
+            KEY_LENGTH=${#VITE_MAPBOX_API_KEY}
+            echo "✅ VITE_MAPBOX_API_KEY is set (length: $KEY_LENGTH)"
+          fi
+          if [ -z "${{ secrets.VITE_API_KEY }}" ]; then
+            echo "⚠️  VITE_API_KEY is not set (optional)"
+          else
+            echo "✅ VITE_API_KEY is set"
+          fi
+          if [ -z "${{ secrets.VITE_OPENAI_API_KEY }}" ]; then
+            echo "⚠️  VITE_OPENAI_API_KEY is not set (optional)"
+          else
+            echo "✅ VITE_OPENAI_API_KEY is set"
+          fi
+        env:
+          VITE_MAPBOX_API_KEY: ${{ secrets.VITE_MAPBOX_API_KEY }}
+          VITE_API_KEY: ${{ secrets.VITE_API_KEY }}
+          VITE_OPENAI_API_KEY: ${{ secrets.VITE_OPENAI_API_KEY }}
+
       - name: Build
         env:
           VITE_API_KEY: ${{ secrets.VITE_API_KEY }}
