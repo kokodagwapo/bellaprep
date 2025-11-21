@@ -409,8 +409,8 @@ const StepSubjectProperty: React.FC<StepSubjectPropertyProps> = ({
                     </div>
                   </motion.div>
                 )}
-                {/* Modern icon button to view/confirm address */}
-                {(address.fullAddress || address.street) && ((address.fullAddress && address.fullAddress.trim().length > 5) || (address.street && address.street.trim().length > 5)) && (
+                {/* Modern icon button to view/confirm address - Hidden for now */}
+                {false && (
                   <button
                     type="button"
                     onClick={async (e) => {

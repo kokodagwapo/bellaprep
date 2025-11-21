@@ -273,8 +273,8 @@ const AddressInput: React.FC<{
                             autoComplete="address-line1"
                         />
                     )}
-                    {/* Beautiful icon button with enhanced styling */}
-                    {value && value.trim().length > 5 && (
+                    {/* Beautiful icon button with enhanced styling - Hidden for now */}
+                    {false && (
                         <button
                             type="button"
                             onClick={async (e) => {
@@ -303,7 +303,7 @@ const AddressInput: React.FC<{
                                     if (apiKey) {
                                         try {
                                             const geocodeResponse = await fetch(
-                                                `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(value)}.json?access_token=${apiKey}&country=US&limit=1&types=address`
+                                                `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(value || '')}.json?access_token=${apiKey}&country=US&limit=1&types=address`
                                             );
                                             const geocodeData = await geocodeResponse.json();
                                             
@@ -321,7 +321,7 @@ const AddressInput: React.FC<{
                                                 const properties = feature.properties || {};
                                                 const context = feature.context || [];
                                                 
-                                                street = properties.address_line || properties.name || value.split(',')[0] || value;
+                                                street = properties.address_line || properties.name || (value ? value.split(',')[0] : '') || value || '';
                                                 
                                                 context.forEach((item: any) => {
                                                     if (item.id?.startsWith('place')) {
@@ -366,10 +366,10 @@ const AddressInput: React.FC<{
                                     
                                     const fullAddress = street && city && state && zip
                                         ? `${street}, ${city}, ${state} ${zip}`
-                                        : value;
+                                        : (value || '');
                                     
                                     const addressDetails: AddressDetails = {
-                                        street: street || value.split(',')[0] || value,
+                                        street: street || (value ? value.split(',')[0] : '') || value || '',
                                         city: city || '',
                                         state: state || '',
                                         zip: zip || '',
@@ -384,7 +384,7 @@ const AddressInput: React.FC<{
                                     console.error('Error processing address:', error);
                                     // Still show modal with basic address info
                                     const addressDetails: AddressDetails = {
-                                        street: value.split(',')[0] || value,
+                                        street: (value ? value.split(',')[0] : '') || value || '',
                                         city: '',
                                         state: '',
                                         zip: '',
