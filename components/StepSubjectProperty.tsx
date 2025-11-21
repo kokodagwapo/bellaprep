@@ -5,7 +5,7 @@ import { SelectionButton } from './StepHeader';
 import StepNavigation from './StepNavigation';
 import { Home, Lightbulb, Eye, CheckCircle2, Sparkles } from 'lucide-react';
 import { AddressAutofill } from '@mapbox/search-js-react';
-import AddressPreviewModal, { AddressDetails } from './ui/AddressPreviewModal';
+import AddressSatelliteView, { AddressDetails } from './ui/AddressSatelliteView';
 import type { FormData, Address } from '../types';
 
 interface StepSubjectPropertyProps {
@@ -542,10 +542,10 @@ const StepSubjectProperty: React.FC<StepSubjectPropertyProps> = ({
       <StepNavigation onNext={canProceed ? onNext : undefined} onBack={onBack} />
       
       {/* Address Preview Modal */}
-      <AddressPreviewModal
-        isOpen={showAddressModal}
-        onClose={() => setShowAddressModal(false)}
+      <AddressSatelliteView
         address={addressPreview}
+        isVisible={showAddressModal}
+        onClose={() => setShowAddressModal(false)}
         onConfirm={handleConfirmAddress}
       />
     </div>

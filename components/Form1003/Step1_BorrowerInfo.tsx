@@ -5,7 +5,7 @@ import StepHeader from '../StepHeader';
 import StepNavigation from '../StepNavigation';
 import { Lightbulb } from '../icons';
 import { AddressAutofill } from '@mapbox/search-js-react';
-import AddressPreviewModal, { AddressDetails } from '../ui/AddressPreviewModal';
+import AddressSatelliteView, { AddressDetails } from '../ui/AddressSatelliteView';
 import { MapPin, Eye } from 'lucide-react';
 
 
@@ -421,13 +421,13 @@ const AddressInput: React.FC<{
                 )}
             </div>
             
-            {/* Address Preview Modal */}
-            <AddressPreviewModal
-                isOpen={showAddressModal}
-                onClose={() => setShowAddressModal(false)}
+            {/* Inline Satellite View */}
+            <AddressSatelliteView
                 address={addressPreview}
+                isVisible={showAddressModal}
+                onClose={() => setShowAddressModal(false)}
                 onConfirm={() => {
-                    // Address is already set in handleRetrieve, just close modal
+                    // Address is already set in handleRetrieve, just close view
                     if (addressPreview?.fullAddress) {
                         onChange(id, addressPreview.fullAddress);
                     }
