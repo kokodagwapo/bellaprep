@@ -4,8 +4,37 @@ import { Mic, MicOff, Phone, PhoneOff, Activity, Sparkles } from 'lucide-react';
 import { generateBellaSpeech, getBellaChatReply } from '../services/geminiService';
 import { decodeAudioData, decode } from '../utils/audioUtils';
 
-// Removed scripted demo - now using live agentic mode
-// All demo code has been replaced with live conversational guidance
+// Demo Script System - Step-by-step automated demo
+interface DemoScriptStep {
+    text: string;
+    delay?: number; // Delay before next step in seconds
+    action?: string; // Description of what's happening
+}
+
+// Gen Z style demo scripts - random selection
+const demoScripts: DemoScriptStep[][] = [
+    // Script 1: Full flow demo
+    [
+        { text: "Hey bestie! Welcome to Prep4Loan fr. This is the not-boring way to get a mortgage. Think of it like a warm-up before the marathon, except we make the marathon feel like a walk in the park. Let's vibe!", delay: 3 },
+        { text: "So we start here - no scary forms yet, just you, me, and some big friendly buttons. It's like a dating app but for your dream home. No cap!", delay: 3 },
+        { text: "See how easy this is? Purchase a home, single family... I'm just asking the basics. We keep it light because honestly, nobody wakes up excited to fill out paperwork. That's a whole mood.", delay: 3 },
+        { text: "Check out the left side - that's me, Bella, keeping you organized. I'm like your personal assistant but I don't drink all your coffee. I build your checklist in real-time so you know exactly what's happening. We love to see it!", delay: 3 },
+        { text: "And for the documents? I've got super-vision fr. You upload your W2s, pay stubs, whatever - and I use OCR to read them instantly. I verify them faster than you can say low interest rate. That's fire!", delay: 3 },
+        { text: "Now for the magic trick - we switch to Home Journey. This is the serious, official 1003 form that lenders need. But guess what? You don't have to type it all again! I already moved your info over. Lenders love it because it's perfect; you love it because you're done. Easy, right? Period!", delay: 3 },
+    ],
+    // Script 2: Quick intro
+    [
+        { text: "What's up bestie! I'm Bella and I'm here to make mortgages actually interesting. No cap, this is gonna be easy. Let's get it!", delay: 2 },
+        { text: "So here's the vibe - we're gonna walk through Prep4Loan step by step. I'll guide you through everything and make sure you know what's happening. No stress, just good vibes.", delay: 3 },
+        { text: "First things first - we start with the basics. What do you want to do? Buy a home? Refinance? Just exploring? All valid options fr. Tell me what you're thinking and we'll go from there.", delay: 3 },
+    ],
+    // Script 3: Feature highlight
+    [
+        { text: "Hey! So here's what makes Prep4Loan different - we actually make this fun. I know, wild concept right? But fr, we keep it light and easy.", delay: 3 },
+        { text: "I'm gonna help you through every step. I'll explain what each section means, help you fill things out, and make sure you're not confused. That's my whole vibe - keeping you informed and stress-free.", delay: 3 },
+        { text: "Plus, I can read your documents automatically. Upload your stuff and I'll extract all the info. It's giving efficiency and I'm here for it. Let's do this!", delay: 3 },
+    ],
+];
 
 const BellaVoiceAssistant: React.FC = () => {
     // Agentic Demo State - tracks user context for live guidance
@@ -21,9 +50,14 @@ const BellaVoiceAssistant: React.FC = () => {
     const [isBellaSpeaking, setIsBellaSpeaking] = useState(false);
     const [isUserSpeaking, setIsUserSpeaking] = useState(false);
     const [statusMessage, setStatusMessage] = useState("Ready to help");
-    const [mode, setMode] = useState<'idle' | 'agentic' | 'call'>('idle');
+    const [mode, setMode] = useState<'idle' | 'agentic' | 'call' | 'demo'>('idle');
     const [micPermissionGranted, setMicPermissionGranted] = useState<boolean | null>(null);
     const [micError, setMicError] = useState<string | null>(null);
+    
+    // Demo State
+    const [currentDemoScript, setCurrentDemoScript] = useState<DemoScriptStep[]>([]);
+    const [currentDemoStep, setCurrentDemoStep] = useState(0);
+    const demoTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
     // Audio Refs
     const audioContextRef = useRef<AudioContext | null>(null);
@@ -267,6 +301,11 @@ const BellaVoiceAssistant: React.FC = () => {
             if (micStreamRef.current) {
                 micStreamRef.current.getTracks().forEach(track => track.stop());
                 micStreamRef.current = null;
+            }
+            
+            // Clear demo timeout
+            if (demoTimeoutRef.current) {
+                clearTimeout(demoTimeoutRef.current);
             }
         };
     }, [isCallActive, isBellaSpeaking, mode]);
@@ -827,20 +866,60 @@ const BellaVoiceAssistant: React.FC = () => {
             setStatusMessage("Demo Mode");
         }
 
-        // Welcome message for agentic mode - Gen Z style, always play, even without mic
-        const welcomeMessage = micPermissionGranted 
-            ? "Hey bestie! I'm Bella, your mortgage guide fr. I'm here to help you through Prep4Loan - no cap, just real talk and genuine help. What brings you here today? Are you looking to buy a home, refinance, or just exploring your options? Let's vibe!"
-            : "Hey bestie! I'm Bella, your mortgage guide. I'm here to help you through Prep4Loan. I can guide you through everything, but I notice mic access wasn't granted. You can still chat with me through the interface, or enable mic access to have voice convos. What would you like to explore today? Let's get it!";
+        // Start automated demo with random script
+        const randomScript = demoScripts[Math.floor(Math.random() * demoScripts.length)];
+        setCurrentDemoScript(randomScript);
+        setCurrentDemoStep(0);
+        setMode('demo');
         
-        await playAudio(welcomeMessage);
-        setConversationHistory([{ role: 'model', text: welcomeMessage }]);
+        // Start playing the demo
+        playDemoStep(0, randomScript);
+    };
+
+    // Play a specific demo step
+    const playDemoStep = async (stepIndex: number, script: DemoScriptStep[]) => {
+        if (stepIndex >= script.length) {
+            // Demo complete, switch to agentic mode
+            setMode('agentic');
+            setStatusMessage("Demo Complete");
+            const finalMessage = "And that's the demo bestie! Now I'm in live mode - you can ask me anything or I'll guide you through the process. What would you like to explore?";
+            await playAudio(finalMessage);
+            setConversationHistory(prev => [...prev, { role: 'model', text: finalMessage }]);
+            return;
+        }
+
+        const step = script[stepIndex];
+        setCurrentDemoStep(stepIndex);
+        setStatusMessage(`Demo Step ${stepIndex + 1}/${script.length}`);
         
-        // Auto-scroll to show welcome message
+        // Play the step audio
+        await playAudio(step.text);
+        
+        // Add to conversation history
+        setConversationHistory(prev => [...prev, { role: 'model', text: step.text }]);
+        
+        // Auto-scroll transcript
         setTimeout(() => {
             if (transcriptScrollRef.current) {
                 transcriptScrollRef.current.scrollTop = transcriptScrollRef.current.scrollHeight;
             }
         }, 100);
+        
+        // Schedule next step
+        const delay = (step.delay || 3) * 1000; // Convert to milliseconds
+        demoTimeoutRef.current = setTimeout(() => {
+            playDemoStep(stepIndex + 1, script);
+        }, delay);
+    };
+
+    // Stop demo
+    const stopDemo = () => {
+        if (demoTimeoutRef.current) {
+            clearTimeout(demoTimeoutRef.current);
+            demoTimeoutRef.current = null;
+        }
+        setMode('agentic');
+        setStatusMessage("Demo Stopped");
     };
 
     // Listen for user actions to provide contextual help
@@ -932,6 +1011,7 @@ const BellaVoiceAssistant: React.FC = () => {
                     {!micError && (
                         <p className="text-sm text-gray-600 leading-relaxed font-medium">
                             {mode === 'idle' && "Ready to guide you through Prep4Loan!"}
+                            {mode === 'demo' && (isBellaSpeaking ? "Playing demo..." : `Demo Step ${currentDemoStep + 1}/${currentDemoScript.length}`)}
                             {(mode === 'call' || mode === 'agentic') && isBellaSpeaking && "Speaking..."}
                             {(mode === 'call' || mode === 'agentic') && !isBellaSpeaking && micPermissionGranted && conversationHistory.length === 0 && "Listening..."}
                             {(mode === 'call' || mode === 'agentic') && !isBellaSpeaking && micPermissionGranted === false && "Demo Mode - Bella can guide you"}
@@ -997,10 +1077,28 @@ const BellaVoiceAssistant: React.FC = () => {
                         <div className="flex items-center justify-center">
                             <button
                                 onClick={startAgenticMode}
+                                type="button"
                                 className="flex items-center justify-center gap-2 bg-primary hover:bg-primary/90 text-white py-3 px-6 rounded-xl shadow-md transition-all active:scale-95 w-full"
                             >
                                 <Phone size={18} />
                                 <span className="text-sm font-semibold">Start Live Guide</span>
+                            </button>
+                        </div>
+                    )}
+
+                    {/* DEMO MODE */}
+                    {mode === 'demo' && (
+                        <div className="flex items-center justify-between gap-2">
+                            <div className="flex-1 text-xs text-gray-600">
+                                <div className="font-semibold">Demo: Step {currentDemoStep + 1}/{currentDemoScript.length}</div>
+                                <div className="text-[10px] opacity-75">{currentDemoScript[currentDemoStep]?.action || 'Playing demo...'}</div>
+                            </div>
+                            <button
+                                onClick={stopDemo}
+                                type="button"
+                                className="p-2 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-lg transition-all text-xs font-medium"
+                            >
+                                Skip Demo
                             </button>
                         </div>
                     )}
