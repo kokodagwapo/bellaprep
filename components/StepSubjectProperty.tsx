@@ -129,7 +129,7 @@ const StepSubjectProperty: React.FC<StepSubjectPropertyProps> = ({
 
   const canProceed = hasProperty !== null && (
     hasProperty 
-      ? (address.street && address.city && address.state && address.zip && value > 0 && addressConfirmed)
+      ? ((address.fullAddress || (address.street && address.city && address.state && address.zip)) && value > 0 && addressConfirmed)
       : (budgetRange && targetZip && targetZipVerified)
   );
 
@@ -209,10 +209,10 @@ const StepSubjectProperty: React.FC<StepSubjectPropertyProps> = ({
               )}
             </AnimatePresence>
 
-            {/* Street Address with Mapbox Autosuggest */}
+            {/* Full Address with Mapbox Autosuggest - Single Field */}
             <div>
               <label className="block text-sm font-medium text-black mb-2">
-                Street Address *
+                Property Address *
               </label>
               <div className="relative">
                 <AddressAutofill
@@ -252,14 +252,23 @@ const StepSubjectProperty: React.FC<StepSubjectPropertyProps> = ({
                       
                       // Build full address
                       const fullAddress = properties.full_address || properties.place_name || 
-                        `${street}${street && city ? ', ' : ''}${city}${city && state ? ', ' : ''}${state} ${zip}`.trim();
+                        `${street}${street && city ? ', ' : ''}${city}${city && state ? ', ' : ''}${state} ${zip}${unit ? `, ${unit}` : ''}`.trim();
                       
-                      // Update all form fields immediately
-                      if (street) handleAddressChange('street', street);
-                      if (city) handleAddressChange('city', city);
-                      if (state) handleAddressChange('state', state);
-                      if (zip) handleAddressChange('zip', zip);
-                      if (unit) handleAddressChange('unit', unit);
+                      // Store full address and components (for backend compatibility)
+                      const newAddress = {
+                        street: street || '',
+                        city: city || '',
+                        state: state || '',
+                        zip: zip || '',
+                        unit: unit || '',
+                        fullAddress: fullAddress
+                      };
+                      
+                      setAddress(newAddress);
+                      onChange('subjectProperty', {
+                        ...data.subjectProperty,
+                        address: newAddress
+                      });
                       
                       // Verify address with Mapbox
                       try {
@@ -271,7 +280,7 @@ const StepSubjectProperty: React.FC<StepSubjectPropertyProps> = ({
                           zip
                         });
                         
-                        // Prepare address details for modal
+                        // Prepare address details for satellite view
                         const addressDetails: AddressDetails = {
                           street: verification.normalizedAddress?.street || street,
                           city: verification.normalizedAddress?.city || city,
@@ -289,18 +298,27 @@ const StepSubjectProperty: React.FC<StepSubjectPropertyProps> = ({
                         
                         // Update with verified address if different
                         if (verification.isValid && verification.normalizedAddress) {
-                          handleAddressChange('street', verification.normalizedAddress.street);
-                          handleAddressChange('city', verification.normalizedAddress.city);
-                          handleAddressChange('state', verification.normalizedAddress.state);
-                          handleAddressChange('zip', verification.normalizedAddress.zip);
+                          const verifiedAddress = {
+                            street: verification.normalizedAddress.street || street,
+                            city: verification.normalizedAddress.city || city,
+                            state: verification.normalizedAddress.state || state,
+                            zip: verification.normalizedAddress.zip || zip,
+                            unit: unit || '',
+                            fullAddress: addressDetails.fullAddress
+                          };
+                          setAddress(verifiedAddress);
+                          onChange('subjectProperty', {
+                            ...data.subjectProperty,
+                            address: verifiedAddress
+                          });
                         }
                         
-                        // Store address details for modal (don't show automatically)
+                        // Store address details for satellite view
                         setAddressPreview(addressDetails);
-                        setAddressConfirmed(false); // Reset confirmation state
+                        setAddressConfirmed(false);
                       } catch (error) {
                         console.error('Error verifying address:', error);
-                        // Store unverified address for modal
+                        // Store unverified address for satellite view
                         const addressDetails: AddressDetails = {
                           street,
                           city,
@@ -325,10 +343,20 @@ const StepSubjectProperty: React.FC<StepSubjectPropertyProps> = ({
                 >
                   <input
                     type="text"
-                    name="street"
-                    value={address.street || ''}
+                    name="fullAddress"
+                    value={address.fullAddress || (address.street && address.city && address.state && address.zip ? `${address.street}${address.street && address.city ? ', ' : ''}${address.city}${address.city && address.state ? ', ' : ''}${address.state} ${address.zip}`.trim() : '') || ''}
                     onChange={(e) => {
-                      handleAddressChange('street', e.target.value);
+                      const newValue = e.target.value;
+                      // Update full address, but keep components for backend
+                      const newAddress = {
+                        ...address,
+                        fullAddress: newValue
+                      };
+                      setAddress(newAddress);
+                      onChange('subjectProperty', {
+                        ...data.subjectProperty,
+                        address: newAddress
+                      });
                       // Clear confirmation when manually editing
                       if (addressConfirmed) {
                         setAddressConfirmed(false);
@@ -336,13 +364,13 @@ const StepSubjectProperty: React.FC<StepSubjectPropertyProps> = ({
                         setAddressPreview(null);
                       }
                     }}
-                    placeholder="Start typing your address..."
+                    placeholder="Start typing your address (e.g., 123 Main St, City, State ZIP)"
                     className="w-full px-4 py-3 pr-12 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary text-black placeholder:text-gray-400"
                     autoComplete="address-line1"
                   />
                 </AddressAutofill>
                 {/* Modern icon button to view/confirm address */}
-                {addressPreview && address.street && address.street.trim().length > 0 && (
+                {addressPreview && (address.fullAddress || address.street) && ((address.fullAddress && address.fullAddress.trim().length > 0) || (address.street && address.street.trim().length > 0)) && (
                   <button
                     type="button"
                     onClick={() => setShowAddressModal(true)}
@@ -353,86 +381,6 @@ const StepSubjectProperty: React.FC<StepSubjectPropertyProps> = ({
                     <Eye className="h-5 w-5" />
                   </button>
                 )}
-              </div>
-            </div>
-
-            {/* Auto-populated fields from Mapbox */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-black mb-2">
-                  City *
-                </label>
-                <input
-                  type="text"
-                  value={address.city || ''}
-                  onChange={(e) => {
-                    handleAddressChange('city', e.target.value);
-                    if (addressConfirmed) {
-                      setAddressConfirmed(false);
-                      setShowConfirmationBanner(false);
-                    }
-                  }}
-                  placeholder="City"
-                  className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary text-black placeholder:text-gray-400"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-black mb-2">
-                  State *
-                </label>
-                <input
-                  type="text"
-                  value={address.state || ''}
-                  onChange={(e) => {
-                    const state = e.target.value.toUpperCase().slice(0, 2);
-                    handleAddressChange('state', state);
-                    if (addressConfirmed) {
-                      setAddressConfirmed(false);
-                      setShowConfirmationBanner(false);
-                    }
-                  }}
-                  placeholder="State"
-                  maxLength={2}
-                  className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary text-black placeholder:text-gray-400"
-                />
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-black mb-2">
-                  ZIP Code *
-                </label>
-                <input
-                  type="text"
-                  inputMode="numeric"
-                  pattern="[0-9]*"
-                  value={address.zip || ''}
-                  onChange={(e) => {
-                    const zip = e.target.value.replace(/\D/g, '').slice(0, 5);
-                    handleAddressChange('zip', zip);
-                    if (addressConfirmed) {
-                      setAddressConfirmed(false);
-                      setShowConfirmationBanner(false);
-                    }
-                  }}
-                  placeholder="12345"
-                  maxLength={5}
-                  className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary text-black placeholder:text-gray-400"
-                  autoComplete="postal-code"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-black mb-2">
-                  Unit (optional)
-                </label>
-                <input
-                  type="text"
-                  value={address.unit || ''}
-                  onChange={(e) => handleAddressChange('unit', e.target.value)}
-                  placeholder="Apt 4B"
-                  className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary text-black placeholder:text-gray-400"
-                />
               </div>
             </div>
 
