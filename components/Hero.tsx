@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import React, { useState, useEffect, useRef } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { AIChatInput } from './ui/ai-chat-input';
+import { X, Bot, User } from 'lucide-react';
 
 const heroMessages = [
   "Home Loans, Simplified. Ask Bella.",
@@ -8,10 +9,21 @@ const heroMessages = [
   "Tell me about your dream home…"
 ];
 
+interface ChatMessage {
+  id: string;
+  role: 'user' | 'assistant';
+  content: string;
+  timestamp: Date;
+}
+
 const Hero: React.FC = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [displayedText, setDisplayedText] = useState('');
   const [isTyping, setIsTyping] = useState(true);
+  const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
+  const [isChatOpen, setIsChatOpen] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const chatEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const currentMessage = heroMessages[currentIndex];
@@ -41,6 +53,13 @@ const Hero: React.FC = () => {
       clearInterval(typingInterval);
     };
   }, [currentIndex]);
+
+  // Auto-scroll to bottom when new messages arrive
+  useEffect(() => {
+    if (chatEndRef.current) {
+      chatEndRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [chatMessages, isProcessing]);
 
   return (
     <div className="relative w-screen min-h-screen flex items-center justify-center overflow-hidden" style={{ width: '100vw', marginLeft: 'calc(50% - 50vw)', marginRight: 'calc(50% - 50vw)', marginTop: '-100px', paddingTop: '100px' }}>
@@ -437,28 +456,71 @@ const Hero: React.FC = () => {
             onSend={async (message, options) => {
               console.log('Message sent:', message, 'Options:', options);
               
-              // Handle deep search with GPT-5.1 (using GPT-4o)
-              if (options?.deepSearchActive) {
-                try {
+              // Open chat if not already open
+              if (!isChatOpen) {
+                setIsChatOpen(true);
+              }
+              
+              // Add user message to chat
+              const userMessage: ChatMessage = {
+                id: Date.now().toString(),
+                role: 'user',
+                content: message,
+                timestamp: new Date()
+              };
+              setChatMessages(prev => [...prev, userMessage]);
+              setIsProcessing(true);
+              
+              try {
+                // Handle deep search with GPT-5.1 (using GPT-4o)
+                if (options?.deepSearchActive) {
                   const { performDeepSearch } = await import('../services/openaiDeepSearchService');
                   const deepSearchResult = await performDeepSearch({
                     query: message,
                     useGPT51: true, // Use latest GPT model
                   });
                   
-                  // Display the result - you can integrate this with a chat widget or modal
-                  console.log('Deep Search Result:', deepSearchResult);
+                  // Add Bella's response to chat
+                  const bellaMessage: ChatMessage = {
+                    id: (Date.now() + 1).toString(),
+                    role: 'assistant',
+                    content: deepSearchResult,
+                    timestamp: new Date()
+                  };
+                  setChatMessages(prev => [...prev, bellaMessage]);
+                } else {
+                  // Regular chat with GPT-5.1 (GPT-4o)
+                  const { getBellaChatReplyOpenAI } = await import('../services/openaiChatService');
                   
-                  // Show result in an alert or modal (you can enhance this with a proper UI component)
-                  alert(`Deep Search Result:\n\n${deepSearchResult.substring(0, 500)}${deepSearchResult.length > 500 ? '...' : ''}`);
-                } catch (error: any) {
-                  console.error('Deep search error:', error);
-                  alert(`Deep search failed: ${error.message || 'Unknown error'}`);
+                  // Build chat history for OpenAI
+                  const chatHistory = [...chatMessages, userMessage].map(msg => ({
+                    role: msg.role === 'user' ? 'user' as const : 'assistant' as const,
+                    content: msg.content
+                  }));
+                  
+                  const bellaReply = await getBellaChatReplyOpenAI(chatHistory);
+                  
+                  // Add Bella's response to chat
+                  const bellaMessage: ChatMessage = {
+                    id: (Date.now() + 1).toString(),
+                    role: 'assistant',
+                    content: bellaReply,
+                    timestamp: new Date()
+                  };
+                  setChatMessages(prev => [...prev, bellaMessage]);
                 }
-              } else {
-                // Regular message handling - integrate with Bella chat
-                console.log('Regular message:', message);
-                // You can integrate this with getBellaChatReply from geminiService
+              } catch (error: any) {
+                console.error('Chat error:', error);
+                // Add error message
+                const errorMessage: ChatMessage = {
+                  id: (Date.now() + 1).toString(),
+                  role: 'assistant',
+                  content: `I apologize, but I'm having trouble processing your request right now. ${error.message || 'Please try again in a moment.'}`,
+                  timestamp: new Date()
+                };
+                setChatMessages(prev => [...prev, errorMessage]);
+              } finally {
+                setIsProcessing(false);
               }
             }}
             onCameraClick={() => {
@@ -472,6 +534,114 @@ const Hero: React.FC = () => {
           />
         </motion.div>
       </div>
+
+      {/* Chat Modal */}
+      <AnimatePresence>
+        {isChatOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+            onClick={() => setIsChatOpen(false)}
+          >
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0, y: 20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.9, opacity: 0, y: 20 }}
+              transition={{ type: "spring", damping: 25, stiffness: 300 }}
+              className="bg-white dark:bg-gray-900 rounded-2xl shadow-2xl w-full max-w-2xl h-[80vh] flex flex-col overflow-hidden"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Chat Header */}
+              <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-primary/5 to-primary/10">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center">
+                    <Bot className="w-6 h-6 text-primary" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-foreground">Bella AI Assistant</h3>
+                    <p className="text-xs text-muted-foreground">Powered by GPT-5.1</p>
+                  </div>
+                </div>
+                <button
+                  onClick={() => setIsChatOpen(false)}
+                  className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                  aria-label="Close chat"
+                >
+                  <X className="w-5 h-5 text-gray-500" />
+                </button>
+              </div>
+
+              {/* Chat Messages */}
+              <div className="flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar">
+                {chatMessages.length === 0 ? (
+                  <div className="flex items-center justify-center h-full text-center">
+                    <div>
+                      <Bot className="w-12 h-12 text-primary/30 mx-auto mb-4" />
+                      <p className="text-muted-foreground">Start a conversation with Bella!</p>
+                      <p className="text-sm text-muted-foreground mt-2">Ask me anything about mortgages, loans, or the application process.</p>
+                    </div>
+                  </div>
+                ) : (
+                  chatMessages.map((message) => (
+                    <motion.div
+                      key={message.id}
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className={`flex gap-3 ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
+                    >
+                      {message.role === 'assistant' && (
+                        <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0">
+                          <Bot className="w-5 h-5 text-primary" />
+                        </div>
+                      )}
+                      <div
+                        className={`max-w-[80%] rounded-2xl px-4 py-3 ${
+                          message.role === 'user'
+                            ? 'bg-primary text-white'
+                            : 'bg-gray-100 dark:bg-gray-800 text-foreground'
+                        }`}
+                      >
+                        <p className="text-sm leading-relaxed whitespace-pre-wrap">{message.content}</p>
+                        <p className={`text-xs mt-2 ${
+                          message.role === 'user' ? 'text-white/70' : 'text-muted-foreground'
+                        }`}>
+                          {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                        </p>
+                      </div>
+                      {message.role === 'user' && (
+                        <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0">
+                          <User className="w-5 h-5 text-primary" />
+                        </div>
+                      )}
+                    </motion.div>
+                  ))
+                )}
+                {isProcessing && (
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    className="flex gap-3 justify-start"
+                  >
+                    <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center">
+                      <Bot className="w-5 h-5 text-primary" />
+                    </div>
+                    <div className="bg-gray-100 dark:bg-gray-800 rounded-2xl px-4 py-3">
+                      <div className="flex gap-1">
+                        <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+                        <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+                        <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
+                <div ref={chatEndRef} />
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };
