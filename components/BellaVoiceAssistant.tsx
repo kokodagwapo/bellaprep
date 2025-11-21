@@ -5,7 +5,11 @@ import { generateBellaSpeech, getBellaChatReply } from '../services/geminiServic
 import { decodeAudioData, decode } from '../utils/audioUtils';
 import DemoController from './DemoController';
 
-const BellaVoiceAssistant: React.FC = () => {
+interface BellaVoiceAssistantProps {
+  onStartDemo?: () => void;
+}
+
+const BellaVoiceAssistant: React.FC<BellaVoiceAssistantProps> = ({ onStartDemo }) => {
     // Agentic Demo State - tracks user context for live guidance
     const [userContext, setUserContext] = useState<{
         currentView?: string;
@@ -984,14 +988,28 @@ const BellaVoiceAssistant: React.FC = () => {
                     {/* IDLE MODE */}
                     {mode === 'idle' && (
                         <div className="flex items-center justify-center">
-                            <button
-                                onClick={startAgenticMode}
-                                type="button"
-                                className="flex items-center justify-center gap-2 bg-primary hover:bg-primary/90 text-white py-3 px-6 rounded-xl shadow-md transition-all active:scale-95 w-full"
-                            >
-                                <Phone size={18} />
-                                <span className="text-sm font-semibold">Start Live Guide</span>
-                            </button>
+                            <div className="flex flex-col gap-2">
+                                <button
+                                    onClick={startAgenticMode}
+                                    type="button"
+                                    className="flex items-center justify-center gap-2 bg-primary hover:bg-primary/90 text-white py-3 px-6 rounded-xl shadow-md transition-all active:scale-95 w-full"
+                                >
+                                    <Phone size={18} />
+                                    <span className="text-sm font-semibold">Start Live Guide</span>
+                                </button>
+                                <button
+                                    onClick={() => {
+                                        if (onStartDemo) {
+                                            onStartDemo();
+                                        }
+                                    }}
+                                    type="button"
+                                    className="flex items-center justify-center gap-2 bg-gradient-to-r from-primary to-green-600 hover:from-green-600 hover:to-primary text-white py-3 px-6 rounded-xl shadow-md transition-all active:scale-95 w-full"
+                                >
+                                    <Sparkles size={18} />
+                                    <span className="text-sm font-semibold">Start Demo Tour</span>
+                                </button>
+                            </div>
                         </div>
                     )}
 

@@ -79,6 +79,7 @@ const App: React.FC = () => {
   const [currentView, setCurrentView] = useState<View>('home');
   const [open, setOpen] = useState(false);
   const [isChatOpen, setIsChatOpen] = useState(false);
+  const [showDemo, setShowDemo] = useState(false);
   const mainContentRef = useRef<HTMLDivElement>(null);
 
   // Scroll to top when view changes
@@ -422,7 +423,23 @@ const App: React.FC = () => {
         )}
       </AnimatePresence> */}
 
-      <BellaVoiceAssistant />
+      <BellaVoiceAssistant onStartDemo={() => setShowDemo(true)} />
+      
+      {showDemo && (
+        <DemoController
+          onNavigateTo={(view) => {
+            setCurrentView(view);
+            if (view === 'prep') {
+              resetApplication();
+            }
+          }}
+          onFillData={(data) => {
+            setFormData(prev => ({ ...prev, ...data }));
+          }}
+          onEndDemo={() => setShowDemo(false)}
+          currentView={currentView}
+        />
+      )}
     </>
   );
 };
