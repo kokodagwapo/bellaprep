@@ -135,7 +135,7 @@ const AIChatInput: React.FC<AIChatInputProps> = ({
           overflow: "hidden", 
           borderRadius: "clamp(16px, 4vw, 32px)", 
           background: "#fff",
-          maxWidth: 'clamp(100%, 48rem, calc(48rem + 2in))', // Mobile-first: full width, then max-w-3xl
+          maxWidth: 'clamp(100%, 48rem, calc(48rem + 4in))', // Extended by 2 inches: Mobile-first: full width, then max-w-3xl + 4in
           height: "auto",
           minHeight: isActive || inputValue 
             ? "clamp(112px, 28vw, 128px)" // Mobile: 112px, Desktop: 128px

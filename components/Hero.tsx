@@ -430,7 +430,8 @@ const Hero: React.FC = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.5, duration: 0.8 }}
-          className="w-full max-w-3xl mx-auto px-4"
+          className="w-full mx-auto px-4"
+          style={{ maxWidth: 'calc(48rem + 4in)' }} // Extended by 2 inches from max-w-3xl (48rem)
         >
           <AIChatInput
             onSend={async (message, options) => {
