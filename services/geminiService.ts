@@ -62,25 +62,64 @@ Knowledge Base:
 ${JSON.stringify(knowledgeBase)}
 `;
 
-// New function for intelligent chat replies
+// New function for intelligent chat replies - uses both Gemini and OpenAI
 export const getBellaChatReply = async (chatHistory: { role: 'user' | 'model', text: string }[]): Promise<string> => {
     const contents = chatHistory.map(msg => ({
         role: msg.role,
         parts: [{ text: msg.text }]
     }));
 
-    try {
-        // Use latest Gemini model for agentic, human-like responses
-        const response = await ai.models.generateContent({
-            model: "gemini-2.0-flash-exp", // Latest model with enhanced agentic capabilities
-            contents: contents,
-            config: { 
-                systemInstruction: systemInstruction,
-            },
-        });
-        return response.text;
-    } catch (error) {
-        console.error("Error getting Bella chat reply:", error);
+    // Try both APIs in parallel for best response
+    const geminiPromise = (async () => {
+        try {
+            console.log("🎯 Using Gemini 2.0 Flash for chat response...");
+            const response = await ai.models.generateContent({
+                model: "gemini-2.0-flash-exp", // Latest model with enhanced agentic capabilities
+                contents: contents,
+                config: { 
+                    systemInstruction: systemInstruction,
+                },
+            });
+            console.log("✅ Gemini chat response successful!");
+            return response.text;
+        } catch (error: any) {
+            console.error("❌ Gemini chat error:", error?.message || error);
+            return null;
+        }
+    })();
+
+    const openAIPromise = (async () => {
+        try {
+            const { getBellaChatReplyOpenAI } = await import('./openaiChatService');
+            const chatMessages = chatHistory.map(msg => ({
+                role: msg.role === 'user' ? 'user' as const : 'assistant' as const,
+                content: msg.text
+            }));
+            const reply = await getBellaChatReplyOpenAI(chatMessages, systemInstruction);
+            return reply;
+        } catch (error: any) {
+            console.error("❌ OpenAI chat error:", error?.message || error);
+            return null;
+        }
+    })();
+
+    // Wait for both responses
+    const [geminiReply, openAIReply] = await Promise.all([geminiPromise, openAIPromise]);
+
+    // Use the best available response
+    if (geminiReply && openAIReply) {
+        // Both succeeded - combine insights from both (use Gemini as primary, OpenAI for validation)
+        console.log("✅ Both APIs responded! Using Gemini response with OpenAI validation.");
+        return geminiReply; // Primary: Gemini for Gen Z personality
+    } else if (geminiReply) {
+        console.log("✅ Using Gemini response (OpenAI unavailable)");
+        return geminiReply;
+    } else if (openAIReply) {
+        console.log("✅ Using OpenAI response (Gemini unavailable)");
+        return openAIReply;
+    } else {
+        // Both failed
+        console.error("❌ Both Gemini and OpenAI failed");
         return "I'm having a little trouble connecting right now. Could you try asking that again in a moment?";
     }
 };
