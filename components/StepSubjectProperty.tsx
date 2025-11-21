@@ -370,11 +370,116 @@ const StepSubjectProperty: React.FC<StepSubjectPropertyProps> = ({
                   />
                 </AddressAutofill>
                 {/* Modern icon button to view/confirm address */}
-                {addressPreview && (address.fullAddress || address.street) && ((address.fullAddress && address.fullAddress.trim().length > 0) || (address.street && address.street.trim().length > 0)) && (
+                {(address.fullAddress || address.street) && ((address.fullAddress && address.fullAddress.trim().length > 5) || (address.street && address.street.trim().length > 5)) && (
                   <button
                     type="button"
-                    onClick={() => setShowAddressModal(true)}
-                    className="absolute right-3 top-1/2 transform -translate-y-1/2 p-2 rounded-lg bg-primary/10 hover:bg-primary/20 text-primary transition-all duration-200 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+                    onClick={async (e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      
+                      // If we have addressPreview with coordinates, show it immediately
+                      if (addressPreview && addressPreview.coordinates) {
+                        setShowAddressModal(true);
+                      } else {
+                        // Geocode the address to get coordinates
+                        const addressToGeocode = address.fullAddress || 
+                          (address.street && address.city && address.state && address.zip 
+                            ? `${address.street}, ${address.city}, ${address.state} ${address.zip}`
+                            : address.street || '');
+                        
+                        if (!addressToGeocode || addressToGeocode.trim().length < 5) {
+                          return;
+                        }
+
+                        // Show loading state
+                        const button = e.currentTarget;
+                        if (button) {
+                          const originalContent = button.innerHTML;
+                          button.disabled = true;
+                          button.innerHTML = '<div class="animate-spin rounded-full h-5 w-5 border-b-2 border-primary"></div>';
+                          
+                          try {
+                            const apiKey = import.meta.env.VITE_MAPBOX_API_KEY;
+                            if (!apiKey) {
+                              console.warn('Mapbox API key not found');
+                              return;
+                            }
+
+                            // Geocode address using Mapbox
+                            const geocodeResponse = await fetch(
+                              `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(addressToGeocode)}.json?access_token=${apiKey}&country=US&limit=1&types=address`
+                            );
+                            const geocodeData = await geocodeResponse.json();
+                            
+                            if (geocodeData.features && geocodeData.features.length > 0) {
+                              const feature = geocodeData.features[0];
+                              const coords = feature.geometry?.coordinates;
+                              
+                              if (coords && coords.length >= 2) {
+                                const properties = feature.properties || {};
+                                const context = feature.context || [];
+                                
+                                let city = '';
+                                let state = '';
+                                let zip = '';
+                                
+                                context.forEach((item: any) => {
+                                  if (item.id?.startsWith('place')) {
+                                    city = item.text || '';
+                                  }
+                                  if (item.id?.startsWith('region')) {
+                                    state = item.short_code?.replace('US-', '') || '';
+                                  }
+                                  if (item.id?.startsWith('postcode')) {
+                                    zip = item.text || '';
+                                  }
+                                });
+                                
+                                const street = properties.address_line || properties.name || address.street || '';
+                                const fullAddress = properties.full_address || properties.place_name || addressToGeocode;
+                                
+                                const addressDetails: AddressDetails = {
+                                  street,
+                                  city: city || address.city || '',
+                                  state: state || address.state || '',
+                                  zip: zip || address.zip || '',
+                                  fullAddress,
+                                  coordinates: {
+                                    longitude: coords[0],
+                                    latitude: coords[1]
+                                  },
+                                  verified: true
+                                };
+                                
+                                setAddressPreview(addressDetails);
+                                setShowAddressModal(true);
+                              }
+                            }
+                          } catch (error) {
+                            console.error('Error geocoding address:', error);
+                            // Still try to show with available data
+                            const addressDetails: AddressDetails = {
+                              street: address.street || '',
+                              city: address.city || '',
+                              state: address.state || '',
+                              zip: address.zip || '',
+                              fullAddress: address.fullAddress || addressToGeocode,
+                              coordinates: undefined,
+                              verified: false
+                            };
+                            setAddressPreview(addressDetails);
+                            setShowAddressModal(true);
+                          } finally {
+                            // Restore button state
+                            if (button) {
+                              button.disabled = false;
+                              button.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-eye h-5 w-5" aria-hidden="true"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path><circle cx="12" cy="12" r="3"></circle></svg>';
+                            }
+                          }
+                        }
+                      }
+                    }}
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 p-2 rounded-lg bg-primary/10 hover:bg-primary/20 text-primary transition-all duration-200 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
                     aria-label="View and confirm address"
                     title="View and confirm address on map"
                   >
