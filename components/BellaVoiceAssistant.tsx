@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Mic, MicOff, Phone, PhoneOff, Activity, Sparkles } from 'lucide-react';
+import { Mic, MicOff, Phone, PhoneOff, Activity, Sparkles, Minimize2, Maximize2 } from 'lucide-react';
 import { generateBellaSpeech, getBellaChatReply } from '../services/geminiService';
 import { decodeAudioData, decode } from '../utils/audioUtils';
 import DemoController from './DemoController';
+import SiriOrb from './ui/siri-orb';
 
 interface BellaVoiceAssistantProps {
   onStartDemo?: () => void;
@@ -26,6 +27,7 @@ const BellaVoiceAssistant: React.FC<BellaVoiceAssistantProps> = ({ onStartDemo }
     const [mode, setMode] = useState<'idle' | 'agentic' | 'call' | 'demo'>('idle');
     const [micPermissionGranted, setMicPermissionGranted] = useState<boolean | null>(null);
     const [micError, setMicError] = useState<string | null>(null);
+    const [isMinimized, setIsMinimized] = useState(false);
 
     // Audio Refs
     const audioContextRef = useRef<AudioContext | null>(null);
@@ -866,6 +868,29 @@ const BellaVoiceAssistant: React.FC<BellaVoiceAssistantProps> = ({ onStartDemo }
         };
     }, [mode]);
 
+    // If minimized, show only the pulsating orb
+    if (isMinimized) {
+        return (
+            <motion.div
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="fixed bottom-6 left-6 z-50"
+                onClick={() => setIsMinimized(false)}
+            >
+                <SiriOrb 
+                    size="64px" 
+                    animationDuration={15}
+                    className="drop-shadow-2xl"
+                    colors={{
+                        c1: "oklch(70% 0.18 350)",
+                        c2: "oklch(75% 0.15 200)",
+                        c3: "oklch(72% 0.16 280)",
+                    }}
+                />
+            </motion.div>
+        );
+    }
+
     return (
         <motion.div
             initial={{ opacity: 0, y: 50 }}
@@ -883,10 +908,18 @@ const BellaVoiceAssistant: React.FC<BellaVoiceAssistantProps> = ({ onStartDemo }
                         <span className="font-semibold text-gray-800 text-sm">Bella AI</span>
                     </div>
 
-                    {/* Status Indicator */}
+                    {/* Status Indicator & Minimize Button */}
                     <div className="flex items-center gap-2">
                         <span className="text-[10px] font-medium text-gray-500 uppercase tracking-wide">{statusMessage}</span>
                         {isBellaSpeaking && <Activity size={14} className="text-primary animate-pulse" />}
+                        <button
+                            onClick={() => setIsMinimized(true)}
+                            className="p-1.5 hover:bg-gray-100 rounded-full transition-colors"
+                            aria-label="Minimize"
+                            title="Minimize"
+                        >
+                            <Minimize2 size={14} className="text-gray-600" />
+                        </button>
                     </div>
                 </div>
 
