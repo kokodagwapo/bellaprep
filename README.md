@@ -15,9 +15,13 @@ View your app in AI Studio: https://ai.studio/apps/drive/1KaxhzDJiogo98aNBhDO8de
 
 1. Install dependencies:
    `npm install`
-2. Create a `.env.local` file in the `bellaNew` folder and set your API keys:
-   - `VITE_API_KEY` - Your Gemini API key (for AI chat functionality)
-   - `VITE_GOOGLE_MAPS_API_KEY` - Your Google Maps API key (for address autocomplete)
+2. Create a `.env` file in the root directory and set your API keys:
+   - `VITE_API_KEY` - Your Gemini API key (Required - for AI chat and voice functionality)
+     - Get your key from: https://aistudio.google.com/app/apikey
+   - `VITE_OPENAI_API_KEY` - Your OpenAI API key (Optional - for enhanced TTS voice)
+     - Get your key from: https://platform.openai.com/api-keys
+     - If not set, will use Gemini TTS (Kore voice) instead
+   - `VITE_GOOGLE_MAPS_API_KEY` - Your Google Maps API key (Optional - for address autocomplete)
      - Get your key from: https://console.cloud.google.com/google/maps-apis
      - Make sure to enable "Places API" for your project
 3. Run the app:
