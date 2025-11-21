@@ -533,14 +533,26 @@ const StepSubjectProperty: React.FC<StepSubjectPropertyProps> = ({
               <label className="block text-sm font-medium text-black mb-2">
                 What do you believe is the VALUE of the home? *
               </label>
-              <input
-                type="number"
-                value={value || ''}
-                onChange={(e) => handleValueChange(Number(e.target.value))}
-                placeholder="500000"
-                min="0"
-                className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary text-black placeholder:text-gray-400"
-              />
+              <div className="relative">
+                <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4">
+                  <span className="text-gray-500 text-base sm:text-lg">$</span>
+                </div>
+                <input
+                  type="text"
+                  inputMode="numeric"
+                  value={value > 0 ? value.toLocaleString('en-US') : ''}
+                  onChange={(e) => {
+                    // Remove all non-numeric characters
+                    const numericValue = e.target.value.replace(/[^0-9]/g, '');
+                    // Parse to number and update
+                    handleValueChange(numericValue ? Number(numericValue) : 0);
+                  }}
+                  placeholder="500,000"
+                  className="w-full px-4 py-3 pl-8 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary text-black placeholder:text-gray-400"
+                  style={{ fontSize: '16px' }}
+                  aria-label="Home Value in US Dollars"
+                />
+              </div>
             </div>
           </motion.div>
         )}

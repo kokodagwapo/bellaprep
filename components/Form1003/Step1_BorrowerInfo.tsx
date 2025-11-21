@@ -164,11 +164,11 @@ const AddressInput: React.FC<{
                 // Store address details for modal (don't show automatically)
                 setAddressPreview(addressDetails);
                 
-                isVerifiedRef.current = true;
-                setIsVerified(true);
-                if (onValidationChange) {
-                    onValidationChange(true);
-                }
+                    isVerifiedRef.current = true;
+                    setIsVerified(true);
+                    if (onValidationChange) {
+                        onValidationChange(true);
+                    }
                 
                 // Show verification message if address is verified
                 if (verification.isValid) {
@@ -199,7 +199,7 @@ const AddressInput: React.FC<{
                 
                 isVerifiedRef.current = true;
                 setIsVerified(true);
-                if (onValidationChange) {
+                    if (onValidationChange) {
                     onValidationChange(true);
                 }
             }
@@ -258,26 +258,26 @@ const AddressInput: React.FC<{
                             />
                         </AddressAutofill>
                     ) : (
-                        <input
-                            ref={addressInputRef}
-                            type="text"
-                            id={id}
-                            value={value || ''}
-                            onChange={(e) => {
-                                const newValue = e.target.value;
-                                onChange(id, newValue);
-                                // Reset verification when manually editing (only if it was verified)
-                                if (isVerifiedRef.current) {
-                                    isVerifiedRef.current = false;
-                                    setIsVerified(false);
+                <input
+                    ref={addressInputRef}
+                    type="text"
+                    id={id}
+                    value={value || ''}
+                    onChange={(e) => {
+                        const newValue = e.target.value;
+                        onChange(id, newValue);
+                        // Reset verification when manually editing (only if it was verified)
+                        if (isVerifiedRef.current) {
+                            isVerifiedRef.current = false;
+                            setIsVerified(false);
                                     setAddressPreview(null); // Clear stored address when manually editing
                                     setShowVerificationMessage(false); // Hide verification message
-                                }
-                            }}
+                        }
+                    }}
                             placeholder={placeholder || "Start typing your address..."}
                             className="block w-full px-4 py-3.5 sm:px-4 sm:py-3 bg-gradient-to-br from-white to-gray-50/50 border-0 text-base sm:text-sm text-foreground placeholder:text-gray-400 focus:outline-none focus:ring-0 transition-all duration-200 touch-manipulation min-h-[48px] sm:min-h-[44px] pr-14"
-                            autoComplete="address-line1"
-                        />
+                    autoComplete="address-line1"
+                />
                     )}
                     {/* Beautiful icon button with enhanced styling - Hidden for now */}
                     {false && (
@@ -419,10 +419,10 @@ const AddressInput: React.FC<{
                         <div className="absolute right-2 top-1/2 transform -translate-y-1/2 p-2 rounded-xl bg-gradient-to-br from-green-500/20 to-green-600/20 backdrop-blur-sm border border-green-400/30">
                             <svg className="h-5 w-5 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                            </svg>
-                        </div>
-                    )}
-                </div>
+                        </svg>
+                    </div>
+                )}
+            </div>
                 {/* Enhanced verification message */}
                 {showVerificationMessage && isVerified && value && (
                     <motion.div
@@ -433,7 +433,7 @@ const AddressInput: React.FC<{
                     >
                         <svg className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                             <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                        </svg>
+                    </svg>
                         <div className="flex-1">
                             <p className="font-semibold text-green-900 mb-1">Address Verified ✓</p>
                             <p className="text-green-700">Address verified and correct. Please double-check to ensure accuracy.</p>
