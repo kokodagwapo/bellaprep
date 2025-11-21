@@ -780,22 +780,23 @@ const BellaVoiceAssistant: React.FC = () => {
         } catch (e: any) {
             console.error("❌ Microphone permission error:", e);
             setMicPermissionGranted(false);
-            setStatusMessage("Permission Denied");
+            setStatusMessage("Demo Mode");
             
             if (e.name === 'NotAllowedError' || e.name === 'PermissionDeniedError') {
-                setMicError("Please allow microphone access. Look for the permission popup or click the 🔒 icon in your browser's address bar and select 'Allow'.");
+                setMicError("Microphone access denied. Bella can still guide you, but voice input is disabled. Click the 🔒 icon in your browser's address bar and select 'Allow' to enable voice input.");
             } else if (e.name === 'NotFoundError' || e.name === 'DevicesNotFoundError') {
-                setMicError("No microphone found. Please connect a microphone and try again.");
+                setMicError("No microphone found. Bella can still guide you, but voice input is disabled.");
             } else if (e.name === 'NotReadableError' || e.name === 'TrackStartError') {
-                setMicError("Microphone is being used by another app. Please close other apps and try again.");
+                setMicError("Microphone is being used by another app. Bella can still guide you, but voice input is disabled.");
             } else {
-                setMicError("Could not access microphone. Please check your browser settings.");
+                setMicError("Could not access microphone. Bella can still guide you, but voice input is disabled.");
             }
-            return;
+            // Continue with demo even if mic is denied - Bella can still speak
+            console.log("ℹ️ Continuing demo without microphone - Bella can still provide guidance");
         }
 
-        // Start Recognition
-        if (recognitionRef.current) {
+        // Start Recognition only if microphone permission was granted
+        if (micPermissionGranted && recognitionRef.current) {
             setTimeout(() => {
                 try {
                     if (recognitionRef.current && (recognitionRef.current as any).state === 'running') {
@@ -813,30 +814,33 @@ const BellaVoiceAssistant: React.FC = () => {
                         console.log("ℹ️ Recognition already started, this is okay");
                         setStatusMessage("Listening...");
                     } else {
-                        setMicError("Could not start speech recognition. Please try refreshing the page.");
-                        setStatusMessage("Error");
+                        console.warn("⚠️ Could not start speech recognition, but continuing demo");
+                        setStatusMessage("Demo Mode");
                     }
                 }
             }, 300);
-        } else {
-            setMicError("Speech recognition not available in this browser. Please use Chrome, Edge, or Safari.");
-            setStatusMessage("Not Supported");
-            return;
+        } else if (!micPermissionGranted) {
+            console.log("ℹ️ Speech recognition disabled - microphone permission not granted");
+            setStatusMessage("Demo Mode");
+        } else if (!recognitionRef.current) {
+            console.warn("⚠️ Speech recognition not available in this browser");
+            setStatusMessage("Demo Mode");
         }
 
-        // Welcome message for agentic mode - conversational and question-asking
-        if (micPermissionGranted) {
-            const welcomeMessage = "Hey there! I'm Bella, your friendly mortgage guide. I'm here to help you through Prep4Loan with real conversation—no scripts, just genuine help. What brings you here today? Are you looking to buy a home, refinance, or just exploring your options?";
-            await playAudio(welcomeMessage);
-            setConversationHistory([{ role: 'model', text: welcomeMessage }]);
-            
-            // Auto-scroll to show welcome message
-            setTimeout(() => {
-                if (transcriptScrollRef.current) {
-                    transcriptScrollRef.current.scrollTop = transcriptScrollRef.current.scrollHeight;
-                }
-            }, 100);
-        }
+        // Welcome message for agentic mode - always play, even without mic
+        const welcomeMessage = micPermissionGranted 
+            ? "Hey there! I'm Bella, your friendly mortgage guide. I'm here to help you through Prep4Loan with real conversation—no scripts, just genuine help. What brings you here today? Are you looking to buy a home, refinance, or just exploring your options?"
+            : "Hey there! I'm Bella, your friendly mortgage guide. I'm here to help you through Prep4Loan. I can guide you through everything, but I notice microphone access wasn't granted. You can still interact with me through the chat interface, or enable microphone access to have voice conversations. What would you like to explore today?";
+        
+        await playAudio(welcomeMessage);
+        setConversationHistory([{ role: 'model', text: welcomeMessage }]);
+        
+        // Auto-scroll to show welcome message
+        setTimeout(() => {
+            if (transcriptScrollRef.current) {
+                transcriptScrollRef.current.scrollTop = transcriptScrollRef.current.scrollHeight;
+            }
+        }, 100);
     };
 
     // Listen for user actions to provide contextual help
@@ -930,7 +934,7 @@ const BellaVoiceAssistant: React.FC = () => {
                             {mode === 'idle' && "Ready to guide you through Prep4Loan!"}
                             {(mode === 'call' || mode === 'agentic') && isBellaSpeaking && "Speaking..."}
                             {(mode === 'call' || mode === 'agentic') && !isBellaSpeaking && micPermissionGranted && conversationHistory.length === 0 && "Listening..."}
-                            {(mode === 'call' || mode === 'agentic') && !isBellaSpeaking && micPermissionGranted === false && "Click button to allow mic"}
+                            {(mode === 'call' || mode === 'agentic') && !isBellaSpeaking && micPermissionGranted === false && "Demo Mode - Bella can guide you"}
                             {(mode === 'call' || mode === 'agentic') && micPermissionGranted === null && "Requesting access..."}
                         </p>
                     )}
@@ -947,8 +951,10 @@ const BellaVoiceAssistant: React.FC = () => {
                             {(micError.includes('permission') || micError.includes('denied') || micError.includes('Allow')) && (
                                 <div className="space-y-3">
                                     <div className="text-[11px] text-gray-700 space-y-2 bg-white rounded p-2 border border-gray-200">
-                                        <p className="font-semibold text-gray-800 mb-2">Quick Fix:</p>
+                                        <p className="font-semibold text-gray-800 mb-2">Note:</p>
                                         <div className="space-y-1.5 text-gray-700">
+                                            <p>Bella can still guide you without microphone access! You can interact through the chat interface.</p>
+                                            <p className="mt-2 font-semibold">To enable voice input:</p>
                                             <p>1. Look for the <strong>🔒 lock icon</strong> in your browser's address bar</p>
                                             <p>2. Click it and select <strong>"Allow"</strong> for microphone</p>
                                             <p>3. Click the button below to try again</p>
@@ -960,7 +966,7 @@ const BellaVoiceAssistant: React.FC = () => {
                                         className="w-full bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold py-2.5 px-4 rounded-lg transition-all active:scale-95 shadow-md flex items-center justify-center gap-2"
                                     >
                                         <span>🎤</span>
-                                        <span>Allow Microphone Access</span>
+                                        <span>Enable Voice Input</span>
                                     </button>
                                 </div>
                             )}
