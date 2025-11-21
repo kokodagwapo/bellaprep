@@ -55,6 +55,7 @@ const AddressInput: React.FC<{
     const [mapboxLoaded, setMapboxLoaded] = useState(false);
     const [showAddressModal, setShowAddressModal] = useState(false);
     const [addressPreview, setAddressPreview] = useState<AddressDetails | null>(null);
+    const [showVerificationMessage, setShowVerificationMessage] = useState(false);
 
     // Initialize Mapbox
     useEffect(() => {
@@ -162,6 +163,17 @@ const AddressInput: React.FC<{
                 if (onValidationChange) {
                     onValidationChange(true);
                 }
+                
+                // Show verification message if address is verified
+                if (verification.isValid) {
+                    setShowVerificationMessage(true);
+                    // Auto-hide verification message after 8 seconds
+                    setTimeout(() => {
+                        setShowVerificationMessage(false);
+                    }, 8000);
+                } else {
+                    setShowVerificationMessage(false);
+                }
             } catch (error) {
                 console.error('Error verifying address:', error);
                 // Address is already set above, store for modal (don't show automatically)
@@ -253,6 +265,7 @@ const AddressInput: React.FC<{
                                     isVerifiedRef.current = false;
                                     setIsVerified(false);
                                     setAddressPreview(null); // Clear stored address when manually editing
+                                    setShowVerificationMessage(false); // Hide verification message
                                 }
                             }}
                             placeholder={placeholder || "Start typing your address..."}
@@ -405,18 +418,20 @@ const AddressInput: React.FC<{
                     )}
                 </div>
                 {/* Enhanced verification message */}
-                {isVerified && value && (
+                {showVerificationMessage && isVerified && value && (
                     <motion.div
                         initial={{ opacity: 0, y: -5 }}
                         animate={{ opacity: 1, y: 0 }}
-                        className="mt-2 flex items-center gap-2 text-xs sm:text-sm text-green-600 font-medium"
+                        exit={{ opacity: 0, y: -5 }}
+                        className="mt-2 p-3 bg-green-50 border border-green-200 rounded-lg text-sm text-green-800 flex items-start gap-2"
                     >
-                        <div className="flex items-center justify-center w-5 h-5 rounded-full bg-green-100">
-                            <svg className="w-3 h-3 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
-                            </svg>
+                        <svg className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                        </svg>
+                        <div className="flex-1">
+                            <p className="font-semibold text-green-900 mb-1">Address Verified ✓</p>
+                            <p className="text-green-700">Address verified and correct. Please double-check to ensure accuracy.</p>
                         </div>
-                        <span>Address verified and ready</span>
                     </motion.div>
                 )}
             </div>
