@@ -256,56 +256,105 @@ const AddressInput: React.FC<{
                 {value && value.trim().length > 5 && (
                     <button
                         type="button"
-                        onClick={async () => {
+                        onClick={async (e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            
                             // If addressPreview exists, use it; otherwise, geocode the current address
-                            if (addressPreview) {
+                            if (addressPreview && addressPreview.coordinates) {
                                 setShowAddressModal(true);
                             } else {
-                                // Geocode the manually entered address
+                                // Show loading state
+                                const button = e.currentTarget;
+                                const originalContent = button.innerHTML;
+                                button.disabled = true;
+                                button.innerHTML = '<div class="animate-spin rounded-full h-5 w-5 border-b-2 border-primary"></div>';
+                                
                                 try {
-                                    const { verifyAddress } = await import('../../services/addressVerificationService');
-                                    const verification = await verifyAddress({
-                                        street: value,
-                                        city: '',
-                                        state: '',
-                                        zip: ''
-                                    });
-                                    
-                                    // Try to get coordinates using Mapbox Geocoding API
+                                    // Try to get coordinates using Mapbox Geocoding API first (faster)
                                     const apiKey = import.meta.env.VITE_MAPBOX_API_KEY;
                                     let coordinates: { longitude: number; latitude: number } | undefined;
+                                    let street = '';
+                                    let city = '';
+                                    let state = '';
+                                    let zip = '';
                                     
                                     if (apiKey) {
                                         try {
                                             const geocodeResponse = await fetch(
-                                                `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(value)}.json?access_token=${apiKey}&country=US&limit=1`
+                                                `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(value)}.json?access_token=${apiKey}&country=US&limit=1&types=address`
                                             );
                                             const geocodeData = await geocodeResponse.json();
                                             
                                             if (geocodeData.features && geocodeData.features.length > 0) {
-                                                const coords = geocodeData.features[0].geometry?.coordinates;
+                                                const feature = geocodeData.features[0];
+                                                const coords = feature.geometry?.coordinates;
                                                 if (coords && coords.length >= 2) {
                                                     coordinates = {
                                                         longitude: coords[0],
                                                         latitude: coords[1]
                                                     };
                                                 }
+                                                
+                                                // Extract address components from geocoded result
+                                                const properties = feature.properties || {};
+                                                const context = feature.context || [];
+                                                
+                                                street = properties.address_line || properties.name || value.split(',')[0] || value;
+                                                
+                                                context.forEach((item: any) => {
+                                                    if (item.id?.startsWith('place')) {
+                                                        city = item.text || '';
+                                                    }
+                                                    if (item.id?.startsWith('region')) {
+                                                        state = item.short_code?.replace('US-', '') || '';
+                                                    }
+                                                    if (item.id?.startsWith('postcode')) {
+                                                        zip = item.text || '';
+                                                    }
+                                                });
                                             }
                                         } catch (geocodeError) {
                                             console.warn('Could not geocode address for map:', geocodeError);
                                         }
                                     }
                                     
+                                    // Verify address with Mapbox if we have components
+                                    let verified = false;
+                                    if (street || city || state || zip) {
+                                        try {
+                                            const { verifyAddress } = await import('../../services/addressVerificationService');
+                                            const verification = await verifyAddress({
+                                                street: street || value,
+                                                city,
+                                                state,
+                                                zip
+                                            });
+                                            
+                                            if (verification.isValid && verification.normalizedAddress) {
+                                                street = verification.normalizedAddress.street || street;
+                                                city = verification.normalizedAddress.city || city;
+                                                state = verification.normalizedAddress.state || state;
+                                                zip = verification.normalizedAddress.zip || zip;
+                                                verified = true;
+                                            }
+                                        } catch (verifyError) {
+                                            console.warn('Could not verify address:', verifyError);
+                                        }
+                                    }
+                                    
+                                    const fullAddress = street && city && state && zip
+                                        ? `${street}, ${city}, ${state} ${zip}`
+                                        : value;
+                                    
                                     const addressDetails: AddressDetails = {
-                                        street: verification.normalizedAddress?.street || value.split(',')[0] || value,
-                                        city: verification.normalizedAddress?.city || '',
-                                        state: verification.normalizedAddress?.state || '',
-                                        zip: verification.normalizedAddress?.zip || '',
-                                        fullAddress: verification.normalizedAddress 
-                                            ? `${verification.normalizedAddress.street}, ${verification.normalizedAddress.city}, ${verification.normalizedAddress.state} ${verification.normalizedAddress.zip}`
-                                            : value,
+                                        street: street || value.split(',')[0] || value,
+                                        city: city || '',
+                                        state: state || '',
+                                        zip: zip || '',
+                                        fullAddress: fullAddress,
                                         coordinates: coordinates,
-                                        verified: verification.isValid
+                                        verified: verified
                                     };
                                     
                                     setAddressPreview(addressDetails);
@@ -324,10 +373,14 @@ const AddressInput: React.FC<{
                                     };
                                     setAddressPreview(addressDetails);
                                     setShowAddressModal(true);
+                                } finally {
+                                    // Restore button state
+                                    button.disabled = false;
+                                    button.innerHTML = originalContent;
                                 }
                             }
                         }}
-                        className="absolute right-3 top-1/2 transform -translate-y-1/2 p-1.5 rounded-lg bg-primary/10 hover:bg-primary/20 text-primary transition-all duration-200 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+                        className="absolute right-3 top-1/2 transform -translate-y-1/2 p-2 rounded-lg bg-primary/10 hover:bg-primary/20 text-primary transition-all duration-200 hover:scale-110 active:scale-95 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
                         aria-label="View and confirm address"
                         title="View and confirm address on map"
                     >
