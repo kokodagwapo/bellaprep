@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import type { FormData, MaritalStatus, CitizenshipStatus } from '../../types';
 import StepHeader from '../StepHeader';
 import StepNavigation from '../StepNavigation';
 import { Lightbulb } from '../icons';
 import { MapPin } from 'lucide-react';
+import { AddressAutofill } from '@mapbox/search-js-react';
 
 interface Step1bProps {
     data: FormData;
@@ -16,6 +17,18 @@ interface Step1bProps {
 const Step1bExtendedBorrowerInfo: React.FC<Step1bProps> = ({ data, onDataChange, onNext, onBack }) => {
     const [ssn, setSsn] = useState(data.ssn || '');
     const [ssnError, setSsnError] = useState('');
+    const [mapboxLoaded, setMapboxLoaded] = useState(false);
+
+    // Initialize Mapbox
+    useEffect(() => {
+        const apiKey = import.meta.env.VITE_MAPBOX_API_KEY || '';
+        if (apiKey) {
+            setMapboxLoaded(true);
+        } else {
+            console.warn('Mapbox API key not found. Please set VITE_MAPBOX_API_KEY in your environment variables.');
+            setMapboxLoaded(false);
+        }
+    }, []);
 
     const handleSsnChange = (value: string) => {
         // Format SSN: XXX-XX-XXXX
@@ -206,15 +219,74 @@ const Step1bExtendedBorrowerInfo: React.FC<Step1bProps> = ({ data, onDataChange,
                                 Street Address *
                             </label>
                             <div className="relative rounded-xl sm:rounded-lg overflow-hidden ring-1 ring-border/50 shadow-md hover:shadow-lg transition-all duration-300">
-                                <input
-                                    type="text"
-                                    value={data.formerAddress?.street || ''}
-                                    onChange={(e) => onDataChange({
-                                        formerAddress: { ...data.formerAddress, street: e.target.value }
-                                    })}
-                                    placeholder="Start typing your address..."
-                                    className="block w-full px-4 py-3.5 sm:px-4 sm:py-3 bg-gradient-to-br from-white to-gray-50/50 border-0 text-base sm:text-sm text-foreground placeholder:text-gray-400 focus:outline-none focus:ring-0 transition-all duration-200 touch-manipulation min-h-[48px] sm:min-h-[44px]"
-                                />
+                                {mapboxLoaded ? (
+                                    <AddressAutofill
+                                        accessToken={import.meta.env.VITE_MAPBOX_API_KEY || ''}
+                                        onRetrieve={async (res: any) => {
+                                            const feature = res.features[0];
+                                            if (feature) {
+                                                const properties = feature.properties || {};
+                                                const context = feature.context || [];
+                                                
+                                                // Extract address components
+                                                const street = properties.address_line || properties.name || '';
+                                                let city = '';
+                                                let state = '';
+                                                let zip = '';
+                                                
+                                                // Extract from context
+                                                context.forEach((item: any) => {
+                                                    if (item.id?.startsWith('place')) {
+                                                        city = item.text || '';
+                                                    }
+                                                    if (item.id?.startsWith('region')) {
+                                                        state = item.short_code?.replace('US-', '') || '';
+                                                    }
+                                                    if (item.id?.startsWith('postcode')) {
+                                                        zip = item.text || '';
+                                                    }
+                                                });
+                                                
+                                                // Auto-populate all fields
+                                                onDataChange({
+                                                    formerAddress: {
+                                                        ...data.formerAddress,
+                                                        street: street || data.formerAddress?.street || '',
+                                                        city: city || data.formerAddress?.city || '',
+                                                        state: state || data.formerAddress?.state || '',
+                                                        zip: zip || data.formerAddress?.zip || ''
+                                                    }
+                                                });
+                                            }
+                                        }}
+                                        options={{
+                                            country: 'US',
+                                            language: 'en'
+                                        }}
+                                    >
+                                        <input
+                                            type="text"
+                                            value={data.formerAddress?.street || ''}
+                                            onChange={(e) => onDataChange({
+                                                formerAddress: { ...data.formerAddress, street: e.target.value }
+                                            })}
+                                            placeholder="Start typing your address..."
+                                            className="block w-full px-4 py-3.5 sm:px-4 sm:py-3 bg-gradient-to-br from-white to-gray-50/50 border-0 text-base sm:text-sm text-foreground placeholder:text-gray-400 focus:outline-none focus:ring-0 transition-all duration-200 touch-manipulation min-h-[48px] sm:min-h-[44px]"
+                                            autoComplete="address-line1"
+                                        />
+                                    </AddressAutofill>
+                                ) : (
+                                    <input
+                                        type="text"
+                                        value={data.formerAddress?.street || ''}
+                                        onChange={(e) => onDataChange({
+                                            formerAddress: { ...data.formerAddress, street: e.target.value }
+                                        })}
+                                        placeholder="Start typing your address..."
+                                        className="block w-full px-4 py-3.5 sm:px-4 sm:py-3 bg-gradient-to-br from-white to-gray-50/50 border-0 text-base sm:text-sm text-foreground placeholder:text-gray-400 focus:outline-none focus:ring-0 transition-all duration-200 touch-manipulation min-h-[48px] sm:min-h-[44px]"
+                                        autoComplete="address-line1"
+                                    />
+                                )}
                             </div>
                         </div>
                         <div>
