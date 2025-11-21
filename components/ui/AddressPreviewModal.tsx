@@ -1,6 +1,8 @@
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, MapPin, ExternalLink, CheckCircle2 } from 'lucide-react';
+import mapboxgl from 'mapbox-gl';
+import 'mapbox-gl/dist/mapbox-gl.css';
 
 export interface AddressDetails {
   street?: string;
@@ -28,6 +30,92 @@ const AddressPreviewModal: React.FC<AddressPreviewModalProps> = ({
   address,
   onConfirm
 }) => {
+  const mapContainer = useRef<HTMLDivElement>(null);
+  const mapRef = useRef<mapboxgl.Map | null>(null);
+  const markerRef = useRef<mapboxgl.Marker | null>(null);
+  const [mapLoaded, setMapLoaded] = useState(false);
+
+  // Initialize 3D satellite map
+  useEffect(() => {
+    if (!isOpen || !address?.coordinates || !mapContainer.current) return;
+
+    const apiKey = import.meta.env.VITE_MAPBOX_API_KEY;
+    if (!apiKey) {
+      console.warn('Mapbox API key not found');
+      return;
+    }
+
+    mapboxgl.accessToken = apiKey;
+
+    // Initialize map with 3D satellite view
+    if (!address.coordinates) return;
+    
+    const map = new mapboxgl.Map({
+      container: mapContainer.current,
+      style: 'mapbox://styles/mapbox/satellite-streets-v12', // Satellite imagery with street labels
+      center: [address.coordinates.longitude, address.coordinates.latitude],
+      zoom: 17, // Close zoom for detail
+      pitch: 60, // 3D tilt angle (0-60 degrees)
+      bearing: -17.6, // Rotation angle
+      antialias: true, // Smooth rendering
+      attributionControl: false // Hide default attribution (we'll add custom)
+    });
+
+    mapRef.current = map;
+
+    // Add 3D terrain when map loads
+    map.on('load', () => {
+      // Add terrain source for 3D elevation
+      map.addSource('mapbox-dem', {
+        type: 'raster-dem',
+        url: 'mapbox://mapbox.mapbox-terrain-dem-v1',
+        tileSize: 512,
+        maxzoom: 14
+      });
+
+      // Set terrain with exaggeration for better 3D effect
+      map.setTerrain({ 
+        source: 'mapbox-dem', 
+        exaggeration: 1.5 // Makes terrain more pronounced
+      });
+
+      // Add marker at address location
+      if (address.coordinates) {
+        const marker = new mapboxgl.Marker({
+          color: '#ef4444', // Red color
+          scale: 1.2
+        })
+          .setLngLat([address.coordinates.longitude, address.coordinates.latitude])
+          .addTo(map);
+
+        markerRef.current = marker;
+
+        // Add popup with address
+        const popup = new mapboxgl.Popup({ offset: 25 })
+          .setLngLat([address.coordinates.longitude, address.coordinates.latitude])
+          .setHTML(`
+            <div class="p-2">
+              <p class="font-semibold text-sm">${address.fullAddress || `${address.street}, ${address.city}, ${address.state} ${address.zip}`}</p>
+            </div>
+          `)
+          .addTo(map);
+      }
+
+      setMapLoaded(true);
+    });
+
+    // Cleanup on unmount
+    return () => {
+      if (markerRef.current) {
+        markerRef.current.remove();
+      }
+      if (mapRef.current) {
+        mapRef.current.remove();
+        mapRef.current = null;
+      }
+    };
+  }, [isOpen, address]);
+
   if (!address) return null;
 
   const openInGoogleMaps = () => {
@@ -63,7 +151,7 @@ const AddressPreviewModal: React.FC<AddressPreviewModalProps> = ({
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
               onClick={(e) => e.stopPropagation()}
-              className="bg-white rounded-2xl shadow-2xl max-w-md w-full max-h-[90vh] overflow-y-auto"
+              className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden flex flex-col"
             >
               {/* Header */}
               <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between rounded-t-2xl z-10">
@@ -85,8 +173,31 @@ const AddressPreviewModal: React.FC<AddressPreviewModalProps> = ({
                 </button>
               </div>
 
-              {/* Content */}
-              <div className="p-6 space-y-4">
+              {/* 3D Satellite Map */}
+              {address.coordinates && (
+                <div className="relative w-full h-64 sm:h-80 bg-gray-200">
+                  <div 
+                    ref={mapContainer} 
+                    className="w-full h-full rounded-t-2xl"
+                    style={{ minHeight: '256px' }}
+                  />
+                  {!mapLoaded && (
+                    <div className="absolute inset-0 flex items-center justify-center bg-gray-100 rounded-t-2xl">
+                      <div className="text-center">
+                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-2"></div>
+                        <p className="text-sm text-gray-600">Loading 3D satellite view...</p>
+                      </div>
+                    </div>
+                  )}
+                  {/* Mapbox attribution */}
+                  <div className="absolute bottom-2 right-2 text-xs text-white bg-black/50 px-2 py-1 rounded">
+                    © Mapbox © Maxar
+                  </div>
+                </div>
+              )}
+
+              {/* Content - Scrollable */}
+              <div className="p-6 space-y-4 overflow-y-auto flex-1">
                 {/* Verification Status */}
                 {address.verified && (
                   <div className="flex items-center gap-2 p-3 bg-green-50 border border-green-200 rounded-lg">
