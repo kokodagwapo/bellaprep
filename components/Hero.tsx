@@ -433,9 +433,32 @@ const Hero: React.FC = () => {
           className="w-full max-w-3xl mx-auto px-4"
         >
           <AIChatInput
-            onSend={(message) => {
-              console.log('Message sent:', message);
-              // Handle message sending here
+            onSend={async (message, options) => {
+              console.log('Message sent:', message, 'Options:', options);
+              
+              // Handle deep search with GPT-5.1 (using GPT-4o)
+              if (options?.deepSearchActive) {
+                try {
+                  const { performDeepSearch } = await import('../services/openaiDeepSearchService');
+                  const deepSearchResult = await performDeepSearch({
+                    query: message,
+                    useGPT51: true, // Use latest GPT model
+                  });
+                  
+                  // Display the result - you can integrate this with a chat widget or modal
+                  console.log('Deep Search Result:', deepSearchResult);
+                  
+                  // Show result in an alert or modal (you can enhance this with a proper UI component)
+                  alert(`Deep Search Result:\n\n${deepSearchResult.substring(0, 500)}${deepSearchResult.length > 500 ? '...' : ''}`);
+                } catch (error: any) {
+                  console.error('Deep search error:', error);
+                  alert(`Deep search failed: ${error.message || 'Unknown error'}`);
+                }
+              } else {
+                // Regular message handling - integrate with Bella chat
+                console.log('Regular message:', message);
+                // You can integrate this with getBellaChatReply from geminiService
+              }
             }}
             onCameraClick={() => {
               console.log('OCR camera clicked');

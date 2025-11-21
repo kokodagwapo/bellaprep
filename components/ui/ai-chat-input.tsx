@@ -10,7 +10,7 @@ const PLACEHOLDERS = [
 ];
 
 interface AIChatInputProps {
-  onSend?: (message: string) => void;
+  onSend?: (message: string, options?: { thinkActive?: boolean; deepSearchActive?: boolean }) => void;
   onCameraClick?: () => void;
   onVoiceClick?: () => void;
 }
@@ -62,8 +62,10 @@ const AIChatInput: React.FC<AIChatInputProps> = ({
 
   const handleSend = () => {
     if (inputValue.trim() && onSend) {
-      onSend(inputValue);
+      onSend(inputValue, { thinkActive, deepSearchActive });
       setInputValue("");
+      setThinkActive(false);
+      setDeepSearchActive(false);
     }
   };
 

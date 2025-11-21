@@ -32,6 +32,7 @@ const BellaVoiceAssistant: React.FC = () => {
     const recognitionRef = useRef<any>(null);
     const micStreamRef = useRef<MediaStream | null>(null);
     const gainNodeRef = useRef<GainNode | null>(null);
+    const transcriptScrollRef = useRef<HTMLDivElement | null>(null);
 
     useEffect(() => {
         // Initialize Audio Context with default sample rate (prevents hissing/artifacts)
@@ -216,6 +217,18 @@ const BellaVoiceAssistant: React.FC = () => {
                     
                     // Update conversation history with Bella's response
                     setConversationHistory([...updatedHistory, { role: 'model' as const, text: reply }]);
+                    
+                    // Auto-scroll transcript to bottom when new message is added
+                    setTimeout(() => {
+                        if (transcriptScrollRef.current) {
+                            const endElement = transcriptScrollRef.current.querySelector('#transcript-end');
+                            if (endElement) {
+                                endElement.scrollIntoView({ behavior: 'smooth', block: 'end' });
+                            } else {
+                                transcriptScrollRef.current.scrollTop = transcriptScrollRef.current.scrollHeight;
+                            }
+                        }
+                    }, 100);
                     
                     // Play response
                     await playAudio(reply, () => {
@@ -833,6 +846,13 @@ const BellaVoiceAssistant: React.FC = () => {
             const welcomeMessage = "Hey there! I'm Bella, your friendly mortgage guide. I'm here to help you through Prep4Loan with real conversation—no scripts, just genuine help. What brings you here today? Are you looking to buy a home, refinance, or just exploring your options?";
             await playAudio(welcomeMessage);
             setConversationHistory([{ role: 'model', text: welcomeMessage }]);
+            
+            // Auto-scroll to show welcome message
+            setTimeout(() => {
+                if (transcriptScrollRef.current) {
+                    transcriptScrollRef.current.scrollTop = transcriptScrollRef.current.scrollHeight;
+                }
+            }, 100);
         }
     };
 
@@ -892,11 +912,40 @@ const BellaVoiceAssistant: React.FC = () => {
                 </div>
 
                 {/* Dynamic Content Area */}
-                <div className="px-5 py-2 min-h-[60px] flex flex-col items-start justify-center gap-1">
+                <div className="px-5 py-2 min-h-[60px] max-h-[300px] flex flex-col items-start justify-start gap-1 overflow-hidden">
+                    {/* Conversation Transcript - Scrollable */}
+                    {(mode === 'call' || mode === 'agentic') && conversationHistory.length > 0 && (
+                        <div 
+                            ref={transcriptScrollRef}
+                            className="w-full max-h-[250px] overflow-y-auto pr-2 space-y-3 mb-2 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100"
+                            style={{ scrollBehavior: 'smooth' }}
+                        >
+                            {conversationHistory.map((msg, idx) => (
+                                <motion.div
+                                    key={idx}
+                                    initial={{ opacity: 0, y: 10 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    className={`text-xs leading-relaxed p-2 rounded-lg ${
+                                        msg.role === 'user' 
+                                            ? 'bg-blue-50 text-blue-900 ml-auto text-right max-w-[85%]' 
+                                            : 'bg-primary/10 text-gray-800 mr-auto text-left max-w-[85%]'
+                                    }`}
+                                >
+                                    <div className="font-semibold text-[10px] mb-1 opacity-70">
+                                        {msg.role === 'user' ? 'You' : 'Bella'}
+                                    </div>
+                                    <div className="text-[11px] whitespace-pre-wrap break-words">{msg.text}</div>
+                                </motion.div>
+                            ))}
+                            <div id="transcript-end" />
+                        </div>
+                    )}
+                    
+                    {/* Status Message */}
                     <p className="text-sm text-gray-600 leading-relaxed font-medium">
                         {mode === 'idle' && "Ready to guide you through Prep4Loan!"}
                         {(mode === 'call' || mode === 'agentic') && isBellaSpeaking && "Speaking..."}
-                        {(mode === 'call' || mode === 'agentic') && !isBellaSpeaking && micPermissionGranted && "Listening..."}
+                        {(mode === 'call' || mode === 'agentic') && !isBellaSpeaking && micPermissionGranted && conversationHistory.length === 0 && "Listening..."}
                         {(mode === 'call' || mode === 'agentic') && !isBellaSpeaking && micPermissionGranted === false && "Mic Permission Needed"}
                     </p>
                     {micError && (
