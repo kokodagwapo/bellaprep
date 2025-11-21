@@ -32,9 +32,9 @@ export const generateBellaSpeechOpenAI = async (text: string): Promise<string | 
             },
             body: JSON.stringify({
                 model: 'tts-1-hd', // Latest HD model - highest quality, most natural, GPT-5.1 compatible
-                voice: 'nova', // Agentic female voice - most human-like, emotionally intelligent, conversational
+                voice: 'nova', // Best conversational female voice - most human-like, Gen Z friendly, emotionally intelligent
                 input: text,
-                speed: 0.95, // Slightly slower for more natural, thoughtful agentic conversation pace
+                speed: 1.0, // Natural conversational pace for Gen Z energy and vibe
             }),
         });
 

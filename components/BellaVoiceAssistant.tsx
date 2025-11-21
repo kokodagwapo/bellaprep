@@ -827,10 +827,10 @@ const BellaVoiceAssistant: React.FC = () => {
             setStatusMessage("Demo Mode");
         }
 
-        // Welcome message for agentic mode - always play, even without mic
+        // Welcome message for agentic mode - Gen Z style, always play, even without mic
         const welcomeMessage = micPermissionGranted 
-            ? "Hey there! I'm Bella, your friendly mortgage guide. I'm here to help you through Prep4Loan with real conversation—no scripts, just genuine help. What brings you here today? Are you looking to buy a home, refinance, or just exploring your options?"
-            : "Hey there! I'm Bella, your friendly mortgage guide. I'm here to help you through Prep4Loan. I can guide you through everything, but I notice microphone access wasn't granted. You can still interact with me through the chat interface, or enable microphone access to have voice conversations. What would you like to explore today?";
+            ? "Hey bestie! I'm Bella, your mortgage guide fr. I'm here to help you through Prep4Loan - no cap, just real talk and genuine help. What brings you here today? Are you looking to buy a home, refinance, or just exploring your options? Let's vibe!"
+            : "Hey bestie! I'm Bella, your mortgage guide. I'm here to help you through Prep4Loan. I can guide you through everything, but I notice mic access wasn't granted. You can still chat with me through the interface, or enable mic access to have voice convos. What would you like to explore today? Let's get it!";
         
         await playAudio(welcomeMessage);
         setConversationHistory([{ role: 'model', text: welcomeMessage }]);
