@@ -86,7 +86,13 @@ const DemoController: React.FC<DemoControllerProps> = ({
   const stepTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
-    audioContextRef.current = new ((window as any).AudioContext || (window as any).webkitAudioContext)({ sampleRate: 24000 });
+    // Initialize Audio Context - use default sample rate for better compatibility
+    const AudioContextClass = (window as any).AudioContext || (window as any).webkitAudioContext;
+    if (AudioContextClass) {
+      audioContextRef.current = new AudioContextClass();
+      console.log("✅ Audio context initialized for demo");
+    }
+    
     return () => {
       if (audioContextRef.current) {
         audioContextRef.current.close();
@@ -188,18 +194,57 @@ const DemoController: React.FC<DemoControllerProps> = ({
     if (!isMuted) {
       setIsLoadingAudio(true);
       try {
-        const audioData = await generateBellaSpeech(step.text, true); // Force Gemini voice for demo
+        // Resume audio context if suspended (required for autoplay policies)
+        if (audioContextRef.current?.state === 'suspended') {
+          try {
+            await audioContextRef.current.resume();
+            console.log("✅ Audio context resumed for demo playback");
+          } catch (e) {
+            console.warn("⚠️ Could not resume audio context:", e);
+          }
+        }
+
+        // Use best agentic voice: OpenAI Nova (best) with Gemini Kore as fallback
+        // Don't force Gemini only - let it use the best available voice
+        console.log("🎤 Generating speech with best available agentic voice (OpenAI Nova preferred, Gemini Kore fallback)...");
+        const audioData = await generateBellaSpeech(step.text, false); // false = use best available (OpenAI first)
+        
         if (audioData && audioContextRef.current) {
           if (currentSourceRef.current) {
             currentSourceRef.current.stop();
+            currentSourceRef.current.disconnect();
           }
           
-          const buffer = await decodeAudioData(decode(audioData), audioContextRef.current, 24000, 1);
+          // Decode audio - handle both OpenAI (MP3) and Gemini (PCM) formats
+          let audioBuffer: AudioBuffer;
+          try {
+            // Check if it's MP3 format (OpenAI) by trying to decode as audio file
+            // OpenAI returns base64-encoded MP3, which we can decode directly
+            const decodedBytes = decode(audioData);
+            
+            // Try to decode as MP3 first (OpenAI format)
+            try {
+              // Create a new ArrayBuffer copy from the Uint8Array to avoid type issues
+              const arrayBuffer = decodedBytes.buffer.slice(decodedBytes.byteOffset, decodedBytes.byteOffset + decodedBytes.byteLength) as ArrayBuffer;
+              audioBuffer = await audioContextRef.current.decodeAudioData(arrayBuffer);
+              console.log("✅ Decoded as MP3 (OpenAI format)");
+            } catch (mp3Error) {
+              // If MP3 decode fails, try as PCM (Gemini format)
+              console.log("🔄 Trying PCM format (Gemini)...");
+              audioBuffer = await decodeAudioData(decodedBytes, audioContextRef.current, 24000, 1);
+              console.log("✅ Decoded as PCM (Gemini format)");
+            }
+          } catch (decodeError: any) {
+            console.error("❌ Audio decode error:", decodeError);
+            throw new Error(`Failed to decode audio: ${decodeError.message}`);
+          }
+          
           const source = audioContextRef.current.createBufferSource();
-          source.buffer = buffer;
+          source.buffer = audioBuffer;
           source.connect(audioContextRef.current.destination);
           
           source.onended = () => {
+            console.log(`✅ Audio playback completed for step ${index + 1}`);
             if (isPlaying && currentStep === index) {
               // Calculate delay until next step
               const nextStep = demoScript[index + 1];
@@ -209,15 +254,42 @@ const DemoController: React.FC<DemoControllerProps> = ({
                 if (isPlaying) {
                   playStep(index + 1);
                 }
-              }, Math.max(delay - (buffer.duration * 1000), 500));
+              }, Math.max(delay - (audioBuffer.duration * 1000), 500));
             }
           };
           
-          source.start();
-          currentSourceRef.current = source;
+          console.log(`🎵 Starting audio playback for step ${index + 1} (duration: ${audioBuffer.duration.toFixed(2)}s)`);
+          try {
+            source.start(0);
+            currentSourceRef.current = source;
+            setIsLoadingAudio(false);
+          } catch (playError: any) {
+            console.error("❌ Audio playback error:", playError);
+            setIsLoadingAudio(false);
+            // Continue to next step even if audio fails
+            const nextStep = demoScript[index + 1];
+            const delay = nextStep ? (nextStep.time - step.time) * 1000 : 2000;
+            stepTimeoutRef.current = setTimeout(() => {
+              if (isPlaying) {
+                playStep(index + 1);
+              }
+            }, delay);
+          }
+        } else {
+          console.error("❌ No audio data received");
+          setIsLoadingAudio(false);
+          // Continue even if audio generation fails
+          const nextStep = demoScript[index + 1];
+          const delay = nextStep ? (nextStep.time - step.time) * 1000 : 2000;
+          stepTimeoutRef.current = setTimeout(() => {
+            if (isPlaying) {
+              playStep(index + 1);
+            }
+          }, delay);
         }
       } catch (error) {
-        console.error("Error playing audio:", error);
+        console.error("❌ Error playing audio:", error);
+        setIsLoadingAudio(false);
         // Continue even if audio fails
         const nextStep = demoScript[index + 1];
         const delay = nextStep ? (nextStep.time - step.time) * 1000 : 2000;
@@ -226,8 +298,6 @@ const DemoController: React.FC<DemoControllerProps> = ({
             playStep(index + 1);
           }
         }, delay);
-      } finally {
-        setIsLoadingAudio(false);
       }
     } else {
       // If muted, still advance after delay
@@ -241,16 +311,27 @@ const DemoController: React.FC<DemoControllerProps> = ({
     }
   };
 
-  const togglePlay = () => {
+  const togglePlay = async () => {
     if (isPlaying) {
       setIsPlaying(false);
       if (currentSourceRef.current) {
         currentSourceRef.current.stop();
+        currentSourceRef.current.disconnect();
       }
       if (stepTimeoutRef.current) {
         clearTimeout(stepTimeoutRef.current);
       }
     } else {
+      // Resume audio context on user interaction (required for autoplay policies)
+      if (audioContextRef.current?.state === 'suspended') {
+        try {
+          await audioContextRef.current.resume();
+          console.log("✅ Audio context resumed on play button click");
+        } catch (e) {
+          console.warn("⚠️ Could not resume audio context:", e);
+        }
+      }
+      
       setIsPlaying(true);
       if (currentStep >= demoScript.length) {
         setCurrentStep(0);
@@ -385,3 +466,4 @@ const DemoController: React.FC<DemoControllerProps> = ({
 };
 
 export default DemoController;
+
