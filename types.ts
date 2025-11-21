@@ -79,6 +79,7 @@ export interface EmploymentInfo {
         state?: string;
         zip?: string;
         country?: string;
+        fullAddress?: string; // Full formatted address string
     };
     position?: string;
     startDate?: string;

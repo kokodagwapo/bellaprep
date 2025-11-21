@@ -220,131 +220,104 @@ const Step2bEmploymentDetails: React.FC<Step2bProps> = ({ data, onDataChange, on
                     />
                 </div>
 
-                {/* Employer Address */}
+                {/* Employer Address - Single Field with Mapbox Autosuggest */}
                 <div className="sm:col-span-2">
                     <label className="block text-xs sm:text-sm font-semibold text-foreground mb-2 sm:mb-3 flex items-center gap-2">
                         <MapPin className="h-4 w-4 text-primary" />
                         Employer Address
                     </label>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <div className="sm:col-span-2">
-                            <div className="relative rounded-xl sm:rounded-lg overflow-hidden ring-1 ring-border/50 shadow-md hover:shadow-lg transition-all duration-300">
-                                {mapboxLoaded ? (
-                                    <AddressAutofill
-                                        accessToken={import.meta.env.VITE_MAPBOX_API_KEY || ''}
-                                        onRetrieve={async (res: any) => {
-                                            const feature = res.features[0];
-                                            if (feature) {
-                                                const properties = feature.properties || {};
-                                                const context = feature.context || [];
-                                                
-                                                // Extract address components
-                                                const street = properties.address_line || properties.name || '';
-                                                let city = '';
-                                                let state = '';
-                                                let zip = '';
-                                                
-                                                // Extract from context
-                                                context.forEach((item: any) => {
-                                                    if (item.id?.startsWith('place')) {
-                                                        city = item.text || '';
-                                                    }
-                                                    if (item.id?.startsWith('region')) {
-                                                        state = item.short_code?.replace('US-', '') || '';
-                                                    }
-                                                    if (item.id?.startsWith('postcode')) {
-                                                        zip = item.text || '';
-                                                    }
-                                                });
-                                                
-                                                // Auto-populate all fields
-                                                handleAddressChange('street', street);
-                                                if (city) handleAddressChange('city', city);
-                                                if (state) handleAddressChange('state', state);
-                                                if (zip) handleAddressChange('zip', zip);
+                    <div className="relative rounded-xl sm:rounded-lg overflow-hidden ring-1 ring-border/50 shadow-md hover:shadow-lg transition-all duration-300">
+                        {mapboxLoaded ? (
+                            <AddressAutofill
+                                accessToken={import.meta.env.VITE_MAPBOX_API_KEY || ''}
+                                onRetrieve={async (res: any) => {
+                                    const feature = res.features[0];
+                                    if (feature) {
+                                        const properties = feature.properties || {};
+                                        const context = feature.context || [];
+                                        
+                                        // Extract address components
+                                        const street = properties.address_line || properties.name || '';
+                                        let city = '';
+                                        let state = '';
+                                        let zip = '';
+                                        
+                                        // Extract from context
+                                        context.forEach((item: any) => {
+                                            if (item.id?.startsWith('place')) {
+                                                city = item.text || '';
                                             }
-                                        }}
-                                        options={{
-                                            country: 'US',
-                                            language: 'en'
-                                        }}
-                                    >
-                                        <input
-                                            type="text"
-                                            value={data.currentEmployment?.employerAddress?.street || ''}
-                                            onChange={(e) => handleAddressChange('street', e.target.value)}
-                                            placeholder="Start typing your address..."
-                                            className="block w-full px-4 py-3.5 sm:px-4 sm:py-3 bg-gradient-to-br from-white to-gray-50/50 border-0 text-base sm:text-sm text-foreground placeholder:text-gray-400 focus:outline-none focus:ring-0 transition-all duration-200 touch-manipulation min-h-[48px] sm:min-h-[44px]"
-                                            autoComplete="address-line1"
-                                        />
-                                    </AddressAutofill>
-                                ) : (
-                                    <input
-                                        type="text"
-                                        value={data.currentEmployment?.employerAddress?.street || ''}
-                                        onChange={(e) => handleAddressChange('street', e.target.value)}
-                                        placeholder="Start typing your address..."
-                                        className="block w-full px-4 py-3.5 sm:px-4 sm:py-3 bg-gradient-to-br from-white to-gray-50/50 border-0 text-base sm:text-sm text-foreground placeholder:text-gray-400 focus:outline-none focus:ring-0 transition-all duration-200 touch-manipulation min-h-[48px] sm:min-h-[44px]"
-                                        autoComplete="address-line1"
-                                    />
-                                )}
-                            </div>
-                        </div>
-                        <div>
-                            <div className="relative rounded-xl sm:rounded-lg overflow-hidden ring-1 ring-border/50 shadow-md hover:shadow-lg transition-all duration-300">
-                                <input
-                                    type="text"
-                                    value={data.currentEmployment?.employerAddress?.city || ''}
-                                    onChange={(e) => handleAddressChange('city', e.target.value)}
-                                    placeholder="City"
-                                    className="block w-full px-4 py-3.5 sm:px-4 sm:py-3 bg-gradient-to-br from-white to-gray-50/50 border-0 text-base sm:text-sm text-foreground placeholder:text-gray-400 focus:outline-none focus:ring-0 transition-all duration-200 touch-manipulation min-h-[48px] sm:min-h-[44px]"
-                                />
-                            </div>
-                        </div>
-                        <div>
-                            <div className="relative rounded-xl sm:rounded-lg overflow-hidden ring-1 ring-border/50 shadow-md hover:shadow-lg transition-all duration-300">
-                                <input
-                                    type="text"
-                                    value={data.currentEmployment?.employerAddress?.state || ''}
-                                    onChange={(e) => handleAddressChange('state', e.target.value.toUpperCase().slice(0, 2))}
-                                    placeholder="State"
-                                    maxLength={2}
-                                    className="block w-full px-4 py-3.5 sm:px-4 sm:py-3 bg-gradient-to-br from-white to-gray-50/50 border-0 text-base sm:text-sm text-foreground placeholder:text-gray-400 focus:outline-none focus:ring-0 transition-all duration-200 touch-manipulation min-h-[48px] sm:min-h-[44px] uppercase"
-                                />
-                            </div>
-                        </div>
-                        <div>
-                            <div className="relative rounded-xl sm:rounded-lg overflow-hidden ring-1 ring-border/50 shadow-md hover:shadow-lg transition-all duration-300">
-                                <input
-                                    type="text"
-                                    inputMode="numeric"
-                                    pattern="[0-9]*"
-                                    value={data.currentEmployment?.employerAddress?.zip || ''}
-                                    onChange={async (e) => {
-                                        // Allow only digits, limit to 5 characters
-                                        const zip = e.target.value.replace(/\D/g, '').slice(0, 5);
-                                        handleAddressChange('zip', zip);
-                                        // Auto-fill city/state from ZIP when 5 digits entered and verify with Mapbox
-                                        if (zip.length === 5) {
-                                            try {
-                                                const { getCityStateFromZip } = await import('../../services/addressVerificationService');
-                                                const cityState = await getCityStateFromZip(zip);
-                                                if (cityState) {
-                                                    handleAddressChange('city', cityState.city);
-                                                    handleAddressChange('state', cityState.state);
-                                                }
-                                            } catch (error) {
-                                                console.error('Error verifying ZIP code with Mapbox:', error);
+                                            if (item.id?.startsWith('region')) {
+                                                state = item.short_code?.replace('US-', '') || '';
                                             }
-                                        }
+                                            if (item.id?.startsWith('postcode')) {
+                                                zip = item.text || '';
+                                            }
+                                        });
+                                        
+                                        // Build full address
+                                        const fullAddress = properties.full_address || properties.place_name || 
+                                            `${street}${street && city ? ', ' : ''}${city}${city && state ? ', ' : ''}${state} ${zip}`.trim();
+                                        
+                                        // Store full address and components (for backend compatibility)
+                                        const employerAddress = {
+                                            street: street || '',
+                                            city: city || '',
+                                            state: state || '',
+                                            zip: zip || '',
+                                            fullAddress: fullAddress
+                                        };
+                                        
+                                        handleEmploymentChange('employerAddress', employerAddress);
+                                    }
+                                }}
+                                options={{
+                                    country: 'US',
+                                    language: 'en'
+                                }}
+                            >
+                                <input
+                                    type="text"
+                                    value={data.currentEmployment?.employerAddress?.fullAddress || 
+                                        (data.currentEmployment?.employerAddress?.street && data.currentEmployment?.employerAddress?.city && data.currentEmployment?.employerAddress?.state && data.currentEmployment?.employerAddress?.zip
+                                            ? `${data.currentEmployment.employerAddress.street}, ${data.currentEmployment.employerAddress.city}, ${data.currentEmployment.employerAddress.state} ${data.currentEmployment.employerAddress.zip}`
+                                            : data.currentEmployment?.employerAddress?.street || '')}
+                                    onChange={(e) => {
+                                        const newValue = e.target.value;
+                                        // Update full address, but keep components for backend
+                                        const currentAddress = data.currentEmployment?.employerAddress || {};
+                                        const updatedAddress = {
+                                            ...currentAddress,
+                                            fullAddress: newValue
+                                        };
+                                        handleEmploymentChange('employerAddress', updatedAddress);
                                     }}
-                                    placeholder="ZIP Code"
-                                    maxLength={5}
-                                    minLength={5}
+                                    placeholder="Start typing your address (e.g., 123 Main St, City, State ZIP)"
                                     className="block w-full px-4 py-3.5 sm:px-4 sm:py-3 bg-gradient-to-br from-white to-gray-50/50 border-0 text-base sm:text-sm text-foreground placeholder:text-gray-400 focus:outline-none focus:ring-0 transition-all duration-200 touch-manipulation min-h-[48px] sm:min-h-[44px]"
+                                    autoComplete="address-line1"
                                 />
-                            </div>
-                        </div>
+                            </AddressAutofill>
+                        ) : (
+                            <input
+                                type="text"
+                                value={data.currentEmployment?.employerAddress?.fullAddress || 
+                                    (data.currentEmployment?.employerAddress?.street && data.currentEmployment?.employerAddress?.city && data.currentEmployment?.employerAddress?.state && data.currentEmployment?.employerAddress?.zip
+                                        ? `${data.currentEmployment.employerAddress.street}, ${data.currentEmployment.employerAddress.city}, ${data.currentEmployment.employerAddress.state} ${data.currentEmployment.employerAddress.zip}`
+                                        : data.currentEmployment?.employerAddress?.street || '')}
+                                onChange={(e) => {
+                                    const newValue = e.target.value;
+                                    const currentAddress = data.currentEmployment?.employerAddress || {};
+                                    const updatedAddress = {
+                                        ...currentAddress,
+                                        fullAddress: newValue
+                                    };
+                                    handleEmploymentChange('employerAddress', updatedAddress);
+                                }}
+                                placeholder="Start typing your address (e.g., 123 Main St, City, State ZIP)"
+                                className="block w-full px-4 py-3.5 sm:px-4 sm:py-3 bg-gradient-to-br from-white to-gray-50/50 border-0 text-base sm:text-sm text-foreground placeholder:text-gray-400 focus:outline-none focus:ring-0 transition-all duration-200 touch-manipulation min-h-[48px] sm:min-h-[44px]"
+                                autoComplete="address-line1"
+                            />
+                        )}
                     </div>
                 </div>
             </div>
