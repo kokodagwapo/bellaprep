@@ -989,14 +989,17 @@ const BellaVoiceAssistant: React.FC<BellaVoiceAssistantProps> = ({ onStartDemo }
                     {mode === 'idle' && (
                         <div className="flex items-center justify-center">
                             <div className="flex flex-col gap-2">
-                                <button
-                                    onClick={startAgenticMode}
-                                    type="button"
-                                    className="flex items-center justify-center gap-2 bg-primary hover:bg-primary/90 text-white py-3 px-6 rounded-xl shadow-md transition-all active:scale-95 w-full"
-                                >
-                                    <Phone size={18} />
-                                    <span className="text-sm font-semibold">Start Live Guide</span>
-                                </button>
+                                {/* Start Live Guide - Hidden for now, will bring back later */}
+                                {false && (
+                                    <button
+                                        onClick={startAgenticMode}
+                                        type="button"
+                                        className="flex items-center justify-center gap-2 bg-primary hover:bg-primary/90 text-white py-3 px-6 rounded-xl shadow-md transition-all active:scale-95 w-full"
+                                    >
+                                        <Phone size={18} />
+                                        <span className="text-sm font-semibold">Start Live Guide</span>
+                                    </button>
+                                )}
                                 <button
                                     onClick={() => {
                                         if (onStartDemo) {
