@@ -26,16 +26,14 @@ const demoScript: DemoScriptStep[] = [
   },
   {
     time: 8,
-    action: "Click 'Start Pre-Evaluation'",
+    action: "Navigate to Prep4Loan",
     text: "We start here. No scary forms yet. Just you, me, and some big friendly buttons. It's like a dating app, but for your dream home.",
-    navigateTo: 'prep',
-    clickTarget: "Start Pre-Evaluation"
+    navigateTo: 'prep'
   },
   {
     time: 16,
-    action: "Step-by-Step Flow - Loan Purpose",
-    text: "See how easy this is? 'Purchase a Home', 'Single Family'... I'm just asking the basics. We keep it light because, let's be honest, nobody wakes up excited to fill out paperwork.",
-    fillData: { loanPurpose: 'Purchase a Home', propertyType: 'Single Family' }
+    action: "Step-by-Step Flow - Welcome Screen",
+    text: "See how easy this is? I'm just asking the basics. We keep it light because, let's be honest, nobody wakes up excited to fill out paperwork. Click 'Get Started' when you're ready."
   },
   {
     time: 24,
@@ -117,59 +115,121 @@ const DemoController: React.FC<DemoControllerProps> = ({
     }
   }, [isPlaying, currentStep]);
 
+  // Wait for element to appear with retries
+  const waitForElement = async (selector: string, maxRetries = 10, delay = 200): Promise<HTMLElement | null> => {
+    for (let i = 0; i < maxRetries; i++) {
+      const element = document.querySelector(selector) as HTMLElement;
+      if (element) {
+        return element;
+      }
+      await new Promise(resolve => setTimeout(resolve, delay));
+    }
+    return null;
+  };
+
+  // Highlight element for demo visualization
+  const highlightElement = (element: HTMLElement) => {
+    const originalStyle = element.style.cssText;
+    element.style.transition = 'all 0.3s ease';
+    element.style.boxShadow = '0 0 0 4px rgba(59, 130, 246, 0.5)';
+    element.style.transform = 'scale(1.02)';
+    element.style.zIndex = '9999';
+    
+    setTimeout(() => {
+      element.style.cssText = originalStyle;
+    }, 2000);
+  };
+
   const performStepActions = async (step: DemoScriptStep) => {
     // Navigate if needed
     if (step.navigateTo && onNavigateTo) {
       console.log(`🎬 Demo: Navigating to ${step.navigateTo}`);
       onNavigateTo(step.navigateTo);
-      // Wait for navigation to complete
-      await new Promise(resolve => setTimeout(resolve, 500));
+      // Wait longer for navigation and DOM to update
+      await new Promise(resolve => setTimeout(resolve, 1000));
     }
 
     // Fill data if needed
     if (step.fillData && onFillData) {
       console.log(`🎬 Demo: Filling data`, step.fillData);
       onFillData(step.fillData);
+      // Wait for data to be applied
+      await new Promise(resolve => setTimeout(resolve, 300));
+    }
+
+    // Click button if needed (do this before scrolling for better UX)
+    if (step.clickTarget) {
+      // Wait for button to appear
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      const buttons = Array.from(document.querySelectorAll('button, [role="button"], a[role="button"]'));
+      const targetButton = buttons.find(btn => {
+        const text = btn.textContent?.trim() || '';
+        const ariaLabel = btn.getAttribute('aria-label') || '';
+        const buttonText = step.clickTarget || '';
+        
+        return text.toLowerCase().includes(buttonText.toLowerCase()) || 
+               ariaLabel.toLowerCase().includes(buttonText.toLowerCase()) ||
+               text.toLowerCase() === buttonText.toLowerCase();
+      }) as HTMLElement | undefined;
+      
+      if (targetButton) {
+        console.log(`🎬 Demo: Clicking button "${step.clickTarget}"`);
+        highlightElement(targetButton);
+        await new Promise(resolve => setTimeout(resolve, 500));
+        targetButton.click();
+        // Wait for click action to complete
+        await new Promise(resolve => setTimeout(resolve, 500));
+      } else {
+        console.warn(`🎬 Demo: Could not find button "${step.clickTarget}"`);
+        // Try alternative: if navigating to prep, use direct navigation
+        if (step.clickTarget.includes('Pre-Evaluation') && onNavigateTo) {
+          console.log(`🎬 Demo: Using direct navigation as fallback`);
+          onNavigateTo('prep');
+          await new Promise(resolve => setTimeout(resolve, 500));
+        }
+      }
     }
 
     // Scroll if needed
     if (step.scrollTarget) {
-      setTimeout(() => {
-        if (step.scrollTarget === 'top') {
-          window.scrollTo({ top: 0, behavior: 'smooth' });
-        } else if (step.scrollTarget === 'sidebar') {
-          const sidebar = document.querySelector('[data-sidebar]');
-          if (sidebar) {
-            sidebar.scrollIntoView({ behavior: 'smooth', block: 'start' });
-          }
-        } else if (step.scrollTarget === 'form-content') {
-          const formContent = document.querySelector('[data-form-content]') || 
-                             document.querySelector('.form-content') ||
-                             document.querySelector('main');
-          if (formContent) {
-            formContent.scrollTo({ top: formContent.scrollHeight, behavior: 'smooth' });
-          }
-        }
-      }, 300);
-    }
-
-    // Click button if needed
-    if (step.clickTarget) {
-      setTimeout(() => {
-        const buttons = Array.from(document.querySelectorAll('button, [role="button"]'));
-        const targetButton = buttons.find(btn => {
-          const text = btn.textContent?.trim() || '';
-          return text.includes(step.clickTarget || '') || 
-                 btn.getAttribute('aria-label')?.includes(step.clickTarget || '');
-        });
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      if (step.scrollTarget === 'top') {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      } else if (step.scrollTarget === 'sidebar') {
+        // Try multiple selectors for sidebar
+        const sidebar = await waitForElement('[data-sidebar]') ||
+                       await waitForElement('aside') ||
+                       document.querySelector('.sidebar') as HTMLElement;
         
-        if (targetButton) {
-          console.log(`🎬 Demo: Clicking button "${step.clickTarget}"`);
-          (targetButton as HTMLElement).click();
+        if (sidebar) {
+          sidebar.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          highlightElement(sidebar);
         } else {
-          console.warn(`🎬 Demo: Could not find button "${step.clickTarget}"`);
+          // Fallback: scroll to checklist area
+          const checklist = document.querySelector('[data-checklist]') || 
+                           document.querySelector('.checklist');
+          if (checklist) {
+            checklist.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            highlightElement(checklist as HTMLElement);
+          }
         }
-      }, 500);
+      } else if (step.scrollTarget === 'form-content') {
+        // Try multiple selectors for form content
+        const formContent = await waitForElement('[data-form-content]') ||
+                           await waitForElement('main') ||
+                           document.querySelector('.form-content') as HTMLElement ||
+                           document.querySelector('form') as HTMLElement;
+        
+        if (formContent) {
+          formContent.scrollTo({ top: formContent.scrollHeight, behavior: 'smooth' });
+          highlightElement(formContent);
+        } else {
+          // Fallback: scroll window
+          window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+        }
+      }
     }
   };
 
@@ -246,15 +306,22 @@ const DemoController: React.FC<DemoControllerProps> = ({
           source.onended = () => {
             console.log(`✅ Audio playback completed for step ${index + 1}`);
             if (isPlaying && currentStep === index) {
-              // Calculate delay until next step
+              // Calculate delay until next step - use actual audio duration
               const nextStep = demoScript[index + 1];
-              const delay = nextStep ? (nextStep.time - step.time) * 1000 : 2000;
+              const audioDuration = audioBuffer.duration * 1000; // Convert to ms
+              const scriptedDelay = nextStep ? (nextStep.time - step.time) * 1000 : 2000;
+              
+              // Use the longer of: remaining scripted time or minimum pause
+              const remainingTime = Math.max(scriptedDelay - audioDuration, 0);
+              const pauseTime = Math.max(remainingTime, 1000); // Minimum 1 second pause
+              
+              console.log(`⏱️ Step ${index + 1} completed. Audio: ${audioDuration.toFixed(0)}ms, Pausing ${pauseTime.toFixed(0)}ms before next step`);
               
               stepTimeoutRef.current = setTimeout(() => {
                 if (isPlaying) {
                   playStep(index + 1);
                 }
-              }, Math.max(delay - (audioBuffer.duration * 1000), 500));
+              }, pauseTime);
             }
           };
           
@@ -300,9 +367,12 @@ const DemoController: React.FC<DemoControllerProps> = ({
         }, delay);
       }
     } else {
-      // If muted, still advance after delay
+      // If muted, still advance after delay (estimate text reading time)
       const nextStep = demoScript[index + 1];
-      const delay = nextStep ? (nextStep.time - step.time) * 1000 : 2000;
+      const estimatedReadingTime = Math.max(step.text.length * 50, 3000); // ~50ms per character, min 3s
+      const scriptedDelay = nextStep ? (nextStep.time - step.time) * 1000 : 2000;
+      const delay = Math.max(estimatedReadingTime, scriptedDelay);
+      
       stepTimeoutRef.current = setTimeout(() => {
         if (isPlaying) {
           playStep(index + 1);
