@@ -221,7 +221,14 @@ const StepSubjectProperty: React.FC<StepSubjectPropertyProps> = ({
                   zipVerified ? 'border-green-500' : zipError ? 'border-red-500' : 'border-gray-300'
                 }`}
                 maxLength={5}
-                minLength={5}
+                autoComplete="postal-code"
+                style={{ 
+                  pointerEvents: 'auto',
+                  userSelect: 'text',
+                  WebkitUserSelect: 'text',
+                  MozUserSelect: 'text',
+                  touchAction: 'manipulation'
+                }}
               />
               {zipVerified && address.zip?.length === 5 && (
                 <p className="mt-1.5 text-xs text-green-600 flex items-center gap-1">
@@ -568,7 +575,14 @@ const StepSubjectProperty: React.FC<StepSubjectPropertyProps> = ({
                   targetZipVerified ? 'border-green-500' : targetZipError ? 'border-red-500' : 'border-gray-300'
                 }`}
                 maxLength={5}
-                minLength={5}
+                autoComplete="postal-code"
+                style={{ 
+                  pointerEvents: 'auto',
+                  userSelect: 'text',
+                  WebkitUserSelect: 'text',
+                  MozUserSelect: 'text',
+                  touchAction: 'manipulation'
+                }}
               />
               {targetZipVerified && targetZip.length === 5 && (
                 <p className="mt-1.5 text-xs text-green-600 flex items-center gap-1">
