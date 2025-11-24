@@ -14,7 +14,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onNavigateToPrep, onNavigateT
     {
       icon: <FilePlus2 className="h-10 w-10 text-primary" />,
       title: "Prep4Loan",
-      description: "Get pre-evaluation in minutes with our streamlined pre-evaluation process.",
+      description: "Get pre-evaluated in minutes with our streamlined pre-evaluation process.",
       action: "Start Pre-Evaluation"
     },
     {
