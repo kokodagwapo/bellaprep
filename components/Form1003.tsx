@@ -123,10 +123,6 @@ const Form1003: React.FC<Form1003Props> = ({ initialData }) => {
     <div className="w-full max-w-6xl mx-auto animate-fade-in my-4 sm:my-6 md:my-8 px-3 sm:px-4">
         {!showWelcome && (
           <>
-            <div className="text-center mb-4 sm:mb-6 md:mb-8">
-                <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-foreground font-heading px-2">Uniform Residential Loan Application</h1>
-                <p className="text-muted-foreground mt-2 text-sm sm:text-base md:text-lg">Fannie Mae Form 1003</p>
-            </div>
             {showStepIndicator && (
               <div className="mb-2 sm:mb-6 md:mb-8 mt-1 sm:mt-4 md:mt-6 px-2 sm:px-4">
                 <StepIndicator 
