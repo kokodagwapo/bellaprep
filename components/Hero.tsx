@@ -415,7 +415,7 @@ const Hero: React.FC = () => {
             key={currentIndex}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-light text-foreground leading-tight tracking-tight"
+            className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-thin text-foreground leading-tight tracking-tight"
             style={{
               textShadow: '0 2px 20px rgba(0, 0, 0, 0.05)'
             }}
