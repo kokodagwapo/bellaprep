@@ -99,7 +99,8 @@ const StepWelcome: React.FC<StepWelcomeProps> = ({ onNext }) => {
           </motion.span>
         </motion.div>
         <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-light text-foreground mb-4 sm:mb-5 tracking-tight">Prep4Loan</h1>
-        <p className="text-base sm:text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed font-light mb-6 sm:mb-8 px-2" style={{ color: '#6b7280' }}>Discover Mortgage Possibilities</p>
+        <p className="text-base sm:text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed font-light mb-4 sm:mb-5 px-2" style={{ color: '#6b7280' }}>Discover Mortgage Possibilities</p>
+        <p className="text-sm sm:text-base md:text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed font-light mb-6 sm:mb-8 px-2" style={{ color: '#6b7280' }}>Our streamlined pre-evaluation process guides you step by step through your loan application. We'll help you gather the right information, verify your documents, and prepare a complete file that's ready for lender review.</p>
       </div>
       <div className="px-4 sm:px-0 mt-4 sm:mt-6 w-full flex justify-center relative" style={{zIndex: 100, visibility: 'visible', opacity: 1, pointerEvents: 'auto', position: 'relative'}}>
         <button
