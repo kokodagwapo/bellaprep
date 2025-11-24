@@ -16,9 +16,10 @@ interface DemoScriptStep {
   waitForElement?: string;
 }
 
-// Script variations for each demo step (11 variations per step)
+// Streamlined demo script - Under 5 minutes total
+// Focus: Empathize, establish rapport, show Prep4Loan and Home Journey with animations
 const demoScriptVariations: { [key: number]: DemoScriptStep[] } = {
-  // Step 0: Landing Page - Storytelling & Heartfelt Introductions
+  // Step 0: Landing Page - Introduction & Teraverde's Mission
   0: [
     {
       time: 0,
@@ -654,9 +655,186 @@ const selectScript = (stepIndex: number): DemoScriptStep => {
   return selectedScript;
 };
 
-// Get the current demo script with rotation
+// Get the streamlined demo script - Single script, under 5 minutes (280 seconds total)
 const getDemoScript = (): DemoScriptStep[] => {
-  return [0, 1, 2, 3, 4, 5, 6].map(stepIndex => selectScript(stepIndex));
+  return [
+    // Step 0: Landing Page - Introduction & Teraverde's Mission (12s)
+    {
+      time: 0,
+      action: "Welcome & Teraverde Mission",
+      text: "Hi, I'm Bella. At Teraverde, our mission is simple: help home buyers get their best experience so they can secure the best rate and close quicker. I understand you have your own dreams of owning a home—and I'm here to help make that happen.",
+      navigateTo: 'home',
+      scrollTarget: "top"
+    },
+    // Step 1: Ask about dream home (10s)
+    {
+      time: 12,
+      action: "Understanding Your Dream",
+      text: "Before we dive in, I'd love to understand your journey. What type of dream home are you envisioning? And what initiated this decision? How long have you been planning for this?",
+      navigateTo: 'home'
+    },
+    // Step 2: Navigate to Prep4Loan (8s)
+    {
+      time: 22,
+      action: "Start Prep4Loan",
+      text: "Now let's begin with Prep4Loan—our streamlined pre-evaluation process.",
+      navigateTo: 'prep',
+      clickTarget: "Start Pre-Evaluation"
+    },
+    // Step 3: Welcome screen (6s)
+    {
+      time: 30,
+      action: "Prep4Loan Welcome",
+      text: "Welcome to Prep4Loan. I'll guide you through each section step by step.",
+      clickTarget: "Get Started"
+    },
+    // Step 4: Loan Purpose - Highlight & Click (5s)
+    {
+      time: 36,
+      action: "Loan Purpose Selection",
+      text: "First, your loan purpose. Are you buying a home, refinancing, or checking your buying power?",
+      fillData: { goal: 'Buy a Home' },
+      clickTarget: "Buy a Home"
+    },
+    // Step 5: Property Type - Highlight & Click (5s)
+    {
+      time: 41,
+      action: "Property Type",
+      text: "What type of property? Single family, condo, townhouse, or multi-family?",
+      fillData: { propertyType: 'Single Family Home' },
+      clickTarget: "Single Family Home"
+    },
+    // Step 6: Property Use - Highlight & Click (5s)
+    {
+      time: 46,
+      action: "Property Use",
+      text: "How will you use this property? Primary residence, second home, or investment?",
+      fillData: { propertyUse: 'Primary Residence' },
+      clickTarget: "Primary Residence"
+    },
+    // Step 7: Subject Property - Address with typing animation (8s)
+    {
+      time: 51,
+      action: "Subject Property Address",
+      text: "Now your property address. Watch as I fill this in with address verification.",
+      fillData: { 
+        subjectProperty: {
+          hasProperty: true,
+          address: {
+            street: "123 Main Street",
+            city: "Naples",
+            state: "FL",
+            zip: "34104",
+            fullAddress: "123 Main Street, Naples, FL 34104"
+          },
+          value: 450000
+        }
+      }
+    },
+    // Step 8: Employment Status - Highlight & Click (5s)
+    {
+      time: 59,
+      action: "Employment Information",
+      text: "Your employment status helps us understand your income stability.",
+      fillData: { employmentStatus: 'Employed' },
+      clickTarget: "Employed"
+    },
+    // Step 9: Income - Show typing animation (6s)
+    {
+      time: 64,
+      action: "Income Details",
+      text: "Now your income. Watch as I fill in your income details.",
+      fillData: { 
+        timeInJob: 'More than 2 years',
+        income: 75000
+      }
+    },
+    // Step 10: Document Upload Section - Highlight (8s)
+    {
+      time: 70,
+      action: "Document Upload Section",
+      text: "Here's where it gets exciting! Upload your driver's license, W-2, or bank statements.",
+      navigateTo: 'prep',
+      scrollTarget: "form-content"
+    },
+    // Step 11: OCR Demo - Driver's License (8s)
+    {
+      time: 78,
+      action: "OCR - Driver's License",
+      text: "Watch: when you upload your driver's license, I use OCR to extract name, address, and date of birth automatically.",
+      fillData: {
+        fullName: "John Doe",
+        dob: "01/15/1990",
+        borrowerAddress: "123 Main Street, Naples, FL 34104"
+      }
+    },
+    // Step 12: OCR Demo - W-2 (7s)
+    {
+      time: 86,
+      action: "OCR - W-2 Form",
+      text: "With your W-2, I extract employer name and annual income automatically. Fast and accurate!",
+      fillData: {
+        income: 75000
+      }
+    },
+    // Step 13: OCR Demo - Bank Statement (7s)
+    {
+      time: 93,
+      action: "OCR - Bank Statement",
+      text: "Bank statements? I can read account balances and transactions. This saves hours of manual entry.",
+      scrollTarget: "form-content"
+    },
+    // Step 14: Progress & Checklist - Highlight sidebar (8s)
+    {
+      time: 100,
+      action: "Progress Tracking",
+      text: "See the progress bar and checklist on the right? I'm tracking everything in real-time.",
+      scrollTarget: "sidebar"
+    },
+    // Step 15: Celebration Animation (10s)
+    {
+      time: 108,
+      action: "Prep4Loan Complete!",
+      text: "Congratulations! You've completed Prep4Loan. Your information is organized and ready. Let's celebrate!",
+      navigateTo: 'prep'
+    },
+    // Step 16: Navigate to Home Journey (8s)
+    {
+      time: 118,
+      action: "Start Home Journey",
+      text: "Now let's move to Home Journey—the official URLA 1003 form. I've already transferred your information.",
+      navigateTo: 'form1003',
+      clickTarget: "Home Journey"
+    },
+    // Step 17: Form1003 Welcome (6s)
+    {
+      time: 126,
+      action: "URLA 1003 Welcome",
+      text: "Welcome to the Home Journey. This is the comprehensive URLA 1003 form that lenders need.",
+      clickTarget: "Get Started"
+    },
+    // Step 18: Show Step Indicator - Highlight navigation (8s)
+    {
+      time: 132,
+      action: "Section Navigation",
+      text: "See the step indicator? You can click through sections: Borrower Info, Financial Info, Employment, and more.",
+      scrollTarget: "form-content"
+    },
+    // Step 19: Quick form sections walkthrough (8s)
+    {
+      time: 140,
+      action: "Form Sections Overview",
+      text: "Notice how I've pre-filled most fields from Prep4Loan? Borrower info, employment, property—it's all here.",
+      scrollTarget: "form-content"
+    },
+    // Step 20: Final summary (12s)
+    {
+      time: 148,
+      action: "Demo Complete",
+      text: "And that's it! You've seen how Teraverde and I work together to make your home buying journey smoother. From Prep4Loan to Home Journey, I'm here to help you get the best rate and close quicker. Ready to start your own journey?",
+      navigateTo: 'home'
+    }
+  ];
 };
 
 interface DemoControllerProps {
@@ -739,13 +917,48 @@ const DemoController: React.FC<DemoControllerProps> = ({
   const highlightElement = (element: HTMLElement) => {
     const originalStyle = element.style.cssText;
     element.style.transition = 'all 0.3s ease';
-    element.style.boxShadow = '0 0 0 4px rgba(59, 130, 246, 0.5)';
+    element.style.boxShadow = '0 0 0 4px rgba(16, 185, 129, 0.4)';
     element.style.transform = 'scale(1.02)';
     element.style.zIndex = '9999';
+    element.style.backgroundColor = element.style.backgroundColor || 'rgba(16, 185, 129, 0.05)';
     
     setTimeout(() => {
       element.style.cssText = originalStyle;
     }, 2000);
+  };
+
+  // Highlight form section by finding elements with specific text or classes
+  const highlightFormSection = async (sectionName: string) => {
+    await new Promise(resolve => setTimeout(resolve, 300));
+    
+    // Try to find section by various methods
+    const selectors = [
+      `[data-section="${sectionName}"]`,
+      `.section-${sectionName.toLowerCase()}`,
+      `h2:contains("${sectionName}")`,
+      `h3:contains("${sectionName}")`,
+    ];
+    
+    for (const selector of selectors) {
+      try {
+        const elements = document.querySelectorAll(selector);
+        if (elements.length > 0) {
+          highlightElement(elements[0] as HTMLElement);
+          return;
+        }
+      } catch (e) {
+        // Continue to next selector
+      }
+    }
+    
+    // Fallback: try to find by text content
+    const allElements = document.querySelectorAll('h2, h3, [class*="section"], [class*="step"]');
+    for (const el of Array.from(allElements)) {
+      if (el.textContent?.toLowerCase().includes(sectionName.toLowerCase())) {
+        highlightElement(el as HTMLElement);
+        return;
+      }
+    }
   };
 
   const performStepActions = async (step: DemoScriptStep) => {
@@ -1299,15 +1512,15 @@ const DemoController: React.FC<DemoControllerProps> = ({
 
       {/* Controls - Minimalist */}
       <div className="flex items-center justify-between pt-3 border-t border-gray-100">
-        <button
+        <button 
           onClick={resetDemo}
           className="px-3 py-1.5 text-xs text-gray-500 hover:text-gray-700 hover:bg-gray-50 rounded-lg transition-all font-light"
         >
           Reset
         </button>
         <div className="flex items-center gap-2">
-          <button 
-            onClick={nextStep}
+        <button 
+          onClick={nextStep}
             className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-50 rounded-lg transition-all"
             aria-label="Skip to next step"
           >
@@ -1319,8 +1532,8 @@ const DemoController: React.FC<DemoControllerProps> = ({
             aria-label={isPlaying ? "Pause" : "Play"}
           >
             {isPlaying ? <Pause size={18} fill="currentColor" /> : <Play size={18} fill="currentColor" className="ml-0.5" />}
-          </button>
-        </div>
+        </button>
+      </div>
       </div>
     </motion.div>
   );
