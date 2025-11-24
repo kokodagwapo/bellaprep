@@ -233,7 +233,7 @@ export const SidebarLink = ({
           display: animate ? (open ? "inline-block" : "none") : "inline-block",
           opacity: animate ? (open ? 1 : 0) : 1,
         }}
-        className="text-base md:text-lg font-semibold transition duration-150 whitespace-pre inline-block !p-0 !m-0"
+        className="text-base md:text-lg font-light tracking-tight transition duration-150 whitespace-pre inline-block !p-0 !m-0"
         style={{ color: '#000000' }}
       >
         {link.label}
