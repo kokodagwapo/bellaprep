@@ -112,7 +112,7 @@ const Form1003Checklist: React.FC<Form1003ChecklistProps> = ({ formData }) => {
                 onClick={() => toggleSection(section)}
                 className="w-full flex items-center justify-between px-4 py-3 bg-secondary/50 hover:bg-secondary/70 transition-colors cursor-pointer"
               >
-                <h4 className="text-xs font-bold text-primary uppercase tracking-wider">
+                <h4 className="text-xs font-bold text-black uppercase tracking-wider">
               {section}
             </h4>
                 <motion.div
