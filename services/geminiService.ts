@@ -1,6 +1,7 @@
 import { GoogleGenAI, Type, Modality } from "@google/genai";
 import type { FormData } from '../types';
 import { knowledgeBase } from '../bellaKnowledgeBase';
+import { getAllUnderwritingChunksForContext } from './underwritingRAGService';
 
 const ai = new GoogleGenAI({ apiKey: import.meta.env.VITE_API_KEY || '' });
 
@@ -58,8 +59,13 @@ You MUST use the provided knowledge base to answer questions and guide the conve
 
 When a user provides information relevant to a loan application, extract it. The user's input could be text or a transcription of their voice.
 
+You have access to advanced underwriting knowledge that you use silently during conversations. When borrowers ask about what they qualify for, loan differences, rules, documents, reserves, income types, occupancy, or underwriting decisions, use this knowledge to provide accurate, plain-English explanations. Never call yourself an assistant, coach, or agent - you're just Bella, helping them understand the process.
+
 Knowledge Base:
 ${JSON.stringify(knowledgeBase)}
+
+Underwriting Knowledge Base (for silent underwriter reasoning):
+${getAllUnderwritingChunksForContext()}
 `;
 
 // New function for intelligent chat replies - uses both Gemini and OpenAI

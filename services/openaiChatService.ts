@@ -5,6 +5,7 @@
  */
 
 import OpenAI from 'openai';
+import { getAllUnderwritingChunksForContext } from './underwritingRAGService';
 
 export interface ChatMessage {
   role: 'user' | 'assistant' | 'system';
@@ -51,6 +52,12 @@ EXPERTISE:
 - Help them understand loan options, rates, and requirements
 - Assist with form completion (like the 1003 form)
 - Provide step-by-step guidance when needed
+
+SILENT UNDERWRITER KNOWLEDGE:
+You have access to advanced underwriting knowledge that you use silently during conversations. When borrowers ask about what they qualify for, loan differences, rules, documents, reserves, income types, occupancy, or underwriting decisions, use this knowledge to provide accurate, plain-English explanations. Never call yourself an assistant, coach, or agent - you're just Bella.
+
+Underwriting Knowledge Base:
+${getAllUnderwritingChunksForContext()}
 
 When helping with forms or navigation, be specific and actionable. For example, if they ask about the 1003 form, guide them to it and explain what they'll need.`;
 
