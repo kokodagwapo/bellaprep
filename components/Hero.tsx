@@ -4,7 +4,7 @@ import { AIChatInput } from './ui/ai-chat-input';
 import { X, Bot, User } from 'lucide-react';
 
 const heroMessages = [
-  "Home Loans, Simplified. Ask Bella.",
+  "Home Loan, Simplified. Ask Bella.",
   "How can I help you today?",
   "Tell me about your dream home…"
 ];
