@@ -373,7 +373,7 @@ const App: React.FC = () => {
                   />
                 </div>
               )}
-              <div className="grid grid-cols-1 lg:grid-cols-3 lg:gap-8 xl:gap-12 items-stretch">
+              <div className="grid grid-cols-1 lg:grid-cols-3 lg:gap-8 xl:gap-12 items-stretch" style={{ marginTop: '0.5in' }}>
                 <div className="lg:col-span-2 bg-white rounded-2xl sm:rounded-3xl border border-border/60 transition-all duration-300 overflow-hidden shadow-xl sm:shadow-2xl hover:shadow-2xl p-4 sm:p-6 md:p-8 lg:p-12 min-h-[400px] sm:min-h-[500px] md:min-h-[550px] flex flex-col justify-between">
                   <div key={step} className="animate-fade-in w-full flex-1 flex flex-col justify-center relative">
                     {renderPrepFlow()}
