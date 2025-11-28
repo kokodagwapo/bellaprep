@@ -70,14 +70,14 @@ const Step4Declarations: React.FC<Step4Props> = ({ data, onDataChange, onNext, o
             <StepHeader title="Section 4: Declarations" subtitle="Please answer the following questions." />
             
             {/* Bella's Insight */}
-            <div className="bg-blue-50 border-l-4 border-blue-400 p-4 text-blue-800 rounded-md flex items-start gap-3 mt-4 mb-6">
-                <Lightbulb className="h-5 w-5 text-blue-600 flex-shrink-0 mt-1" />
-                <p className="text-sm">
+            <div className="bg-blue-50 border-l-4 border-blue-400 p-2.5 sm:p-3 text-blue-800 rounded-md flex items-start gap-2 sm:gap-2.5 mt-3 mb-4">
+                <Lightbulb className="h-4 w-4 sm:h-4.5 sm:w-4.5 text-blue-600 flex-shrink-0 mt-0.5" />
+                <p className="text-xs sm:text-sm leading-relaxed">
                     <span className="font-semibold">Bella's Insight:</span> These declarations help determine if you qualify for special loan programs. First-time homebuyers may qualify for down payment assistance, and military service members may be eligible for VA loans with no down payment required!
                 </p>
             </div>
 
-            <div className="mt-4 sm:mt-6 md:mt-8 space-y-3 sm:space-y-4">
+            <div className="mt-3 sm:mt-4 space-y-2 sm:space-y-3">
                 {/* Property and Money Declarations */}
                 <div className="mb-6">
                     <h3 className="text-sm font-semibold text-foreground mb-4">Property and Money</h3>

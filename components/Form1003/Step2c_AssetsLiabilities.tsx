@@ -281,14 +281,14 @@ const Step2cAssetsLiabilities: React.FC<Step2cProps> = ({ data, onDataChange, on
             />
             
             {/* Bella's Insight */}
-            <div className="bg-blue-50 border-l-4 border-blue-400 p-4 text-blue-800 rounded-md flex items-start gap-3 mt-4 mb-6">
-                <Lightbulb className="h-5 w-5 text-blue-600 flex-shrink-0 mt-1" />
-                <p className="text-sm">
+            <div className="bg-blue-50 border-l-4 border-blue-400 p-2.5 sm:p-3 text-blue-800 rounded-md flex items-start gap-2 sm:gap-2.5 mt-3 mb-4">
+                <Lightbulb className="h-4 w-4 sm:h-4.5 sm:w-4.5 text-blue-600 flex-shrink-0 mt-0.5" />
+                <p className="text-xs sm:text-sm leading-relaxed">
                     <span className="font-semibold">Bella's Insight:</span> Assets help demonstrate your ability to cover down payment and closing costs. Liabilities are used to calculate your debt-to-income ratio. You don't need to list every small debt, but include all significant monthly obligations.
                 </p>
             </div>
 
-            <div className="space-y-6 mt-6">
+            <div className="space-y-4 mt-4">
                 {/* Assets Section */}
                 <div>
                     <h3 className="text-lg font-semibold text-foreground mb-4">Assets</h3>

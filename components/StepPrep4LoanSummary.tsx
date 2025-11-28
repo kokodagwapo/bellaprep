@@ -1,9 +1,8 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import StepHeader from './StepHeader';
 import StepNavigation from './StepNavigation';
-import { generateLoanSummary, generateBellaSpeech } from '../services/geminiService';
-import { decodeAudioData, decode } from '../utils/audioUtils';
+import { generateLoanSummary } from '../services/geminiService';
 import type { FormData } from '../types';
 
 interface StepPrep4LoanSummaryProps {
@@ -23,32 +22,12 @@ const StepPrep4LoanSummary: React.FC<StepPrep4LoanSummaryProps> = ({
 }) => {
   const [summary, setSummary] = useState<string>('');
   const [isGenerating, setIsGenerating] = useState(true);
-  const audioContextRef = useRef<AudioContext | null>(null);
 
   useEffect(() => {
-    audioContextRef.current = new ((window as any).AudioContext || (window as any).webkitAudioContext)({ sampleRate: 24000 });
-    
     const generateSummary = async () => {
       try {
         const summaryText = await generateLoanSummary(data);
         setSummary(summaryText);
-        
-        // Play Bella voice summary
-        if (audioContextRef.current) {
-          const audioContext = audioContextRef.current;
-          if (audioContext.state === 'suspended') {
-            await audioContext.resume();
-          }
-          
-          const audioData = await generateBellaSpeech(summaryText);
-          if (audioData && audioContext) {
-            const buffer = await decodeAudioData(decode(audioData), audioContext, 24000, 1);
-            const source = audioContext.createBufferSource();
-            source.buffer = buffer;
-            source.connect(audioContext.destination);
-            source.start();
-          }
-        }
       } catch (error) {
         console.error('Error generating summary:', error);
         setSummary('Thank you for completing your pre-evaluation! Based on the information you provided, you\'re in a great position to move forward.');
@@ -58,10 +37,6 @@ const StepPrep4LoanSummary: React.FC<StepPrep4LoanSummaryProps> = ({
     };
 
     generateSummary();
-    
-    return () => {
-      audioContextRef.current?.close().catch(console.error);
-    };
   }, [data]);
 
   const approvalStrength = data.affordabilitySnapshot?.approvalStrengthScore || 0;

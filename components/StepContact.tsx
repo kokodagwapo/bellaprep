@@ -28,16 +28,16 @@ const StepContact: React.FC<StepContactProps> = ({ data, onChange, onNext, onBac
       />
       
       {/* Bella's Insight */}
-      <div className="bg-blue-50 border-l-4 border-blue-400 p-4 text-blue-800 rounded-md flex items-start gap-3 mt-4 mb-6">
-        <Lightbulb className="h-5 w-5 text-blue-600 flex-shrink-0 mt-1" />
-        <p className="text-sm">
+      <div className="bg-blue-50 border-l-4 border-blue-400 p-2.5 sm:p-3 text-blue-800 rounded-md flex items-start gap-2 sm:gap-2.5 mt-3 mb-4">
+        <Lightbulb className="h-4 w-4 sm:h-4.5 sm:w-4.5 text-blue-600 flex-shrink-0 mt-0.5" />
+        <p className="text-xs sm:text-sm leading-relaxed">
           <span className="font-semibold">Bella's Insight:</span> We'll use this information to send you personalized loan options and keep you updated on your application progress. Make sure your email and phone number are current!
         </p>
       </div>
       
-      <div className="space-y-4 mt-4 sm:mt-6">
+      <div className="space-y-3 mt-3 sm:mt-4">
         <div>
-          <label htmlFor="email" className="block text-xs sm:text-sm font-medium text-muted-foreground mb-1.5 sm:mb-2">Email Address</label>
+          <label htmlFor="email" className="block text-xs font-medium text-muted-foreground mb-1">Email Address</label>
           <input
             ref={emailInputRef}
             type="email"
@@ -45,21 +45,21 @@ const StepContact: React.FC<StepContactProps> = ({ data, onChange, onNext, onBac
             placeholder="your.email@example.com"
             value={data.email}
             onChange={(e) => onChange('email', e.target.value)}
-            className="w-full px-4 py-3 text-base sm:text-lg border border-input bg-background rounded-xl sm:rounded-lg focus:outline-none focus:ring-2 focus:ring-ring focus:border-primary transition duration-200 touch-manipulation min-h-[48px] sm:min-h-[44px]"
+            className="w-full px-3 py-2 sm:py-2.5 text-sm sm:text-base border border-input bg-background rounded-lg focus:outline-none focus:ring-2 focus:ring-ring focus:border-primary transition duration-200 touch-manipulation min-h-[40px] sm:min-h-[42px]"
             style={{ fontSize: '16px' }}
             aria-label="Email Address"
             required
           />
         </div>
         <div>
-          <label htmlFor="phone" className="block text-xs sm:text-sm font-medium text-muted-foreground mb-1.5 sm:mb-2">Phone Number</label>
+          <label htmlFor="phone" className="block text-xs font-medium text-muted-foreground mb-1">Phone Number</label>
           <input
             type="tel"
             id="phone"
             placeholder="(555) 123-4567"
             value={data.phoneNumber}
             onChange={(e) => onChange('phoneNumber', e.target.value)}
-            className="w-full px-4 py-3 text-base sm:text-lg border border-input bg-background rounded-xl sm:rounded-lg focus:outline-none focus:ring-2 focus:ring-ring focus:border-primary transition duration-200 touch-manipulation min-h-[48px] sm:min-h-[44px]"
+            className="w-full px-3 py-2 sm:py-2.5 text-sm sm:text-base border border-input bg-background rounded-lg focus:outline-none focus:ring-2 focus:ring-ring focus:border-primary transition duration-200 touch-manipulation min-h-[40px] sm:min-h-[42px]"
             style={{ fontSize: '16px' }}
             aria-label="Phone Number"
             required

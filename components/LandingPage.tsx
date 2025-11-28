@@ -6,9 +6,10 @@ import Hero from './Hero';
 interface LandingPageProps {
   onNavigateToPrep?: () => void;
   onNavigateToForm1003?: () => void;
+  onOpenVoiceAssistant?: () => void;
 }
 
-const LandingPage: React.FC<LandingPageProps> = ({ onNavigateToPrep, onNavigateToForm1003 }) => {
+const LandingPage: React.FC<LandingPageProps> = ({ onNavigateToPrep, onNavigateToForm1003, onOpenVoiceAssistant }) => {
 
   const mainProducts = [
     {
@@ -59,8 +60,12 @@ const LandingPage: React.FC<LandingPageProps> = ({ onNavigateToPrep, onNavigateT
   return (
     <div className="w-full max-w-7xl mx-auto animate-fade-in">
       {/* Hero Section - Fullscreen */}
-      <div className="w-screen relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] overflow-visible" style={{ marginTop: '-100px' }}>
-        <Hero />
+      <div className="relative overflow-hidden" style={{ marginTop: '-100px', marginLeft: 'calc(-50vw + 50%)', marginRight: 'calc(-50vw + 50%)', width: '100vw', maxWidth: '100vw' }}>
+        <Hero 
+          onNavigateToPrep={onNavigateToPrep} 
+          onNavigateToForm1003={onNavigateToForm1003}
+          onOpenVoiceAssistant={onOpenVoiceAssistant}
+        />
       </div>
 
       {/* Main Products Section */}

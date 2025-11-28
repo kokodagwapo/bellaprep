@@ -120,11 +120,11 @@ const Form1003: React.FC<Form1003Props> = ({ initialData }) => {
   };
 
   return (
-    <div className="w-full max-w-6xl mx-auto animate-fade-in my-4 sm:my-6 md:my-8 px-3 sm:px-4">
+    <div className="w-full max-w-6xl mx-auto animate-fade-in mt-3 sm:mt-4 md:mt-5 mb-4 sm:mb-6 md:mb-8 px-3 sm:px-4">
         {!showWelcome && (
           <>
             {showStepIndicator && (
-              <div className="mb-2 sm:mb-6 md:mb-8 mt-1 sm:mt-4 md:mt-6 px-2 sm:px-4">
+              <div className="mb-2 sm:mb-4 md:mb-5 mt-1 sm:mt-2 md:mt-3 px-2 sm:px-4">
                 <StepIndicator 
                   labels={indicatorSteps.labels} 
                   currentStepIndex={currentIndicatorIndex >= 0 ? currentIndicatorIndex : 0}
@@ -140,11 +140,11 @@ const Form1003: React.FC<Form1003Props> = ({ initialData }) => {
             )}
           </>
         )}
-        <div className="grid grid-cols-1 lg:grid-cols-3 lg:gap-8 xl:gap-12 items-stretch" style={{ marginTop: '0.5in' }}>
-            <div className={`lg:col-span-2 bg-white rounded-2xl sm:rounded-3xl border border-border/60 transition-all duration-300 overflow-hidden shadow-xl sm:shadow-2xl hover:shadow-2xl p-4 sm:p-6 md:p-8 lg:p-12 min-h-[400px] sm:min-h-[500px] md:min-h-[550px] flex flex-col ${showWelcome ? 'justify-center' : 'justify-between'}`}>
+        <div className="grid grid-cols-1 lg:grid-cols-3 lg:gap-6 xl:gap-8 items-start">
+            <div className={`lg:col-span-2 bg-white rounded-xl sm:rounded-2xl border border-border/60 transition-all duration-300 overflow-hidden shadow-lg sm:shadow-xl hover:shadow-xl p-4 sm:p-5 md:p-6 lg:p-8 min-h-[300px] sm:min-h-[350px] md:min-h-[400px] flex flex-col ${showWelcome ? 'justify-center' : 'justify-between'}`}>
                 {renderStep()}
             </div>
-            <div className="hidden lg:block lg:col-span-1 space-y-4 flex flex-col">
+            <div className="hidden lg:block lg:col-span-1 space-y-3 flex flex-col">
                 <ProgressBar 
                   currentStep={step + 1} 
                   totalSteps={totalSteps} 

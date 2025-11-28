@@ -109,17 +109,17 @@ const Step2bEmploymentDetails: React.FC<Step2bProps> = ({ data, onDataChange, on
             />
             
             {/* Bella's Insight */}
-            <div className="bg-blue-50 border-l-4 border-blue-400 p-4 text-blue-800 rounded-md flex items-start gap-3 mt-4 mb-6">
-                <Lightbulb className="h-5 w-5 text-blue-600 flex-shrink-0 mt-1" />
-                <p className="text-sm">
+            <div className="bg-blue-50 border-l-4 border-blue-400 p-2.5 sm:p-3 text-blue-800 rounded-md flex items-start gap-2 sm:gap-2.5 mt-3 mb-4">
+                <Lightbulb className="h-4 w-4 sm:h-4.5 sm:w-4.5 text-blue-600 flex-shrink-0 mt-0.5" />
+                <p className="text-xs sm:text-sm leading-relaxed">
                     <span className="font-semibold">Bella's Insight:</span> Lenders require a total of <strong>24 months of work history</strong>. If your current employment is less than 24 months, we'll need information about your previous employment to complete the requirement. Jobs don't need to be the same or continuous. For self-employed borrowers, tax returns are usually required.
                 </p>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 mt-4 sm:mt-6 md:mt-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mt-3 sm:mt-4">
                 {/* Employer Name */}
                 <div className="sm:col-span-2">
-                    <label className="block text-xs sm:text-sm font-medium text-muted-foreground mb-1.5 sm:mb-2">
+                    <label className="block text-xs font-medium text-muted-foreground mb-1">
                         {isSelfEmployed ? 'Business Name' : 'Employer Name'} *
                     </label>
                     <input
@@ -127,13 +127,13 @@ const Step2bEmploymentDetails: React.FC<Step2bProps> = ({ data, onDataChange, on
                         value={data.currentEmployment?.employerName || ''}
                         onChange={(e) => handleEmploymentChange('employerName', e.target.value)}
                         placeholder={isSelfEmployed ? 'Your business name' : 'Company name'}
-                        className="mt-1 block w-full px-4 py-3 sm:px-3 sm:py-2.5 bg-background border border-border rounded-xl sm:rounded-lg shadow-sm text-base sm:text-sm text-foreground focus:ring-2 focus:ring-primary focus:border-primary transition-all touch-manipulation min-h-[44px] sm:min-h-[auto]"
+                        className="mt-1 block w-full px-3 py-2 sm:py-2.5 bg-background border border-border rounded-lg shadow-sm text-sm text-foreground focus:ring-2 focus:ring-primary focus:border-primary transition-all touch-manipulation min-h-[40px] sm:min-h-[42px]"
                     />
                 </div>
 
                 {/* Position/Title */}
                 <div>
-                    <label className="block text-xs sm:text-sm font-medium text-muted-foreground mb-1.5 sm:mb-2">
+                    <label className="block text-xs font-medium text-muted-foreground mb-1">
                         Position / Job Title *
                     </label>
                     <input
@@ -141,32 +141,32 @@ const Step2bEmploymentDetails: React.FC<Step2bProps> = ({ data, onDataChange, on
                         value={data.currentEmployment?.position || ''}
                         onChange={(e) => handleEmploymentChange('position', e.target.value)}
                         placeholder="e.g., Software Engineer, Manager"
-                        className="mt-1 block w-full px-4 py-3 sm:px-3 sm:py-2.5 bg-background border border-border rounded-xl sm:rounded-lg shadow-sm text-base sm:text-sm text-foreground focus:ring-2 focus:ring-primary focus:border-primary transition-all touch-manipulation min-h-[44px] sm:min-h-[auto]"
+                        className="mt-1 block w-full px-3 py-2 sm:py-2.5 bg-background border border-border rounded-lg shadow-sm text-sm text-foreground focus:ring-2 focus:ring-primary focus:border-primary transition-all touch-manipulation min-h-[40px] sm:min-h-[42px]"
                     />
                 </div>
 
                 {/* Start Date */}
                 <div>
-                    <label className="block text-xs sm:text-sm font-medium text-muted-foreground mb-1.5 sm:mb-2">
+                    <label className="block text-xs font-medium text-muted-foreground mb-1">
                         Employment Start Date *
                     </label>
                     <input
                         type="date"
                         value={data.currentEmployment?.startDate || ''}
                         onChange={(e) => handleEmploymentChange('startDate', e.target.value)}
-                        className="mt-1 block w-full px-4 py-3 sm:px-3 sm:py-2.5 bg-background border border-border rounded-xl sm:rounded-lg shadow-sm text-base sm:text-sm text-foreground focus:ring-2 focus:ring-primary focus:border-primary transition-all touch-manipulation min-h-[44px] sm:min-h-[auto]"
+                        className="mt-1 block w-full px-3 py-2 sm:py-2.5 bg-background border border-border rounded-lg shadow-sm text-sm text-foreground focus:ring-2 focus:ring-primary focus:border-primary transition-all touch-manipulation min-h-[40px] sm:min-h-[42px]"
                     />
                 </div>
 
                 {/* Years in Line of Work */}
                 <div>
-                    <label className="block text-xs sm:text-sm font-medium text-muted-foreground mb-1.5 sm:mb-2">
+                    <label className="block text-xs font-medium text-muted-foreground mb-1">
                         Years in This Job *
                     </label>
                     <select
                         value={data.currentEmployment?.yearsInLineOfWork || ''}
                         onChange={(e) => handleEmploymentChange('yearsInLineOfWork', parseInt(e.target.value) || 0)}
-                        className="mt-1 block w-full px-4 py-3 sm:px-3 sm:py-2.5 bg-background border border-border rounded-xl sm:rounded-lg shadow-sm text-base sm:text-sm text-foreground focus:ring-2 focus:ring-primary focus:border-primary transition-all touch-manipulation min-h-[44px] sm:min-h-[auto]"
+                        className="mt-1 block w-full px-3 py-2 sm:py-2.5 bg-background border border-border rounded-lg shadow-sm text-sm text-foreground focus:ring-2 focus:ring-primary focus:border-primary transition-all touch-manipulation min-h-[40px] sm:min-h-[42px]"
                     >
                         <option value="">Select...</option>
                         {Array.from({ length: 20 }, (_, i) => (
@@ -177,13 +177,13 @@ const Step2bEmploymentDetails: React.FC<Step2bProps> = ({ data, onDataChange, on
 
                 {/* Months in Line of Work */}
                 <div>
-                    <label className="block text-xs sm:text-sm font-medium text-muted-foreground mb-1.5 sm:mb-2">
+                    <label className="block text-xs font-medium text-muted-foreground mb-1">
                         Additional Months *
                     </label>
                     <select
                         value={data.currentEmployment?.monthsInLineOfWork || ''}
                         onChange={(e) => handleEmploymentChange('monthsInLineOfWork', parseInt(e.target.value) || 0)}
-                        className="mt-1 block w-full px-4 py-3 sm:px-3 sm:py-2.5 bg-background border border-border rounded-xl sm:rounded-lg shadow-sm text-base sm:text-sm text-foreground focus:ring-2 focus:ring-primary focus:border-primary transition-all touch-manipulation min-h-[44px] sm:min-h-[auto]"
+                        className="mt-1 block w-full px-3 py-2 sm:py-2.5 bg-background border border-border rounded-lg shadow-sm text-sm text-foreground focus:ring-2 focus:ring-primary focus:border-primary transition-all touch-manipulation min-h-[40px] sm:min-h-[42px]"
                     >
                         <option value="">Select...</option>
                         {Array.from({ length: 12 }, (_, i) => (
@@ -210,7 +210,7 @@ const Step2bEmploymentDetails: React.FC<Step2bProps> = ({ data, onDataChange, on
 
                 {/* Monthly Income */}
                 <div>
-                    <label className="block text-xs sm:text-sm font-medium text-muted-foreground mb-1.5 sm:mb-2">
+                    <label className="block text-xs font-medium text-muted-foreground mb-1">
                         Gross Monthly Income *
                     </label>
                     <input
@@ -221,7 +221,7 @@ const Step2bEmploymentDetails: React.FC<Step2bProps> = ({ data, onDataChange, on
                             const value = parseInt(e.target.value.replace(/[^0-9]/g, '')) || 0;
                             handleEmploymentChange('monthlyIncome', { base: value });
                         }}
-                        className="mt-1 block w-full px-4 py-3 sm:px-3 sm:py-2.5 bg-background border border-border rounded-xl sm:rounded-lg shadow-sm text-base sm:text-sm text-foreground focus:ring-2 focus:ring-primary focus:border-primary transition-all touch-manipulation min-h-[44px] sm:min-h-[auto]"
+                        className="mt-1 block w-full px-3 py-2 sm:py-2.5 bg-background border border-border rounded-lg shadow-sm text-sm text-foreground focus:ring-2 focus:ring-primary focus:border-primary transition-all touch-manipulation min-h-[40px] sm:min-h-[42px]"
                     />
                 </div>
 
@@ -298,7 +298,7 @@ const Step2bEmploymentDetails: React.FC<Step2bProps> = ({ data, onDataChange, on
                                         handleEmploymentChange('employerAddress', updatedAddress);
                                     }}
                                     placeholder="Start typing your address (e.g., 123 Main St, City, State ZIP)"
-                                    className="block w-full px-4 py-3.5 sm:px-4 sm:py-3 bg-gradient-to-br from-white to-gray-50/50 border-0 text-base sm:text-sm text-foreground placeholder:text-gray-400 focus:outline-none focus:ring-0 transition-all duration-200 touch-manipulation min-h-[48px] sm:min-h-[44px]"
+                                    className="block w-full px-3 py-2 sm:py-2.5 bg-gradient-to-br from-white to-gray-50/50 border-0 text-sm text-foreground placeholder:text-gray-400 focus:outline-none focus:ring-0 transition-all duration-200 touch-manipulation min-h-[40px] sm:min-h-[42px]"
                                     autoComplete="address-line1"
                                 />
                             </AddressAutofill>
@@ -354,7 +354,7 @@ const Step2bEmploymentDetails: React.FC<Step2bProps> = ({ data, onDataChange, on
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
                         {/* Previous Employer Name (Optional) */}
                         <div className="sm:col-span-2">
-                            <label className="block text-xs sm:text-sm font-medium text-muted-foreground mb-1.5 sm:mb-2">
+                            <label className="block text-xs font-medium text-muted-foreground mb-1">
                                 Previous Employer Name <span className="text-gray-400 text-xs">(Optional)</span>
                             </label>
                             <input
@@ -364,13 +364,13 @@ const Step2bEmploymentDetails: React.FC<Step2bProps> = ({ data, onDataChange, on
                                     priorEmployment: { ...data.priorEmployment, employerName: e.target.value }
                                 })}
                                 placeholder="Company name (optional)"
-                                className="mt-1 block w-full px-4 py-3 sm:px-3 sm:py-2.5 bg-background border border-border rounded-xl sm:rounded-lg shadow-sm text-base sm:text-sm text-foreground focus:ring-2 focus:ring-primary focus:border-primary transition-all touch-manipulation min-h-[44px] sm:min-h-[auto]"
+                                className="mt-1 block w-full px-3 py-2 sm:py-2.5 bg-background border border-border rounded-lg shadow-sm text-sm text-foreground focus:ring-2 focus:ring-primary focus:border-primary transition-all touch-manipulation min-h-[40px] sm:min-h-[42px]"
                             />
                         </div>
 
                         {/* Job Type */}
                         <div>
-                            <label className="block text-xs sm:text-sm font-medium text-muted-foreground mb-1.5 sm:mb-2">
+                            <label className="block text-xs font-medium text-muted-foreground mb-1">
                                 Job Type *
                             </label>
                             <input
@@ -380,13 +380,13 @@ const Step2bEmploymentDetails: React.FC<Step2bProps> = ({ data, onDataChange, on
                                     priorEmployment: { ...data.priorEmployment, jobType: e.target.value }
                                 })}
                                 placeholder="e.g., Manager, Engineer"
-                                className="mt-1 block w-full px-4 py-3 sm:px-3 sm:py-2.5 bg-background border border-border rounded-xl sm:rounded-lg shadow-sm text-base sm:text-sm text-foreground focus:ring-2 focus:ring-primary focus:border-primary transition-all touch-manipulation min-h-[44px] sm:min-h-[auto]"
+                                className="mt-1 block w-full px-3 py-2 sm:py-2.5 bg-background border border-border rounded-lg shadow-sm text-sm text-foreground focus:ring-2 focus:ring-primary focus:border-primary transition-all touch-manipulation min-h-[40px] sm:min-h-[42px]"
                             />
                         </div>
 
                         {/* Years Worked (Dropdown) */}
                         <div>
-                            <label className="block text-xs sm:text-sm font-medium text-muted-foreground mb-1.5 sm:mb-2">
+                            <label className="block text-xs font-medium text-muted-foreground mb-1">
                                 Years Worked *
                             </label>
                             <select
@@ -403,7 +403,7 @@ const Step2bEmploymentDetails: React.FC<Step2bProps> = ({ data, onDataChange, on
                                         }
                                     });
                                 }}
-                                className="mt-1 block w-full px-4 py-3 sm:px-3 sm:py-2.5 bg-background border border-border rounded-xl sm:rounded-lg shadow-sm text-base sm:text-sm text-foreground focus:ring-2 focus:ring-primary focus:border-primary transition-all touch-manipulation min-h-[44px] sm:min-h-[auto]"
+                                className="mt-1 block w-full px-3 py-2 sm:py-2.5 bg-background border border-border rounded-lg shadow-sm text-sm text-foreground focus:ring-2 focus:ring-primary focus:border-primary transition-all touch-manipulation min-h-[40px] sm:min-h-[42px]"
                             >
                                 <option value="">Select years...</option>
                                 {Array.from({ length: 20 }, (_, i) => (
@@ -414,7 +414,7 @@ const Step2bEmploymentDetails: React.FC<Step2bProps> = ({ data, onDataChange, on
 
                         {/* Months Worked (Dropdown) */}
                         <div>
-                            <label className="block text-xs sm:text-sm font-medium text-muted-foreground mb-1.5 sm:mb-2">
+                            <label className="block text-xs font-medium text-muted-foreground mb-1">
                                 Additional Months *
                             </label>
                             <select
@@ -433,7 +433,7 @@ const Step2bEmploymentDetails: React.FC<Step2bProps> = ({ data, onDataChange, on
                                         }
                                     });
                                 }}
-                                className="mt-1 block w-full px-4 py-3 sm:px-3 sm:py-2.5 bg-background border border-border rounded-xl sm:rounded-lg shadow-sm text-base sm:text-sm text-foreground focus:ring-2 focus:ring-primary focus:border-primary transition-all touch-manipulation min-h-[44px] sm:min-h-[auto]"
+                                className="mt-1 block w-full px-3 py-2 sm:py-2.5 bg-background border border-border rounded-lg shadow-sm text-sm text-foreground focus:ring-2 focus:ring-primary focus:border-primary transition-all touch-manipulation min-h-[40px] sm:min-h-[42px]"
                             >
                                 <option value="">Select months...</option>
                                 {Array.from({ length: 12 }, (_, i) => (

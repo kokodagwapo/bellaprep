@@ -248,6 +248,48 @@ export const generateBellaSpeech = async (text: string, useGeminiOnly: boolean =
 }
 
 
+// Function to transcribe audio using Gemini API
+export const transcribeAudioWithGemini = async (audioBlob: Blob): Promise<string> => {
+    try {
+        console.log("🎤 Transcribing audio with Gemini API...");
+        
+        // Convert blob to base64
+        const reader = new FileReader();
+        const base64Audio = await new Promise<string>((resolve, reject) => {
+            reader.onloadend = () => {
+                const base64 = (reader.result as string).split(',')[1];
+                resolve(base64);
+            };
+            reader.onerror = reject;
+            reader.readAsDataURL(audioBlob);
+        });
+
+        // Use Gemini's audio transcription capability with proper audio input
+        const response = await ai.models.generateContent({
+            model: "gemini-2.0-flash-exp",
+            contents: [{
+                parts: [{
+                    inlineData: {
+                        data: base64Audio,
+                        mimeType: audioBlob.type || 'audio/webm'
+                    }
+                }]
+            }],
+            config: {
+                systemInstruction: "You are a speech-to-text transcription service. Transcribe the audio accurately and return only the transcribed text without any additional commentary or formatting.",
+            },
+        });
+
+        const transcription = response.text?.trim() || '';
+        console.log("✅ Gemini transcription successful:", transcription);
+        return transcription;
+    } catch (error: any) {
+        console.error("❌ Gemini transcription error:", error?.message || error);
+        // Return empty string to allow fallback
+        return '';
+    }
+};
+
 // Re-export OCR function from ocrService for backward compatibility
 export { extractDataFromDocument } from './ocrService';
 

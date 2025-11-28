@@ -29,12 +29,12 @@ const StepPricing: React.FC<StepPricingProps> = ({ data, onChange, onNext, onBac
       <StepHeader
         title="What is your estimated purchase price?"
       />
-      <div className="space-y-4 sm:space-y-6 mt-4 sm:mt-6">
+      <div className="space-y-3 mt-3 sm:mt-4">
         <div>
-          <label htmlFor="purchasePrice" className="block text-xs sm:text-sm font-medium text-muted-foreground mb-1.5 sm:mb-2">Purchase Price</label>
+          <label htmlFor="purchasePrice" className="block text-xs font-medium text-muted-foreground mb-1">Purchase Price</label>
           <div className="relative">
-            <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 sm:pl-4">
-              <span className="text-muted-foreground text-base sm:text-lg">$</span>
+            <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-2.5 sm:pl-3">
+              <span className="text-muted-foreground text-sm sm:text-base">$</span>
             </div>
             <input
               id="purchasePrice"
@@ -43,17 +43,17 @@ const StepPricing: React.FC<StepPricingProps> = ({ data, onChange, onNext, onBac
               placeholder="500,000"
               value={formatNumber(data.purchasePrice)}
               onChange={(e) => handleValueChange('purchasePrice', e.target.value)}
-              className="w-full px-3 sm:px-4 py-3 sm:py-3 pl-7 sm:pl-8 text-base sm:text-lg border border-input bg-background rounded-xl sm:rounded-xl focus:outline-none focus:ring-2 focus:ring-ring focus:border-primary transition duration-200 touch-manipulation min-h-[48px] sm:min-h-[44px]"
+              className="w-full px-3 py-2 sm:py-2.5 pl-6 sm:pl-7 text-sm sm:text-base border border-input bg-background rounded-lg focus:outline-none focus:ring-2 focus:ring-ring focus:border-primary transition duration-200 touch-manipulation min-h-[40px] sm:min-h-[42px]"
               style={{ fontSize: '16px' }}
               aria-label="Purchase Price"
             />
           </div>
         </div>
         <div>
-          <label htmlFor="downPayment" className="block text-xs sm:text-sm font-medium text-muted-foreground mb-1.5 sm:mb-2">Down Payment</label>
+          <label htmlFor="downPayment" className="block text-xs font-medium text-muted-foreground mb-1">Down Payment</label>
           <div className="relative">
-            <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 sm:pl-4">
-              <span className="text-muted-foreground text-base sm:text-lg">$</span>
+            <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-2.5 sm:pl-3">
+              <span className="text-muted-foreground text-sm sm:text-base">$</span>
             </div>
             <input
               id="downPayment"
@@ -62,7 +62,7 @@ const StepPricing: React.FC<StepPricingProps> = ({ data, onChange, onNext, onBac
               placeholder="100,000"
               value={formatNumber(data.downPayment)}
               onChange={(e) => handleValueChange('downPayment', e.target.value)}
-              className="w-full px-3 sm:px-4 py-3 sm:py-3 pl-7 sm:pl-8 text-base sm:text-lg border border-input bg-background rounded-xl sm:rounded-xl focus:outline-none focus:ring-2 focus:ring-ring focus:border-primary transition duration-200 touch-manipulation min-h-[48px] sm:min-h-[44px]"
+              className="w-full px-3 py-2 sm:py-2.5 pl-6 sm:pl-7 text-sm sm:text-base border border-input bg-background rounded-lg focus:outline-none focus:ring-2 focus:ring-ring focus:border-primary transition duration-200 touch-manipulation min-h-[40px] sm:min-h-[42px]"
               style={{ fontSize: '16px' }}
               aria-label="Down Payment"
             />

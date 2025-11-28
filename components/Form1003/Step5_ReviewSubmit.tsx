@@ -36,11 +36,11 @@ const Step5ReviewSubmit: React.FC<Step5Props> = ({ data, onBack }) => {
             />
             
             {/* Bella's Final Insight */}
-            <div className="bg-blue-50 border-l-4 border-blue-400 p-4 text-blue-800 rounded-md flex items-start gap-3 mt-4 mb-6 text-left">
-                <Lightbulb className="h-5 w-5 text-blue-600 flex-shrink-0 mt-1" />
+            <div className="bg-blue-50 border-l-4 border-blue-400 p-2.5 sm:p-3 text-blue-800 rounded-md flex items-start gap-2 sm:gap-2.5 mt-3 mb-4 text-left">
+                <Lightbulb className="h-4 w-4 sm:h-4.5 sm:w-4.5 text-blue-600 flex-shrink-0 mt-0.5" />
                 <div className="flex-1">
-                    <p className="text-sm font-semibold mb-2">Bella's Final Check:</p>
-                    <p className="text-sm">
+                    <p className="text-xs sm:text-sm font-semibold mb-1.5">Bella's Final Check:</p>
+                    <p className="text-xs sm:text-sm leading-relaxed">
                         {isFormComplete 
                             ? "Everything looks great! Your application is complete and ready to submit. After submission, a loan officer will review your application and contact you within 1-2 business days."
                             : "Almost there! Please make sure all required fields are filled out before submitting. This helps ensure a smooth review process."}

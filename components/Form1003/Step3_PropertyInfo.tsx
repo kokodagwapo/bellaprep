@@ -75,14 +75,14 @@ const Step3PropertyInfo: React.FC<Step3Props> = ({ data, onDataChange, onNext, o
             <StepHeader title="Section 3: Property Information" subtitle="Details about the property you are financing." />
             
             {/* Bella's Insight */}
-            <div className="bg-blue-50 border-l-4 border-blue-400 p-4 text-blue-800 rounded-md flex items-start gap-3 mt-4 mb-6">
-                <Lightbulb className="h-5 w-5 text-blue-600 flex-shrink-0 mt-1" />
-                <p className="text-sm">
+            <div className="bg-blue-50 border-l-4 border-blue-400 p-2.5 sm:p-3 text-blue-800 rounded-md flex items-start gap-2 sm:gap-2.5 mt-3 mb-4">
+                <Lightbulb className="h-4 w-4 sm:h-4.5 sm:w-4.5 text-blue-600 flex-shrink-0 mt-0.5" />
+                <p className="text-xs sm:text-sm leading-relaxed">
                     <span className="font-semibold">Bella's Insight:</span> Most of this information was pre-filled from your Prep4Loan evaluation! You can update any fields if needed. The property value helps lenders determine the loan-to-value (LTV) ratio.
                 </p>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 md:gap-8 mt-4 sm:mt-6 md:mt-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mt-3 sm:mt-4">
                 <ReadOnlyField label="Loan Purpose" value={data.loanPurpose} />
                 <ReadOnlyField label="Property Type" value={data.propertyType} />
                 <ReadOnlyField label="Intended Property Use" value={data.propertyUse} />

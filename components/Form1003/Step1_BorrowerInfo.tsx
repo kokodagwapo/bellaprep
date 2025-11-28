@@ -27,14 +27,14 @@ const InputField: React.FC<{ label: string; id: keyof FormData; value: string | 
     
     return (
         <div className={fullWidth ? 'col-span-1 sm:col-span-2' : ''}>
-            <label htmlFor={id} className="block text-xs sm:text-sm font-medium text-muted-foreground mb-1.5 sm:mb-2">{label}</label>
+            <label htmlFor={id} className="block text-xs font-medium text-muted-foreground mb-1">{label}</label>
             <input
                 type={getInputType()}
                 id={id}
                 value={value || ''}
                 onChange={(e) => onChange(id, e.target.value)}
                 placeholder={placeholder}
-                className="mt-1 block w-full px-4 py-3 sm:px-3 sm:py-2.5 bg-background border border-border rounded-xl sm:rounded-lg shadow-sm text-base sm:text-sm text-foreground focus:ring-2 focus:ring-primary focus:border-primary transition-all touch-manipulation min-h-[44px] sm:min-h-[auto]"
+                className="mt-1 block w-full px-3 py-2 sm:py-2.5 bg-background border border-border rounded-lg shadow-sm text-sm text-foreground focus:ring-2 focus:ring-primary focus:border-primary transition-all touch-manipulation min-h-[40px] sm:min-h-[42px]"
             />
         </div>
     );
@@ -216,7 +216,7 @@ const AddressInput: React.FC<{
 
     return (
         <div className={fullWidth ? 'col-span-1 sm:col-span-2' : ''}>
-            <label htmlFor={id} className="block text-xs sm:text-sm font-semibold text-foreground mb-2 sm:mb-3 flex items-center gap-2">
+            <label htmlFor={id} className="block text-xs font-semibold text-foreground mb-1 flex items-center gap-1.5">
                 <MapPin className="h-4 w-4 text-primary" />
                 {label}
             </label>
@@ -233,14 +233,16 @@ const AddressInput: React.FC<{
                             onRetrieve={handleRetrieve}
                             options={{
                                 country: 'US',
-                                language: 'en'
+                                language: 'en',
+                                types: 'address',
+                                limit: 5
                             }}
                         >
                             <input
                                 ref={addressInputRef}
                                 type="text"
                                 id={id}
-                                name={id}
+                                name={`${id} address-search`}
                                 value={value || ''}
                                 onChange={(e) => {
                                     const newValue = e.target.value;
@@ -250,11 +252,15 @@ const AddressInput: React.FC<{
                                         isVerifiedRef.current = false;
                                         setIsVerified(false);
                                         setAddressPreview(null); // Clear stored address when manually editing
+                                        setShowVerificationMessage(false);
                                     }
                                 }}
-                                placeholder={placeholder || "Start typing your address..."}
-                                className="block w-full px-4 py-3.5 sm:px-4 sm:py-3 bg-gradient-to-br from-white to-gray-50/50 border-0 text-base sm:text-sm text-foreground placeholder:text-gray-400 focus:outline-none focus:ring-0 transition-all duration-200 touch-manipulation min-h-[48px] sm:min-h-[44px] pr-14"
-                                autoComplete="address-line1"
+                                placeholder={placeholder || "Start typing your address (e.g., 123 Main St, City, State ZIP)"}
+                                className="block w-full px-3 py-2 sm:py-2.5 bg-gradient-to-br from-white to-gray-50/50 border-0 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-0 transition-all duration-200 touch-manipulation min-h-[40px] sm:min-h-[42px] pr-12"
+                                autoComplete="new-password"
+                                data-lpignore="true"
+                                aria-autocomplete="list"
+                                aria-controls={`${id}-ResultsList`}
                             />
                         </AddressAutofill>
                     ) : (
@@ -483,14 +489,14 @@ const Step1BorrowerInfo: React.FC<Step1Props> = ({ data, onDataChange, onNext, o
             <StepHeader title="Section 1: Borrower Information" subtitle="This information is about you, the Borrower." />
             
             {/* Bella's Insight */}
-            <div className="bg-blue-50 border-l-4 border-blue-400 p-4 text-blue-800 rounded-md flex items-start gap-3 mt-4 mb-6">
-                <Lightbulb className="h-5 w-5 text-blue-600 flex-shrink-0 mt-1" />
-                <p className="text-sm">
+            <div className="bg-blue-50 border-l-4 border-blue-400 p-2.5 sm:p-3 text-blue-800 rounded-md flex items-start gap-2 sm:gap-2.5 mt-3 mb-4">
+                <Lightbulb className="h-4 w-4 sm:h-4.5 sm:w-4.5 text-blue-600 flex-shrink-0 mt-0.5" />
+                <p className="text-xs sm:text-sm leading-relaxed">
                     <span className="font-semibold">Bella's Insight:</span> Make sure to use your full legal name exactly as it appears on your government-issued ID. This helps prevent delays during verification!
                 </p>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 mt-4 sm:mt-6 md:mt-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mt-3 sm:mt-4">
                 <InputField label="Full Legal Name" id="fullName" value={data.fullName} onChange={handleFieldChange} fullWidth placeholder="Enter your full legal name" />
                 <AddressInput 
                     label="Current Home Address" 

@@ -149,11 +149,33 @@ button:active, [role="button"]:active, a:active {
   overscroll-behavior: contain;
 }
 
-/* Global dotted background pattern */
+/* Prevent horizontal scrolling */
+* {
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+html {
+  overflow-x: hidden;
+  width: 100%;
+  max-width: 100vw;
+}
+
 body {
   position: relative;
   background-color: #ffffff;
+  overflow-x: hidden;
+  width: 100%;
+  max-width: 100vw;
 }
+
+#root {
+  width: 100%;
+  max-width: 100vw;
+  overflow-x: hidden;
+}
+
+/* Global dotted background pattern */
 
 body::before {
   content: '';
@@ -209,5 +231,67 @@ body::before {
 
 .soft-glow {
   animation: soft-glow 4s ease-in-out infinite;
+}
+
+/* Mapbox Address Autosuggest Dropdown Styles */
+[data-mapbox-address-autofill] {
+  position: relative;
+}
+
+/* Mapbox Results List Container */
+[data-mapbox-address-autofill] [role="listbox"],
+.mbx-ResultsList,
+[class*="mbx-ResultsList"] {
+  position: absolute !important;
+  top: 100% !important;
+  left: 0 !important;
+  right: 0 !important;
+  z-index: 1000 !important;
+  background: white !important;
+  border: 1px solid #e5e7eb !important;
+  border-radius: 8px !important;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06) !important;
+  margin-top: 4px !important;
+  max-height: 300px !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+}
+
+/* Mapbox Result Items */
+[data-mapbox-address-autofill] [role="option"],
+.mbx-ResultItem,
+[class*="mbx-ResultItem"] {
+  padding: 12px 16px !important;
+  cursor: pointer !important;
+  border-bottom: 1px solid #f3f4f6 !important;
+  transition: background-color 0.15s ease !important;
+  color: #111827 !important;
+  font-size: 14px !important;
+  line-height: 1.5 !important;
+}
+
+[data-mapbox-address-autofill] [role="option"]:hover,
+.mbx-ResultItem:hover,
+[class*="mbx-ResultItem"]:hover {
+  background-color: #f9fafb !important;
+}
+
+[data-mapbox-address-autofill] [role="option"][aria-selected="true"],
+.mbx-ResultItem[aria-selected="true"],
+[class*="mbx-ResultItem"][aria-selected="true"] {
+  background-color: #eff6ff !important;
+  color: #1e40af !important;
+}
+
+/* Mapbox Result Item Text */
+[data-mapbox-address-autofill] [role="option"] > *,
+.mbx-ResultItem > *,
+[class*="mbx-ResultItem"] > * {
+  color: inherit !important;
+}
+
+/* Ensure dropdown is visible above other elements */
+[data-mapbox-address-autofill] {
+  z-index: 1000;
 }
 

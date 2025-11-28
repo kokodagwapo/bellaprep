@@ -81,17 +81,17 @@ const Step1bExtendedBorrowerInfo: React.FC<Step1bProps> = ({ data, onDataChange,
             />
             
             {/* Bella's Insight */}
-            <div className="bg-blue-50 border-l-4 border-blue-400 p-4 text-blue-800 rounded-md flex items-start gap-3 mt-4 mb-6">
-                <Lightbulb className="h-5 w-5 text-blue-600 flex-shrink-0 mt-1" />
-                <p className="text-sm">
+            <div className="bg-blue-50 border-l-4 border-blue-400 p-2.5 sm:p-3 text-blue-800 rounded-md flex items-start gap-2 sm:gap-2.5 mt-3 mb-4">
+                <Lightbulb className="h-4 w-4 sm:h-4.5 sm:w-4.5 text-blue-600 flex-shrink-0 mt-0.5" />
+                <p className="text-xs sm:text-sm leading-relaxed">
                     <span className="font-semibold">Bella's Insight:</span> Your SSN is required for credit verification and loan processing. This information is encrypted and secure. If you don't have an SSN, you can use an ITIN (Individual Taxpayer Identification Number).
                 </p>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 mt-4 sm:mt-6 md:mt-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mt-3 sm:mt-4">
                 {/* SSN/ITIN */}
                 <div className="sm:col-span-2">
-                    <label htmlFor="ssn" className="block text-xs sm:text-sm font-medium text-muted-foreground mb-1.5 sm:mb-2">
+                    <label htmlFor="ssn" className="block text-xs font-medium text-muted-foreground mb-1">
                         Social Security Number (SSN) or ITIN *
                     </label>
                     <input
@@ -101,20 +101,20 @@ const Step1bExtendedBorrowerInfo: React.FC<Step1bProps> = ({ data, onDataChange,
                         onChange={(e) => handleSsnChange(e.target.value)}
                         placeholder="XXX-XX-XXXX"
                         maxLength={11}
-                        className="mt-1 block w-full px-4 py-3 sm:px-3 sm:py-2.5 bg-background border border-border rounded-xl sm:rounded-lg shadow-sm text-base sm:text-sm text-foreground focus:ring-2 focus:ring-primary focus:border-primary transition-all touch-manipulation min-h-[44px] sm:min-h-[auto]"
+                        className="mt-1 block w-full px-3 py-2 sm:py-2.5 bg-background border border-border rounded-lg shadow-sm text-sm text-foreground focus:ring-2 focus:ring-primary focus:border-primary transition-all touch-manipulation min-h-[40px] sm:min-h-[42px]"
                     />
                     {ssnError && <p className="mt-1 text-xs text-red-600">{ssnError}</p>}
                 </div>
 
                 {/* Marital Status */}
                 <div>
-                    <label className="block text-xs sm:text-sm font-medium text-muted-foreground mb-1.5 sm:mb-2">
+                    <label className="block text-xs font-medium text-muted-foreground mb-1">
                         Marital Status *
                     </label>
                     <select
                         value={data.maritalStatus || ''}
                         onChange={(e) => handleFieldChange('maritalStatus', e.target.value as MaritalStatus)}
-                        className="mt-1 block w-full px-4 py-3 sm:px-3 sm:py-2.5 bg-background border border-border rounded-xl sm:rounded-lg shadow-sm text-base sm:text-sm text-foreground focus:ring-2 focus:ring-primary focus:border-primary transition-all touch-manipulation min-h-[44px] sm:min-h-[auto]"
+                        className="mt-1 block w-full px-3 py-2 sm:py-2.5 bg-background border border-border rounded-lg shadow-sm text-sm text-foreground focus:ring-2 focus:ring-primary focus:border-primary transition-all touch-manipulation min-h-[40px] sm:min-h-[42px]"
                     >
                         <option value="">Select...</option>
                         <option value="Married">Married</option>
@@ -125,13 +125,13 @@ const Step1bExtendedBorrowerInfo: React.FC<Step1bProps> = ({ data, onDataChange,
 
                 {/* Citizenship Status */}
                 <div>
-                    <label className="block text-xs sm:text-sm font-medium text-muted-foreground mb-1.5 sm:mb-2">
+                    <label className="block text-xs font-medium text-muted-foreground mb-1">
                         Citizenship Status *
                     </label>
                     <select
                         value={data.citizenship || ''}
                         onChange={(e) => handleFieldChange('citizenship', e.target.value as CitizenshipStatus)}
-                        className="mt-1 block w-full px-4 py-3 sm:px-3 sm:py-2.5 bg-background border border-border rounded-xl sm:rounded-lg shadow-sm text-base sm:text-sm text-foreground focus:ring-2 focus:ring-primary focus:border-primary transition-all touch-manipulation min-h-[44px] sm:min-h-[auto]"
+                        className="mt-1 block w-full px-3 py-2 sm:py-2.5 bg-background border border-border rounded-lg shadow-sm text-sm text-foreground focus:ring-2 focus:ring-primary focus:border-primary transition-all touch-manipulation min-h-[40px] sm:min-h-[42px]"
                     >
                         <option value="">Select...</option>
                         <option value="US Citizen">US Citizen</option>
@@ -151,7 +151,7 @@ const Step1bExtendedBorrowerInfo: React.FC<Step1bProps> = ({ data, onDataChange,
                         value={data.alternateNames || ''}
                         onChange={(e) => handleFieldChange('alternateNames', e.target.value)}
                         placeholder="e.g., maiden name, previous legal name"
-                        className="mt-1 block w-full px-4 py-3 sm:px-3 sm:py-2.5 bg-background border border-border rounded-xl sm:rounded-lg shadow-sm text-base sm:text-sm text-foreground focus:ring-2 focus:ring-primary focus:border-primary transition-all touch-manipulation min-h-[44px] sm:min-h-[auto]"
+                        className="mt-1 block w-full px-3 py-2 sm:py-2.5 bg-background border border-border rounded-lg shadow-sm text-sm text-foreground focus:ring-2 focus:ring-primary focus:border-primary transition-all touch-manipulation min-h-[40px] sm:min-h-[42px]"
                     />
                 </div>
 
@@ -166,7 +166,7 @@ const Step1bExtendedBorrowerInfo: React.FC<Step1bProps> = ({ data, onDataChange,
                         value={data.dependentsCount || ''}
                         onChange={(e) => handleFieldChange('dependentsCount', parseInt(e.target.value) || 0)}
                         min="0"
-                        className="mt-1 block w-full px-4 py-3 sm:px-3 sm:py-2.5 bg-background border border-border rounded-xl sm:rounded-lg shadow-sm text-base sm:text-sm text-foreground focus:ring-2 focus:ring-primary focus:border-primary transition-all touch-manipulation min-h-[44px] sm:min-h-[auto]"
+                        className="mt-1 block w-full px-3 py-2 sm:py-2.5 bg-background border border-border rounded-lg shadow-sm text-sm text-foreground focus:ring-2 focus:ring-primary focus:border-primary transition-all touch-manipulation min-h-[40px] sm:min-h-[42px]"
                     />
                 </div>
 
@@ -181,7 +181,7 @@ const Step1bExtendedBorrowerInfo: React.FC<Step1bProps> = ({ data, onDataChange,
                         value={data.yearsAtCurrentAddress || ''}
                         onChange={(e) => handleFieldChange('yearsAtCurrentAddress', parseInt(e.target.value) || 0)}
                         min="0"
-                        className="mt-1 block w-full px-4 py-3 sm:px-3 sm:py-2.5 bg-background border border-border rounded-xl sm:rounded-lg shadow-sm text-base sm:text-sm text-foreground focus:ring-2 focus:ring-primary focus:border-primary transition-all touch-manipulation min-h-[44px] sm:min-h-[auto]"
+                        className="mt-1 block w-full px-3 py-2 sm:py-2.5 bg-background border border-border rounded-lg shadow-sm text-sm text-foreground focus:ring-2 focus:ring-primary focus:border-primary transition-all touch-manipulation min-h-[40px] sm:min-h-[42px]"
                     />
                 </div>
 
@@ -197,7 +197,7 @@ const Step1bExtendedBorrowerInfo: React.FC<Step1bProps> = ({ data, onDataChange,
                         onChange={(e) => handleFieldChange('monthsAtCurrentAddress', parseInt(e.target.value) || 0)}
                         min="0"
                         max="11"
-                        className="mt-1 block w-full px-4 py-3 sm:px-3 sm:py-2.5 bg-background border border-border rounded-xl sm:rounded-lg shadow-sm text-base sm:text-sm text-foreground focus:ring-2 focus:ring-primary focus:border-primary transition-all touch-manipulation min-h-[44px] sm:min-h-[auto]"
+                        className="mt-1 block w-full px-3 py-2 sm:py-2.5 bg-background border border-border rounded-lg shadow-sm text-sm text-foreground focus:ring-2 focus:ring-primary focus:border-primary transition-all touch-manipulation min-h-[40px] sm:min-h-[42px]"
                     />
                 </div>
             </div>
@@ -271,7 +271,7 @@ const Step1bExtendedBorrowerInfo: React.FC<Step1bProps> = ({ data, onDataChange,
                                                 formerAddress: { ...data.formerAddress, street: e.target.value }
                                             })}
                                             placeholder="Start typing your address..."
-                                            className="block w-full px-4 py-3.5 sm:px-4 sm:py-3 bg-gradient-to-br from-white to-gray-50/50 border-0 text-base sm:text-sm text-foreground placeholder:text-gray-400 focus:outline-none focus:ring-0 transition-all duration-200 touch-manipulation min-h-[48px] sm:min-h-[44px]"
+                                            className="block w-full px-3 py-2 sm:py-2.5 bg-gradient-to-br from-white to-gray-50/50 border-0 text-sm text-foreground placeholder:text-gray-400 focus:outline-none focus:ring-0 transition-all duration-200 touch-manipulation min-h-[40px] sm:min-h-[42px]"
                                             autoComplete="address-line1"
                                         />
                                     </AddressAutofill>

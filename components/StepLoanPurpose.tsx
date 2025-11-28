@@ -1,11 +1,9 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Goal } from '../types';
 import StepHeader from './StepHeader';
 import { SelectionButton } from './StepHeader';
 import { ShoppingCart, Repeat, Zap, TrendingUp, Lightbulb } from './icons';
-import { generateBellaSpeech } from '../services/geminiService';
-import { decodeAudioData, decode } from '../utils/audioUtils';
 
 interface StepLoanPurposeProps {
   data: { goal?: Goal | '' };
@@ -17,7 +15,7 @@ interface StepLoanPurposeProps {
 const goalOptions = [
   { value: Goal.BUY_HOME, icon: <ShoppingCart className="h-8 w-8"/>, label: 'Buy a Home' },
   { value: Goal.REFINANCE_MORTGAGE, icon: <Repeat className="h-8 w-8" />, label: 'Refinance My Mortgage' },
-  { value: Goal.CHECK_BUYING_POWER, icon: <TrendingUp className="h-8 w-8" />, label: 'Check My Buying Power' },
+  { value: Goal.CHECK_BUYING_POWER, icon: <TrendingUp className="h-8 w-8" />, label: 'Buying Power' },
   { value: Goal.QUALIFY_FASTER, icon: <Zap className="h-8 w-8" />, label: 'See If I Qualify Faster' },
 ];
 
@@ -46,40 +44,6 @@ const getRandomMessage = () => {
 const StepLoanPurpose: React.FC<StepLoanPurposeProps> = ({ data, onChange, onNext }) => {
   const [showGamification, setShowGamification] = useState(false);
   const [gamificationMessage, setGamificationMessage] = useState('');
-  const audioContextRef = useRef<AudioContext | null>(null);
-
-  useEffect(() => {
-    // Initialize audio context
-    audioContextRef.current = new ((window as any).AudioContext || (window as any).webkitAudioContext)({ sampleRate: 24000 });
-    
-    // Play Bella voice on mount
-    const playBellaVoice = async () => {
-      try {
-        const audioContext = audioContextRef.current;
-        if (!audioContext) return;
-        
-        if (audioContext.state === 'suspended') {
-          await audioContext.resume();
-        }
-        
-        const audioData = await generateBellaSpeech("Let's get started!");
-        if (audioData && audioContext) {
-          const buffer = await decodeAudioData(decode(audioData), audioContext, 24000, 1);
-          const source = audioContext.createBufferSource();
-          source.buffer = buffer;
-          source.connect(audioContext.destination);
-          source.start();
-        }
-      } catch (error) {
-        console.error('Error playing Bella voice:', error);
-      }
-    };
-    playBellaVoice();
-    
-    return () => {
-      audioContextRef.current?.close().catch(console.error);
-    };
-  }, []);
 
   const handleSelect = (value: Goal) => {
     onChange('goal', value);
@@ -99,7 +63,7 @@ const StepLoanPurpose: React.FC<StepLoanPurposeProps> = ({ data, onChange, onNex
         title="What is the purpose of this loan?" 
         subtitle="Select the option that best describes your loan needs"
       />
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 mt-4 sm:mt-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mt-3 sm:mt-4">
         {goalOptions.map((option, index) => (
           <motion.div
             key={option.value}

@@ -11,7 +11,6 @@ import DocumentList from './components/DocumentList';
 import LandingPage from './components/LandingPage';
 import Footer from './components/Footer';
 import BellaVoiceAssistant from './components/BellaVoiceAssistant';
-import DemoController from './components/DemoController';
 import { FormData, LoanPurpose } from './types';
 import { generateLoanSummary } from './services/geminiService';
 import { motion, AnimatePresence } from "framer-motion";
@@ -81,8 +80,26 @@ const App: React.FC = () => {
   const [currentView, setCurrentView] = useState<View>('home');
   const [open, setOpen] = useState(false);
   const [isChatOpen, setIsChatOpen] = useState(false);
-  const [showDemo, setShowDemo] = useState(false);
+  const [isVoiceAssistantOpen, setIsVoiceAssistantOpen] = useState(false);
   const mainContentRef = useRef<HTMLDivElement>(null);
+
+  // Load callback data from localStorage and prepopulate form
+  useEffect(() => {
+    try {
+      const storedCallbackData = localStorage.getItem('bellaCallbackData');
+      if (storedCallbackData) {
+        const callbackData = JSON.parse(storedCallbackData);
+        setFormData(prev => ({
+          ...prev,
+          fullName: callbackData.fullName || prev.fullName,
+          email: callbackData.email || prev.email,
+          phoneNumber: callbackData.phoneNumber || prev.phoneNumber,
+        }));
+      }
+    } catch (error) {
+      console.error('Error loading callback data:', error);
+    }
+  }, []);
 
   // Scroll to top when view changes
   useEffect(() => {
@@ -129,71 +146,6 @@ const App: React.FC = () => {
   const nextStep = () => setStep(prev => Math.min(prev + 1, filteredFlow.length - 1));
   const prevStep = () => setStep(prev => Math.max(prev - 1, 0));
 
-  // Listen for Bella Demo Actions
-  useEffect(() => {
-    const handleDemoAction = (e: any) => {
-      const action = e.detail;
-      if (!action) return;
-
-      console.log("Demo Action:", action);
-
-      // Handle Navigation FIRST (before scrolling)
-      if (action.targetUrl === '/') {
-        setCurrentView('home');
-        // Wait for navigation, then scroll
-        setTimeout(() => {
-          window.scrollTo({ top: 0, behavior: 'smooth' });
-          if (mainContentRef.current) mainContentRef.current.scrollTo({ top: 0, behavior: 'smooth' });
-        }, 300);
-      }
-
-      // Handle Clicks (Simulated by state changes)
-      if (action.clickTarget === 'Start Pre-Evaluation') {
-        resetApplication();
-      } else if (action.clickTarget === 'Get Started') {
-        // If we're in prep view and on step 0 (Welcome), advance to next step
-        if (currentView === 'prep' && step === 0) {
-          setTimeout(() => {
-            setStep(1);
-          }, 500);
-        }
-      } else if (action.clickTarget === 'Document List') {
-        setCurrentView('documents');
-        setTimeout(() => {
-          if (mainContentRef.current) {
-            mainContentRef.current.scrollTo({ top: 0, behavior: 'smooth' });
-          }
-        }, 300);
-      } else if (action.clickTarget === 'Home Journey') {
-        setCurrentView('form1003');
-        setTimeout(() => {
-          if (mainContentRef.current) {
-            mainContentRef.current.scrollTo({ top: 0, behavior: 'smooth' });
-          }
-        }, 300);
-      }
-
-      // Handle Scrolling (only if no navigation happened)
-      if (!action.targetUrl && !action.clickTarget) {
-        if (action.scrollTarget === 'top') {
-          setTimeout(() => {
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-            if (mainContentRef.current) mainContentRef.current.scrollTo({ top: 0, behavior: 'smooth' });
-          }, 300);
-        } else if (action.scrollTarget === 'form-content') {
-          // Scroll down in the main content
-          setTimeout(() => {
-            if (mainContentRef.current) {
-              mainContentRef.current.scrollTo({ top: 500, behavior: 'smooth' });
-            }
-          }, 500);
-        }
-      }
-    };
-
-    window.addEventListener('bella-demo-action', handleDemoAction);
-    return () => window.removeEventListener('bella-demo-action', handleDemoAction);
-  }, [currentView, step, filteredFlow]);
 
   const handleDataChange = (newData: Partial<FormData>) => {
     setFormData((prev) => {
@@ -344,8 +296,8 @@ const App: React.FC = () => {
           </div>
         </SidebarBody>
       </Sidebar>
-      <main ref={mainContentRef} className="flex-1 h-full overflow-y-auto custom-scrollbar relative" style={{ backgroundColor: 'transparent', zIndex: 1 }}>
-        <div className="min-h-full flex items-center justify-center p-4 sm:p-6 md:p-8 lg:p-10 relative z-10">
+      <main ref={mainContentRef} className="flex-1 h-full overflow-y-auto overflow-x-hidden custom-scrollbar relative w-full max-w-full" style={{ backgroundColor: 'transparent', zIndex: 1 }}>
+        <div className="min-h-full flex items-center justify-center p-4 sm:p-6 md:p-8 lg:p-10 relative z-10 w-full max-w-full overflow-x-hidden">
           {currentView === 'home' ? (
             <LandingPage
               onNavigateToPrep={resetApplication}
@@ -359,7 +311,7 @@ const App: React.FC = () => {
             <div className="w-full max-w-[1088px] mx-auto">
               {/* Step Indicator at the top */}
               {showStepIndicator && (
-                <div className="mb-2 sm:mb-6 md:mb-8 mt-1 sm:mt-4 md:mt-6">
+                <div className="mb-2 sm:mb-4 md:mb-5 mt-1 sm:mt-2 md:mt-3">
                   <StepIndicator
                     labels={indicatorSteps.labels}
                     currentStepIndex={currentIndicatorIndex}
@@ -373,13 +325,13 @@ const App: React.FC = () => {
                   />
                 </div>
               )}
-              <div className="grid grid-cols-1 lg:grid-cols-3 lg:gap-8 xl:gap-12 items-stretch" style={{ marginTop: '0.5in' }}>
-                <div className="lg:col-span-2 bg-white rounded-2xl sm:rounded-3xl border border-border/60 transition-all duration-300 overflow-hidden shadow-xl sm:shadow-2xl hover:shadow-2xl p-4 sm:p-6 md:p-8 lg:p-12 min-h-[400px] sm:min-h-[500px] md:min-h-[550px] flex flex-col justify-between">
+              <div className="grid grid-cols-1 lg:grid-cols-3 lg:gap-6 xl:gap-8 items-start" style={{ marginTop: '0.25in' }}>
+                <div className="lg:col-span-2 bg-white rounded-xl sm:rounded-2xl border border-border/60 transition-all duration-300 overflow-hidden shadow-lg sm:shadow-xl hover:shadow-xl p-4 sm:p-5 md:p-6 lg:p-8 min-h-[300px] sm:min-h-[350px] md:min-h-[400px] flex flex-col justify-between">
                   <div key={step} className="animate-fade-in w-full flex-1 flex flex-col justify-center relative">
                     {renderPrepFlow()}
                   </div>
                 </div>
-                <div className="hidden lg:block lg:col-span-1 space-y-4 flex flex-col">
+                <div className="hidden lg:block lg:col-span-1 space-y-3 flex flex-col">
                   <ProgressBar 
                     currentStep={step + 1} 
                     totalSteps={filteredFlow.length} 
@@ -433,23 +385,6 @@ const App: React.FC = () => {
         )}
       </AnimatePresence> */}
 
-      <BellaVoiceAssistant onStartDemo={() => setShowDemo(true)} />
-      
-      {showDemo && (
-        <DemoController
-          onNavigateTo={(view) => {
-            setCurrentView(view);
-            if (view === 'prep') {
-              resetApplication();
-            }
-          }}
-          onFillData={(data) => {
-            setFormData(prev => ({ ...prev, ...data }));
-          }}
-          onEndDemo={() => setShowDemo(false)}
-          currentView={currentView}
-        />
-      )}
     </>
   );
 };

@@ -55,17 +55,35 @@ const sections: Array<{
 
 const ProgressBar: React.FC<ProgressBarProps> = ({ currentStep, totalSteps, formData, onSectionClick, flowSteps }) => {
   const [isSectionsExpanded, setIsSectionsExpanded] = useState(false);
-  // Use dynamic calculation if formData is provided, otherwise fall back to step-based
-  const progressPercentage = formData 
-    ? calculateProgress(formData)
-    : (totalSteps > 1
-    ? ((currentStep - 1) / (totalSteps - 1)) * 100
-        : (currentStep > 0 ? 100 : 0));
+  
+  // Detect if this is Form1003 context by checking if flowSteps contains Form1003-specific components
+  const isForm1003 = flowSteps && flowSteps.length > 0 && 
+    (flowSteps[0]?.component?.name === 'Step1BorrowerInfo' || 
+     flowSteps.some(step => {
+       const name = step?.component?.name || '';
+       return name.includes('Step1') || name.includes('Step2') || name.includes('Step3') || 
+              name.includes('Step4') || name.includes('Step5') || name.includes('Step6') ||
+              name.includes('Step7') || name.includes('Step8') || name.includes('BorrowerInfo') ||
+              name.includes('FinancialInfo') || name.includes('PropertyInfo') || name.includes('Declarations');
+     }));
+  
+  // Use step-based progress for Form1003, dynamic calculation for Prep4Loan
+  const progressPercentage = isForm1003
+    ? (totalSteps > 1
+        ? Math.max(0, Math.min(100, ((currentStep - 1) / (totalSteps - 1)) * 100))
+        : (currentStep > 0 ? 100 : 0))
+    : (formData 
+        ? Math.max(0, Math.min(100, calculateProgress(formData)))
+        : (totalSteps > 1
+            ? Math.max(0, Math.min(100, ((currentStep - 1) / (totalSteps - 1)) * 100))
+            : (currentStep > 0 ? 100 : 0)));
 
-  const completedSections = formData 
-    ? sections.filter(s => s.isCompleted(formData)).length
-    : currentStep;
-  const totalSections = sections.length;
+  const completedSections = isForm1003
+    ? Math.max(0, currentStep)
+    : (formData 
+        ? Math.max(0, sections.filter(s => s.isCompleted(formData)).length)
+        : Math.max(0, currentStep));
+  const totalSections = isForm1003 ? totalSteps : sections.length;
 
     // Map section keys to step component names for navigation
   const sectionToStepMap: Record<string, string> = {
@@ -104,21 +122,21 @@ const ProgressBar: React.FC<ProgressBarProps> = ({ currentStep, totalSteps, form
   };
 
   return (
-    <div className="w-full space-y-4">
+    <div className="w-full space-y-3 p-4 bg-secondary/50 rounded-lg border border-border">
       {/* Progress Header - Matching prep4loan style */}
       <div className="flex items-center justify-between">
         <div className="flex flex-col">
-          <h3 className="text-sm sm:text-base md:text-lg font-light tracking-tight text-foreground">Application Progress</h3>
-          <p className="text-xs sm:text-sm font-light leading-relaxed" style={{ color: '#6b7280' }}>Pre-Evaluation Requirements</p>
+          <h3 className="text-xs sm:text-sm font-light tracking-tight text-gray-900">Application Progress</h3>
+          <p className="text-[10px] sm:text-xs font-light leading-relaxed text-gray-800">Pre-Evaluation Requirements</p>
         </div>
         <div className="text-right flex-shrink-0">
-          <div className="text-xl sm:text-2xl font-light text-primary">{Math.round(progressPercentage)}%</div>
-          <div className="text-xs font-light" style={{ color: '#6b7280' }}>{completedSections}/{totalSections}</div>
+          <div className="text-base sm:text-lg font-light text-primary">{Math.round(progressPercentage)}%</div>
+          <div className="text-[10px] sm:text-xs font-light text-gray-800">{completedSections}/{totalSections}</div>
         </div>
       </div>
 
       {/* Progress Bar - Matching prep4loan style */}
-      <div className="w-full h-3 bg-muted rounded-full overflow-hidden mb-4">
+      <div className="w-full h-2 bg-muted rounded-full overflow-hidden mb-2">
           <motion.div
           className="h-full bg-gradient-to-r from-primary to-primary/80 rounded-full"
             initial={{ width: 0 }}
@@ -128,17 +146,17 @@ const ProgressBar: React.FC<ProgressBarProps> = ({ currentStep, totalSteps, form
       </div>
 
       {/* Sections List - Collapsible for sidebar */}
-      {formData && (
+      {formData && !isForm1003 && (
         <div>
           <button
             onClick={() => setIsSectionsExpanded(!isSectionsExpanded)}
-            className="w-full flex items-center justify-between p-2 rounded-lg hover:bg-muted/50 transition-colors mb-2"
+            className="w-full flex items-center justify-between p-1.5 rounded-lg hover:bg-muted/50 transition-colors mb-1.5"
           >
-            <span className="text-xs sm:text-sm font-light text-foreground">
+            <span className="text-[10px] sm:text-xs font-light text-gray-900">
               {isSectionsExpanded ? 'Hide' : 'Show'} Sections ({completedSections}/{totalSections})
             </span>
             <ChevronDown 
-              className={`h-4 w-4 text-muted-foreground transition-transform ${isSectionsExpanded ? 'rotate-180' : ''}`}
+              className={`h-3 w-3 text-muted-foreground transition-transform ${isSectionsExpanded ? 'rotate-180' : ''}`}
             />
           </button>
           <AnimatePresence>
@@ -150,7 +168,7 @@ const ProgressBar: React.FC<ProgressBarProps> = ({ currentStep, totalSteps, form
                 transition={{ duration: 0.2 }}
                 className="overflow-hidden"
               >
-                <div className="space-y-2 max-h-96 overflow-y-auto custom-scrollbar pr-2">
+                <div className="space-y-1.5 max-h-64 overflow-y-auto custom-scrollbar pr-1.5">
                   {sections.map((section, index) => {
                     const isCompleted = section.isCompleted(formData);
                     const stepIndex = getStepIndexForSection(section.key);
@@ -161,17 +179,17 @@ const ProgressBar: React.FC<ProgressBarProps> = ({ currentStep, totalSteps, form
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ delay: index * 0.05 }}
                         onClick={() => handleSectionClick(section.key, stepIndex ?? index)}
-                        className="flex items-center gap-2 p-2 rounded-lg hover:bg-muted/50 transition-colors cursor-pointer touch-manipulation"
+                        className="flex items-center gap-1.5 p-1.5 rounded-lg hover:bg-muted/50 transition-colors cursor-pointer touch-manipulation"
                       >
                         {isCompleted ? (
-                          <CheckCircle2 className="h-4 w-4 text-primary flex-shrink-0" />
+                          <CheckCircle2 className="h-3 w-3 text-primary flex-shrink-0" />
                         ) : (
-                          <Circle className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+                          <Circle className="h-3 w-3 text-muted-foreground flex-shrink-0" />
                         )}
-                        <span className={`text-xs font-light flex-1 ${
+                        <span className={`text-[10px] sm:text-xs font-light flex-1 ${
                           isCompleted 
-                            ? 'text-foreground line-through opacity-60' 
-                            : 'text-foreground'
+                            ? 'text-gray-700 line-through opacity-70' 
+                            : 'text-gray-900'
                         }`}>
                           {section.label}
                         </span>
@@ -193,7 +211,7 @@ const ProgressBar: React.FC<ProgressBarProps> = ({ currentStep, totalSteps, form
           className="mt-4 p-4 bg-primary/10 rounded-xl border border-primary/20 text-center"
         >
           <div className="text-2xl mb-2">🎉</div>
-          <p className="text-sm font-light text-foreground">All requirements complete!</p>
+          <p className="text-sm font-light text-gray-900">All requirements complete!</p>
           </motion.div>
         )}
     </div>

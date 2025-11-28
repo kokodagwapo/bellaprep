@@ -3,20 +3,12 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Mic, MicOff, Phone, PhoneOff, Activity, Sparkles, Minimize2, Maximize2 } from 'lucide-react';
 import { generateBellaSpeech, getBellaChatReply } from '../services/geminiService';
 import { decodeAudioData, decode } from '../utils/audioUtils';
-import DemoController from './DemoController';
 import SiriOrb from './ui/siri-orb';
 
 interface BellaVoiceAssistantProps {
-  onStartDemo?: () => void;
 }
 
-const BellaVoiceAssistant: React.FC<BellaVoiceAssistantProps> = ({ onStartDemo }) => {
-    // Agentic Demo State - tracks user context for live guidance
-    const [userContext, setUserContext] = useState<{
-        currentView?: string;
-        currentStep?: number;
-        lastAction?: string;
-    }>({});
+const BellaVoiceAssistant: React.FC<BellaVoiceAssistantProps> = () => {
     const [conversationHistory, setConversationHistory] = useState<{ role: 'user' | 'model', text: string }[]>([]);
 
     // Call State
@@ -24,7 +16,7 @@ const BellaVoiceAssistant: React.FC<BellaVoiceAssistantProps> = ({ onStartDemo }
     const [isBellaSpeaking, setIsBellaSpeaking] = useState(false);
     const [isUserSpeaking, setIsUserSpeaking] = useState(false);
     const [statusMessage, setStatusMessage] = useState("Ready to help");
-    const [mode, setMode] = useState<'idle' | 'agentic' | 'call' | 'demo'>('idle');
+    const [mode, setMode] = useState<'idle' | 'call'>('idle');
     const [micPermissionGranted, setMicPermissionGranted] = useState<boolean | null>(null);
     const [micError, setMicError] = useState<string | null>(null);
     const [isMinimized, setIsMinimized] = useState(false);
@@ -82,8 +74,8 @@ const BellaVoiceAssistant: React.FC<BellaVoiceAssistantProps> = ({ onStartDemo }
 
             recognition.onend = () => {
                 setIsUserSpeaking(false);
-                // If call is still active OR in agentic mode, restart listening (unless Bella is speaking)
-                if ((isCallActive || mode === 'agentic') && !isBellaSpeaking) {
+                // If call is still active, restart listening (unless Bella is speaking)
+                if (isCallActive && !isBellaSpeaking) {
                     setTimeout(() => {
                         try { 
                             recognition.start(); 
@@ -194,31 +186,8 @@ const BellaVoiceAssistant: React.FC<BellaVoiceAssistantProps> = ({ onStartDemo }
                     const updatedHistory: { role: 'user' | 'model', text: string }[] = [...conversationHistory, { role: 'user' as const, text: transcript }];
                     setConversationHistory(updatedHistory);
 
-                    // Get contextual response from Bella with user context
-                    const contextInfo = [];
-                    if (userContext.currentView) {
-                        contextInfo.push(`User is currently viewing: ${userContext.currentView}`);
-                    }
-                    if (userContext.currentStep !== undefined) {
-                        contextInfo.push(`They're on step ${userContext.currentStep} of the application`);
-                    }
-                    if (userContext.lastAction) {
-                        contextInfo.push(`Last action: ${userContext.lastAction}`);
-                    }
-                    
-                    const contextPrompt = contextInfo.length > 0 
-                        ? `[Context: ${contextInfo.join('. ')}]`
-                        : '';
-                    
-                    // Build conversation with context
-                    const conversationWithContext: { role: 'user' | 'model', text: string }[] = contextPrompt 
-                        ? [
-                            ...updatedHistory.slice(0, -1), // All but the last user message
-                            { role: 'user' as const, text: `${transcript} ${contextPrompt}` }
-                          ]
-                        : updatedHistory;
-                    
-                    const reply = await getBellaChatReply(conversationWithContext);
+                    // Get response from Bella
+                    const reply = await getBellaChatReply(updatedHistory);
                     
                     // Update conversation history with Bella's response
                     setConversationHistory([...updatedHistory, { role: 'model' as const, text: reply }]);
@@ -237,8 +206,8 @@ const BellaVoiceAssistant: React.FC<BellaVoiceAssistantProps> = ({ onStartDemo }
                     
                     // Play response
                     await playAudio(reply, () => {
-                        // After answering, restart listening if agentic/call mode is active
-                        if ((isCallActive || mode === 'agentic') && recognitionRef.current) {
+                        // After answering, restart listening if call mode is active
+                        if (isCallActive && recognitionRef.current) {
                             setTimeout(() => {
                                 try { 
                                     recognitionRef.current.start(); 
@@ -279,7 +248,7 @@ const BellaVoiceAssistant: React.FC<BellaVoiceAssistantProps> = ({ onStartDemo }
 
     // Separate useEffect to monitor microphone permission changes when permission is denied
     useEffect(() => {
-        if ((mode !== 'agentic' && mode !== 'call') || micPermissionGranted !== false) return;
+        if (mode !== 'call' || micPermissionGranted !== false) return;
 
         const checkPermissionState = async () => {
             try {
@@ -293,7 +262,7 @@ const BellaVoiceAssistant: React.FC<BellaVoiceAssistantProps> = ({ onStartDemo }
                         setMicPermissionGranted(true);
                         setMicError(null);
                         setTimeout(() => {
-                            startAgenticMode();
+                            startCall();
                         }, 500);
                         return; // Exit early since we're restarting
                     }
@@ -305,7 +274,7 @@ const BellaVoiceAssistant: React.FC<BellaVoiceAssistantProps> = ({ onStartDemo }
                             setMicPermissionGranted(true);
                             setMicError(null);
                             setTimeout(() => {
-                                startAgenticMode();
+                                startCall();
                             }, 500);
                         }
                     };
@@ -517,8 +486,8 @@ const BellaVoiceAssistant: React.FC<BellaVoiceAssistantProps> = ({ onStartDemo }
                 setIsBellaSpeaking(false);
                 setStatusMessage("Listening...");
                 
-                // Resume listening after Bella finishes (call/agentic mode is active)
-                if ((isCallActive || mode === 'agentic') && recognitionRef.current) {
+                // Resume listening after Bella finishes (call mode is active)
+                if (isCallActive && recognitionRef.current) {
                     setTimeout(() => {
                         try { 
                             recognitionRef.current.start(); 
@@ -571,8 +540,8 @@ const BellaVoiceAssistant: React.FC<BellaVoiceAssistantProps> = ({ onStartDemo }
             utterance.onend = () => {
                 setIsBellaSpeaking(false);
                 setStatusMessage("Listening...");
-                // Resume listening after Bella finishes (call/agentic mode is active)
-                if ((isCallActive || mode === 'agentic') && recognitionRef.current) {
+                // Resume listening after Bella finishes (call mode is active)
+                if (isCallActive && recognitionRef.current) {
                     setTimeout(() => {
                         try { 
                             recognitionRef.current.start(); 
@@ -674,9 +643,117 @@ const BellaVoiceAssistant: React.FC<BellaVoiceAssistantProps> = ({ onStartDemo }
         await playAudio(reply, undefined);
     };
 
-    // startCall now uses agentic mode for live guidance
-    const startCall = () => {
-        startAgenticMode();
+    // Start call mode - voice conversation with borrowers
+    const startCall = async () => {
+        setMode('call');
+        setIsCallActive(true);
+        setStatusMessage("Starting call...");
+        setMicError(null);
+        setConversationHistory([]);
+        
+        // When starting call, use auto voice selection (OpenAI first, Gemini fallback)
+        setVoicePreference('auto');
+
+        // Resume Audio Context on user interaction
+        if (audioContextRef.current?.state === 'suspended') {
+            try {
+                await audioContextRef.current.resume();
+                console.log("✅ Audio context resumed");
+            } catch (e) {
+                console.warn("⚠️ Could not resume audio context:", e);
+            }
+        }
+
+        // Request microphone permission
+        try {
+            console.log("🎤 Requesting microphone access...");
+            setMicPermissionGranted(null);
+            setStatusMessage("Requesting Access...");
+            setMicError(null);
+            
+            let stream: MediaStream;
+            try {
+                stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                console.log("✅ Microphone permission granted");
+            } catch (basicError: any) {
+                try {
+                    stream = await navigator.mediaDevices.getUserMedia({ 
+                        audio: {
+                            echoCancellation: true,
+                            noiseSuppression: true,
+                            autoGainControl: true
+                        } 
+                    });
+                    console.log("✅ Microphone permission granted with constraints");
+                } catch (constraintError: any) {
+                    throw basicError;
+                }
+            }
+            
+            setMicPermissionGranted(true);
+            micStreamRef.current = stream;
+            setMicError(null);
+            setStatusMessage("Ready");
+            console.log("✅ Microphone permission granted for call mode");
+            
+            // Monitor stream for disconnection
+            stream.getTracks().forEach(track => {
+                track.onended = () => {
+                    console.warn("⚠️ Microphone track ended unexpectedly");
+                    setMicPermissionGranted(false);
+                    setMicError("Microphone disconnected. Please check your microphone and try again.");
+                };
+            });
+        } catch (e: any) {
+            console.error("❌ Microphone permission error:", e);
+            setMicPermissionGranted(false);
+            setStatusMessage("Ready to help");
+            
+            if (e.name === 'NotAllowedError' || e.name === 'PermissionDeniedError') {
+                setMicError("Microphone access denied. Bella can still guide you, but voice input is disabled. Click the 🔒 icon in your browser's address bar and select 'Allow' to enable voice input.");
+            } else if (e.name === 'NotFoundError' || e.name === 'DevicesNotFoundError') {
+                setMicError("No microphone found. Bella can still guide you, but voice input is disabled.");
+            } else if (e.name === 'NotReadableError' || e.name === 'TrackStartError') {
+                setMicError("Microphone is being used by another app. Bella can still guide you, but voice input is disabled.");
+            } else {
+                setMicError("Could not access microphone. Bella can still guide you, but voice input is disabled.");
+            }
+            console.log("ℹ️ Continuing without microphone - Bella can still provide guidance");
+        }
+
+        // Start Recognition only if microphone permission was granted
+        if (micPermissionGranted && recognitionRef.current) {
+            setTimeout(() => {
+                try {
+                    if (recognitionRef.current && (recognitionRef.current as any).state === 'running') {
+                        console.log("ℹ️ Speech recognition already running");
+                        setStatusMessage("Listening...");
+                        return;
+                    }
+                    
+                    recognitionRef.current.start();
+                    setStatusMessage("Listening...");
+                    console.log("✅ Speech recognition started for call mode");
+                } catch (e: any) {
+                    console.error("❌ Error starting recognition:", e);
+                    if (e.name === 'InvalidStateError' || e.message?.includes('already started')) {
+                        console.log("ℹ️ Recognition already started, this is okay");
+                        setStatusMessage("Listening...");
+                    } else {
+                        console.warn("⚠️ Could not start speech recognition");
+                        setStatusMessage("Ready to help");
+                    }
+                }
+            }, 300);
+        } else if (!micPermissionGranted) {
+            console.log("ℹ️ Speech recognition disabled - microphone permission not granted");
+            setStatusMessage("Ready to help");
+        } else if (!recognitionRef.current) {
+            console.warn("⚠️ Speech recognition not available in this browser");
+            setStatusMessage("Ready to help");
+        }
+
+        setStatusMessage("Ready to help");
     };
 
     const endCall = () => {
@@ -732,179 +809,29 @@ const BellaVoiceAssistant: React.FC<BellaVoiceAssistantProps> = ({ onStartDemo }
     };
 
 
-    // Live Agentic Mode - Bella observes and guides based on user actions
-    const startAgenticMode = async () => {
-        setMode('agentic');
-        setIsCallActive(true);
-        setStatusMessage("Starting live guide...");
-        setMicError(null);
-        setConversationHistory([]);
-        
-        // When starting agentic mode, use auto voice selection (OpenAI first, Gemini fallback)
-        // This allows best quality voice when available, but falls back gracefully
-        setVoicePreference('auto');
 
-        // Resume Audio Context on user interaction
-        if (audioContextRef.current?.state === 'suspended') {
-            try {
-            await audioContextRef.current.resume();
-                console.log("✅ Audio context resumed");
-            } catch (e) {
-                console.warn("⚠️ Could not resume audio context:", e);
-            }
-        }
-
-        // Request microphone permission - simple and direct approach
-        try {
-            console.log("🎤 Requesting microphone access...");
-            setMicPermissionGranted(null); // Show loading state
-            setStatusMessage("Requesting Access...");
-            setMicError(null);
-            
-            // Directly request microphone access - let browser show the prompt
-            // Don't check permissions first, just request directly
-            let stream: MediaStream;
-            try {
-                // Try with basic audio first (most compatible)
-                stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-                console.log("✅ Microphone permission granted");
-            } catch (basicError: any) {
-                // If basic fails, try with constraints
-                try {
-                    stream = await navigator.mediaDevices.getUserMedia({ 
-                        audio: {
-                            echoCancellation: true,
-                            noiseSuppression: true,
-                            autoGainControl: true
-                        } 
-                    });
-                    console.log("✅ Microphone permission granted with constraints");
-                } catch (constraintError: any) {
-                    throw basicError; // Throw the original error
-                }
-            }
-            
-            setMicPermissionGranted(true);
-            micStreamRef.current = stream;
-            setMicError(null);
-            setStatusMessage("Ready");
-            console.log("✅ Microphone permission granted for agentic mode");
-            
-            // Monitor stream for disconnection
-            stream.getTracks().forEach(track => {
-                track.onended = () => {
-                    console.warn("⚠️ Microphone track ended unexpectedly");
-                    setMicPermissionGranted(false);
-                    setMicError("Microphone disconnected. Please check your microphone and try again.");
-                };
-            });
-        } catch (e: any) {
-            console.error("❌ Microphone permission error:", e);
-            setMicPermissionGranted(false);
-            setStatusMessage("Demo Mode");
-            
-            if (e.name === 'NotAllowedError' || e.name === 'PermissionDeniedError') {
-                setMicError("Microphone access denied. Bella can still guide you, but voice input is disabled. Click the 🔒 icon in your browser's address bar and select 'Allow' to enable voice input.");
-            } else if (e.name === 'NotFoundError' || e.name === 'DevicesNotFoundError') {
-                setMicError("No microphone found. Bella can still guide you, but voice input is disabled.");
-            } else if (e.name === 'NotReadableError' || e.name === 'TrackStartError') {
-                setMicError("Microphone is being used by another app. Bella can still guide you, but voice input is disabled.");
-            } else {
-                setMicError("Could not access microphone. Bella can still guide you, but voice input is disabled.");
-            }
-            // Continue with demo even if mic is denied - Bella can still speak
-            console.log("ℹ️ Continuing demo without microphone - Bella can still provide guidance");
-        }
-
-        // Start Recognition only if microphone permission was granted
-        if (micPermissionGranted && recognitionRef.current) {
-            setTimeout(() => {
-                try {
-                    if (recognitionRef.current && (recognitionRef.current as any).state === 'running') {
-                        console.log("ℹ️ Speech recognition already running");
-                        setStatusMessage("Listening...");
-                        return;
-                    }
-                    
-                    recognitionRef.current.start();
-                    setStatusMessage("Listening...");
-                    console.log("✅ Speech recognition started for agentic mode");
-                } catch (e: any) {
-                    console.error("❌ Error starting recognition:", e);
-                    if (e.name === 'InvalidStateError' || e.message?.includes('already started')) {
-                        console.log("ℹ️ Recognition already started, this is okay");
-                        setStatusMessage("Listening...");
-                    } else {
-                        console.warn("⚠️ Could not start speech recognition, but continuing demo");
-                        setStatusMessage("Demo Mode");
-                    }
-                }
-            }, 300);
-        } else if (!micPermissionGranted) {
-            console.log("ℹ️ Speech recognition disabled - microphone permission not granted");
-            setStatusMessage("Demo Mode");
-        } else if (!recognitionRef.current) {
-            console.warn("⚠️ Speech recognition not available in this browser");
-            setStatusMessage("Demo Mode");
-        }
-
-        // Show DemoController - it will handle the demo
-        setMode('demo');
-        setStatusMessage("Demo Ready");
-    };
-
-    // Listen for user actions to provide contextual help
-    useEffect(() => {
-        if (mode !== 'agentic') return;
-
-        const handleUserAction = (e: any) => {
-            // Track user context for better responses
-            const action = e.detail;
-            if (action) {
-                setUserContext(prev => ({
-                    ...prev,
-                    lastAction: action.action || action.type || 'user interaction'
-                }));
-            }
-        };
-
-        // Listen for view changes
-        const handleViewChange = () => {
-            const currentView = window.location.pathname === '/' ? 'home' : 
-                              document.querySelector('[data-view]')?.getAttribute('data-view') || 'unknown';
-            setUserContext(prev => ({ ...prev, currentView }));
-        };
-
-        window.addEventListener('bella-demo-action', handleUserAction);
-        window.addEventListener('popstate', handleViewChange);
-        
-        return () => {
-            window.removeEventListener('bella-demo-action', handleUserAction);
-            window.removeEventListener('popstate', handleViewChange);
-        };
-    }, [mode]);
-
-    // If minimized, show only the pulsating orb
+    // If minimized, show only the pulsating orb - Hidden for now
     if (isMinimized) {
-        return (
-            <motion.div
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                className="fixed bottom-6 left-[120px] z-50"
-                onClick={() => setIsMinimized(false)}
-            >
-                <SiriOrb 
-                    size="64px" 
-                    animationDuration={15}
-                    className="drop-shadow-2xl"
-                    colors={{
-                        c1: "oklch(70% 0.18 350)",
-                        c2: "oklch(75% 0.15 200)",
-                        c3: "oklch(72% 0.16 280)",
-                    }}
-                />
-            </motion.div>
-        );
+        return null;
+        // return (
+        //     <motion.div
+        //         initial={{ opacity: 0, scale: 0.8 }}
+        //         animate={{ opacity: 1, scale: 1 }}
+        //         className="fixed bottom-6 left-[120px] z-50"
+        //         onClick={() => setIsMinimized(false)}
+        //     >
+        //         <SiriOrb 
+        //             size="64px" 
+        //             animationDuration={15}
+        //             className="drop-shadow-2xl"
+        //             colors={{
+        //                 c1: "oklch(70% 0.18 350)",
+        //                 c2: "oklch(75% 0.15 200)",
+        //                 c3: "oklch(72% 0.16 280)",
+        //             }}
+        //         />
+        //     </motion.div>
+        // );
     }
 
     return (
@@ -942,7 +869,7 @@ const BellaVoiceAssistant: React.FC<BellaVoiceAssistantProps> = ({ onStartDemo }
                 {/* Dynamic Content Area */}
                 <div className="px-5 py-2 min-h-[60px] max-h-[300px] flex flex-col items-start justify-start gap-1 overflow-hidden">
                     {/* Conversation Transcript - Scrollable */}
-                    {(mode === 'call' || mode === 'agentic') && conversationHistory.length > 0 && (
+                    {mode === 'call' && conversationHistory.length > 0 && (
                         <div 
                             ref={transcriptScrollRef}
                             className="w-full max-h-[250px] overflow-y-auto pr-2 space-y-3 mb-2 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100"
@@ -973,11 +900,10 @@ const BellaVoiceAssistant: React.FC<BellaVoiceAssistantProps> = ({ onStartDemo }
                     {!micError && (
                     <p className="text-sm text-gray-600 leading-relaxed font-medium">
                         {mode === 'idle' && "Ready to guide you through Prep4Loan!"}
-                            {mode === 'demo' && "Demo Mode - Check demo controller"}
-                        {(mode === 'call' || mode === 'agentic') && isBellaSpeaking && "Speaking..."}
-                            {(mode === 'call' || mode === 'agentic') && !isBellaSpeaking && micPermissionGranted && conversationHistory.length === 0 && "Listening..."}
-                            {(mode === 'call' || mode === 'agentic') && !isBellaSpeaking && micPermissionGranted === false && "Demo Mode - Bella can guide you"}
-                            {(mode === 'call' || mode === 'agentic') && micPermissionGranted === null && "Requesting access..."}
+                        {mode === 'call' && isBellaSpeaking && "Speaking..."}
+                        {mode === 'call' && !isBellaSpeaking && micPermissionGranted && conversationHistory.length === 0 && "Listening..."}
+                        {mode === 'call' && !isBellaSpeaking && micPermissionGranted === false && "Bella can guide you"}
+                        {mode === 'call' && micPermissionGranted === null && "Requesting access..."}
                     </p>
                     )}
                     {micError && (
@@ -1003,7 +929,7 @@ const BellaVoiceAssistant: React.FC<BellaVoiceAssistantProps> = ({ onStartDemo }
                                         </div>
                                     </div>
                                     <button
-                                        onClick={startAgenticMode}
+                                        onClick={startCall}
                                         type="button"
                                         className="w-full bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold py-2.5 px-4 rounded-lg transition-all active:scale-95 shadow-md flex items-center justify-center gap-2"
                                     >
@@ -1024,7 +950,7 @@ const BellaVoiceAssistant: React.FC<BellaVoiceAssistantProps> = ({ onStartDemo }
                             )}
                         </motion.div>
                     )}
-                    {(mode === 'call' || mode === 'agentic') && micPermissionGranted === null && !micError && (
+                    {mode === 'call' && micPermissionGranted === null && !micError && (
                         <p className="text-xs text-blue-600 font-medium mt-1">
                             🎤 Requesting microphone access...
                         </p>
@@ -1038,40 +964,28 @@ const BellaVoiceAssistant: React.FC<BellaVoiceAssistantProps> = ({ onStartDemo }
                     {mode === 'idle' && (
                         <div className="flex items-center justify-center">
                             <div className="flex flex-col gap-2">
-                                {/* Start Live Guide - Hidden for now, will bring back later */}
+                                {/* Start Call - Hidden for now */}
                                 {false && (
                             <button
-                                onClick={startAgenticMode}
+                                onClick={startCall}
                                         type="button"
                                 className="flex items-center justify-center gap-2 bg-primary hover:bg-primary/90 text-white py-3 px-6 rounded-xl shadow-md transition-all active:scale-95 w-full"
                             >
                                 <Phone size={18} />
-                                <span className="text-sm font-semibold">Start Live Guide</span>
+                                <span className="text-sm font-semibold">Start Call</span>
                                     </button>
                                 )}
-                                <button
-                                    onClick={() => {
-                                        if (onStartDemo) {
-                                            onStartDemo();
-                                        }
-                                    }}
-                                    type="button"
-                                    className="flex items-center justify-center gap-2 bg-gradient-to-r from-primary to-green-600 hover:from-green-600 hover:to-primary text-white py-3 px-6 rounded-xl shadow-md transition-all active:scale-95 w-full"
-                                >
-                                    <Sparkles size={18} />
-                                    <span className="text-sm font-semibold">Start Demo Tour</span>
-                            </button>
                             </div>
                         </div>
                     )}
 
 
-                    {/* CALL/AGENTIC MODE */}
-                    {(mode === 'call' || mode === 'agentic') && (
+                    {/* CALL MODE */}
+                    {mode === 'call' && (
                         <div className="flex items-center justify-between gap-4 px-2">
                             {micPermissionGranted === false ? (
                                 <button
-                                    onClick={startAgenticMode}
+                                    onClick={startCall}
                                     type="button"
                                     className="p-3 rounded-full bg-blue-500 text-white hover:bg-blue-600 transition-all shadow-lg hover:shadow-xl animate-pulse"
                                     title="Click to allow microphone access"
