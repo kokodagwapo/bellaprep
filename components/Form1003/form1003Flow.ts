@@ -1,3 +1,4 @@
+import Step0LoanType from './Step0_LoanType';
 import Step1BorrowerInfo from './Step1_BorrowerInfo';
 import Step1bExtendedBorrowerInfo from './Step1b_ExtendedBorrowerInfo';
 import Step2FinancialInfo from './Step2_FinancialInfo';
@@ -11,15 +12,16 @@ import Step8Demographics from './Step8_Demographics';
 import Step5ReviewSubmit from './Step5_ReviewSubmit';
 
 export const form1003Flow = [
-  { component: Step1BorrowerInfo },
-  { component: Step1bExtendedBorrowerInfo },
-  { component: Step2FinancialInfo },
-  { component: Step2bEmploymentDetails },
-  { component: Step2cAssetsLiabilities },
-  { component: Step3PropertyInfo },
-  { component: Step4Declarations },
-  { component: Step6StateDisclosures },
-  { component: Step7Acknowledgments },
-  { component: Step8Demographics },
-  { component: Step5ReviewSubmit },
+  { component: Step0LoanType, label: 'Loan Type' },
+  { component: Step1BorrowerInfo, label: 'Borrower Info' },
+  { component: Step1bExtendedBorrowerInfo, label: 'Extended Info' },
+  { component: Step2FinancialInfo, label: 'Financial Info' },
+  { component: Step2bEmploymentDetails, label: 'Employment' },
+  { component: Step2cAssetsLiabilities, label: 'Assets/Liabilities' },
+  { component: Step3PropertyInfo, label: 'Property Info' },
+  { component: Step4Declarations, label: 'Declarations' },
+  { component: Step6StateDisclosures, label: 'State Disclosures' },
+  { component: Step7Acknowledgments, label: 'Acknowledgments' },
+  { component: Step8Demographics, label: 'Demographics' },
+  { component: Step5ReviewSubmit, label: 'Review & Submit' },
 ];

@@ -29,6 +29,7 @@ import StepMilitary from './components/StepMilitary';
 import StepName from './components/StepName';
 import StepContact from './components/StepContact';
 import StepConfirmation from './components/StepConfirmation';
+import StepLoanRecommendation from './components/StepLoanRecommendation';
 import type { FormData } from './types';
 
 type StepComponent = React.ComponentType<any>;
@@ -84,6 +85,7 @@ export const appFlow: AppStep[] = [
   { component: StepPrepDocs, path: 'all', indicatorLabel: 'Docs' },
   { component: StepDMVAddressVerification, path: 'all', indicatorLabel: 'Verification' },
   { component: StepAffordabilitySnapshot, path: 'all', indicatorLabel: 'Snapshot' },
+  { component: StepLoanRecommendation, path: 'all', indicatorLabel: 'Loan Type' },
   { component: StepReviewChecklist, path: 'all', indicatorLabel: 'Review' },
   { component: StepPrep4LoanSummary, path: 'all', indicatorLabel: 'Summary' },
   { component: StepConfirmation, path: 'all', indicatorLabel: 'Apply' },

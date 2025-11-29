@@ -5,6 +5,35 @@ export enum LoanPurpose {
   QUALIFY_FASTER = 'See If I Qualify Faster',
 }
 
+// Mortgage/Loan Type (URLA 1003 Section L)
+export enum MortgageType {
+  CONVENTIONAL = 'Conventional',
+  FHA = 'FHA',
+  VA = 'VA',
+  USDA = 'USDA',
+  JUMBO = 'Jumbo',
+  OTHER = 'Other',
+}
+
+// Amortization Type
+export enum AmortizationType {
+  FIXED = 'Fixed Rate',
+  ARM_5_1 = '5/1 ARM',
+  ARM_7_1 = '7/1 ARM',
+  ARM_10_1 = '10/1 ARM',
+  GPM = 'Graduated Payment Mortgage',
+  OTHER = 'Other',
+}
+
+// Loan Term
+export enum LoanTerm {
+  THIRTY_YEAR = '30 Years',
+  TWENTY_FIVE_YEAR = '25 Years',
+  TWENTY_YEAR = '20 Years',
+  FIFTEEN_YEAR = '15 Years',
+  TEN_YEAR = '10 Years',
+}
+
 export enum Goal {
   BUY_HOME = 'Buy a Home',
   REFINANCE_MORTGAGE = 'Refinance My Mortgage',
@@ -184,6 +213,13 @@ export interface FormData {
   borrowerAddress?: string;
   dob?: string;
   estimatedPropertyValue: number;
+  
+  // Loan Type Information (from Prep4Loan recommendation or URLA 1003)
+  mortgageType?: MortgageType | '';
+  amortizationType?: AmortizationType | '';
+  loanTerm?: LoanTerm | '';
+  interestRate?: number;
+  loanTypeSource?: 'prep4loan' | 'urla1003' | ''; // Track where loan type was set
   
   // New fields from master flow
   primaryResidenceIntent?: {
