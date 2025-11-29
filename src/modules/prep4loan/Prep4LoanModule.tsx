@@ -272,7 +272,7 @@ const App: React.FC = () => {
           <div className="flex flex-col flex-1 overflow-y-auto overflow-x-hidden" style={{ color: '#000000', backgroundColor: '#ffffff' }}>
             {/* Logo */}
             <LogoSection />
-            <div className="flex flex-col gap-1 md:gap-2">
+            <div className="flex flex-col gap-1 md:gap-2 mt-12">
               {links.map((link, idx) => (
                 <button
                   key={idx}
