@@ -1,0 +1,106 @@
+service: bellaprep-api
+
+frameworkVersion: '3'
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  region: ${opt:region, 'us-east-1'}
+  stage: ${opt:stage, 'dev'}
+  memorySize: 512
+  timeout: 30
+  environment:
+    NODE_ENV: ${self:provider.stage}
+    DATABASE_URL: ${ssm:/bellaprep/${self:provider.stage}/database-url}
+    JWT_SECRET: ${ssm:/bellaprep/${self:provider.stage}/jwt-secret~true}
+    JWT_REFRESH_SECRET: ${ssm:/bellaprep/${self:provider.stage}/jwt-refresh-secret~true}
+    AWS_ACCOUNT_ID: ${aws:accountId}
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - ssm:GetParameter
+            - ssm:GetParameters
+          Resource:
+            - 'arn:aws:ssm:${self:provider.region}:${aws:accountId}:parameter/bellaprep/${self:provider.stage}/*'
+        - Effect: Allow
+          Action:
+            - s3:PutObject
+            - s3:GetObject
+            - s3:DeleteObject
+          Resource:
+            - 'arn:aws:s3:::bellaprep-${self:provider.stage}-uploads/*'
+        - Effect: Allow
+          Action:
+            - lambda:InvokeFunction
+          Resource:
+            - '*'
+
+plugins:
+  - serverless-plugin-typescript
+  - serverless-offline
+  - serverless-dotenv-plugin
+
+custom:
+  serverless-offline:
+    httpPort: 3000
+    lambdaPort: 3002
+  dotenv:
+    path: .env.${self:provider.stage}
+    basePath: ./
+    include:
+      - DATABASE_URL
+      - JWT_SECRET
+      - JWT_REFRESH_SECRET
+
+package:
+  individually: true
+  patterns:
+    - '!node_modules/**'
+    - '!test/**'
+    - '!.env*'
+    - '!README.md'
+
+functions:
+  api:
+    handler: src/main.handler
+    events:
+      - http:
+          method: ANY
+          path: /
+          cors: true
+      - http:
+          method: ANY
+          path: /{proxy+}
+          cors: true
+    vpc:
+      securityGroupIds:
+        - ${ssm:/bellaprep/${self:provider.stage}/security-group-id}
+      subnetIds:
+        - ${ssm:/bellaprep/${self:provider.stage}/subnet-id-1}
+        - ${ssm:/bellaprep/${self:provider.stage}/subnet-id-2}
+
+resources:
+  Resources:
+    UploadsS3Bucket:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: bellaprep-${self:provider.stage}-uploads
+        CorsConfiguration:
+          CorsRules:
+            - AllowedOrigins:
+                - '*'
+              AllowedMethods:
+                - GET
+                - PUT
+                - POST
+                - DELETE
+              AllowedHeaders:
+                - '*'
+        PublicAccessBlockConfiguration:
+          BlockPublicAcls: true
+          BlockPublicPolicy: true
+          IgnorePublicAcls: true
+          RestrictPublicBuckets: true
+

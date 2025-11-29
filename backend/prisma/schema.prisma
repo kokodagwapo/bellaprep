@@ -1,0 +1,715 @@
+// BellaPrep Multi-Tenant SaaS Database Schema
+// PostgreSQL + Prisma
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================================
+// ENUMS
+// ============================================================
+
+enum UserRole {
+  SUPER_ADMIN
+  LENDER_ADMIN
+  LOAN_OFFICER
+  PROCESSOR
+  UNDERWRITER
+  CLOSER
+  BORROWER
+}
+
+enum LoanPurpose {
+  PURCHASE
+  REFINANCE
+  CASH_OUT_REFINANCE
+}
+
+enum LoanStatus {
+  DRAFT
+  IN_PROGRESS
+  SUBMITTED
+  IN_REVIEW
+  CONDITIONALLY_APPROVED
+  APPROVED
+  DENIED
+  CLOSED
+  CANCELLED
+}
+
+enum ProductType {
+  CONVENTIONAL
+  FHA
+  VA
+  USDA
+  JUMBO
+  HELOC
+  NON_QM
+  MOBILE_HOME
+  MANUFACTURED_HOME
+}
+
+enum PropertyType {
+  SINGLE_FAMILY
+  CONDO
+  TOWNHOUSE
+  MULTI_FAMILY
+  MANUFACTURED
+  MOBILE_HOME
+}
+
+enum PropertyUse {
+  PRIMARY_RESIDENCE
+  SECOND_HOME
+  INVESTMENT
+}
+
+enum MFAMethod {
+  SMS
+  EMAIL
+  TOTP
+  WEBAUTHN
+  FACE
+}
+
+enum NotificationChannel {
+  EMAIL
+  SMS
+  IN_APP
+  PUSH
+}
+
+enum NotificationStatus {
+  PENDING
+  SENT
+  FAILED
+  READ
+}
+
+enum IntegrationType {
+  PLAID
+  GOOGLE_CALENDAR
+  OFFICE365_CALENDAR
+  SENDGRID
+  TWILIO
+  ENCOMPASS
+  SALESFORCE
+  STRIPE
+}
+
+enum QRCodeType {
+  LOGIN
+  PORTAL_START
+  DOCUMENT_UPLOAD
+  LOAN_HANDOFF
+  APPOINTMENT_CHECKIN
+  UNDERWRITER_ACCESS
+  CLOSER_PACKET
+}
+
+enum SubscriptionPlan {
+  FREE
+  STARTER
+  PROFESSIONAL
+  ENTERPRISE
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  PAST_DUE
+  CANCELLED
+  TRIALING
+}
+
+// ============================================================
+// CORE MODELS
+// ============================================================
+
+model Tenant {
+  id        String   @id @default(uuid())
+  name      String
+  subdomain String   @unique
+  domain    String?  @unique
+  
+  // Organization Info
+  nmlsNumber     String?
+  address        String?
+  phone          String?
+  email          String?
+  supportEmail   String?
+  websiteUrl     String?
+  
+  // Branding
+  logoUrl        String?
+  primaryColor   String?   @default("#2563eb")
+  secondaryColor String?   @default("#7c3aed")
+  fontFamily     String?   @default("Inter")
+  
+  // Settings
+  settings       Json?     @db.JsonB
+  
+  // Subscription
+  plan           SubscriptionPlan     @default(FREE)
+  subscriptionStatus SubscriptionStatus @default(TRIALING)
+  trialEndsAt    DateTime?
+  subscriptionId String?   // Stripe subscription ID
+  
+  // Metadata
+  isActive       Boolean   @default(true)
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  deletedAt      DateTime?
+  
+  // Relations
+  tenantUsers    TenantUser[]
+  products       TenantProduct[]
+  formTemplates  FormTemplate[]
+  loans          Loan[]
+  integrations   Integration[]
+  qrCodes        QRCode[]
+  auditLogs      AuditLog[]
+  notifications  Notification[]
+  calendarEvents CalendarEvent[]
+  plaidConnections PlaidConnection[]
+  analyticsEvents AnalyticsEvent[]
+  apiKeys        ApiKey[]
+  
+  @@map("tenants")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String?  // Hashed, nullable for OAuth users
+  
+  // Profile
+  firstName    String?
+  lastName     String?
+  phone        String?
+  avatar       String?
+  
+  // Authentication
+  isEmailVerified Boolean @default(false)
+  emailVerificationToken String?
+  emailVerificationExpires DateTime?
+  passwordResetToken String?
+  passwordResetExpires DateTime?
+  refreshToken String?
+  
+  // MFA
+  mfaEnabled   Boolean @default(false)
+  mfaMethods   Json?   @db.JsonB  // Array of enabled MFA methods
+  totpSecret   String?
+  webauthnCredentials Json? @db.JsonB
+  faceEmbedding String?  // Encrypted
+  
+  // Metadata
+  lastLoginAt  DateTime?
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  deletedAt    DateTime?
+  
+  // Relations
+  tenantUsers  TenantUser[]
+  loans        Loan[]
+  auditLogs    AuditLog[]
+  notifications Notification[]
+  
+  @@map("users")
+}
+
+// Many-to-many: Users can belong to multiple tenants with different roles
+model TenantUser {
+  id        String   @id @default(uuid())
+  tenantId  String
+  userId    String
+  role      UserRole
+  
+  // Invitation
+  invitedBy String?
+  invitedAt DateTime?
+  acceptedAt DateTime?
+  
+  // Metadata
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  tenant    Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@unique([tenantId, userId])
+  @@map("tenant_users")
+}
+
+// ============================================================
+// PRODUCTS & ELIGIBILITY
+// ============================================================
+
+model Product {
+  id          String      @id @default(uuid())
+  name        String
+  type        ProductType
+  description String?
+  
+  // Base configuration (can be overridden per tenant)
+  baseConfig  Json        @db.JsonB
+  
+  // Metadata
+  isActive    Boolean     @default(true)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  
+  // Relations
+  tenantProducts TenantProduct[]
+  loans          Loan[]
+  
+  @@map("products")
+}
+
+model TenantProduct {
+  id        String   @id @default(uuid())
+  tenantId  String
+  productId String
+  
+  // Tenant-specific configuration
+  isEnabled         Boolean  @default(true)
+  configuration     Json     @db.JsonB  // Property types, fields, rules, docs
+  eligibilityRules  Json?    @db.JsonB
+  minLoanAmount     Decimal? @db.Decimal(12, 2)
+  maxLoanAmount     Decimal? @db.Decimal(12, 2)
+  minCreditScore    Int?
+  maxLTV            Decimal? @db.Decimal(5, 2)
+  
+  // Metadata
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  tenant    Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  
+  @@unique([tenantId, productId])
+  @@map("tenant_products")
+}
+
+// ============================================================
+// FORM BUILDER
+// ============================================================
+
+model FormTemplate {
+  id        String   @id @default(uuid())
+  tenantId  String
+  name      String
+  type      String   // "PREP4LOAN" or "URLA1003"
+  
+  // Versioning
+  version   Int      @default(1)
+  isPublished Boolean @default(false)
+  publishedAt DateTime?
+  
+  // Configuration
+  configuration Json?  @db.JsonB
+  
+  // Metadata
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  tenant    Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  sections  FormSection[]
+  
+  @@map("form_templates")
+}
+
+model FormSection {
+  id          String   @id @default(uuid())
+  templateId  String
+  name        String
+  label       String
+  description String?
+  order       Int
+  
+  // Visibility rules
+  visibilityRules Json? @db.JsonB
+  
+  // Metadata
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  template    FormTemplate @relation(fields: [templateId], references: [id], onDelete: Cascade)
+  fields      FormField[]
+  
+  @@map("form_sections")
+}
+
+model FormField {
+  id         String   @id @default(uuid())
+  sectionId  String
+  name       String
+  label      String
+  type       String   // text, number, date, select, checkbox, radio, file
+  placeholder String?
+  helpText   String?
+  order      Int
+  
+  // Validation
+  isRequired Boolean  @default(false)
+  validation Json?    @db.JsonB
+  
+  // Conditional logic
+  visibilityRules Json? @db.JsonB
+  productRules    Json? @db.JsonB
+  
+  // Data mapping
+  dataMapping String?  // Path to loan data field
+  
+  // Options for select/radio
+  options    Json?    @db.JsonB
+  
+  // Metadata
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  
+  section    FormSection @relation(fields: [sectionId], references: [id], onDelete: Cascade)
+  
+  @@map("form_fields")
+}
+
+// ============================================================
+// LOANS
+// ============================================================
+
+model Loan {
+  id        String     @id @default(uuid())
+  tenantId  String
+  userId    String?    // Borrower
+  productId String?
+  
+  // Loan details
+  purpose   LoanPurpose?
+  status    LoanStatus  @default(DRAFT)
+  loanAmount Decimal?   @db.Decimal(12, 2)
+  propertyAddress String?
+  propertyType PropertyType?
+  propertyUse  PropertyUse?
+  
+  // Form data (flexible JSON storage)
+  prep4loanData Json?    @db.JsonB
+  urlaData      Json?    @db.JsonB
+  
+  // Assignments
+  loanOfficerId   String?
+  processorId     String?
+  underwriterId   String?
+  closerId        String?
+  
+  // Metadata
+  submittedAt DateTime?
+  approvedAt  DateTime?
+  closedAt    DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  deletedAt   DateTime?
+  
+  // Relations
+  tenant      Tenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  user        User?     @relation(fields: [userId], references: [id], onDelete: SetNull)
+  product     Product?  @relation(fields: [productId], references: [id], onDelete: SetNull)
+  documents   Document[]
+  plaidConnections PlaidConnection[]
+  
+  @@map("loans")
+}
+
+model Document {
+  id        String   @id @default(uuid())
+  loanId    String
+  
+  // Document info
+  name      String
+  type      String   // ID, W2, BankStatement, etc.
+  fileUrl   String
+  fileSize  Int
+  mimeType  String
+  
+  // OCR/AI extraction
+  extractedData Json?  @db.JsonB
+  isVerified    Boolean @default(false)
+  
+  // Metadata
+  uploadedBy String
+  uploadedAt DateTime @default(now())
+  deletedAt  DateTime?
+  
+  // Relations
+  loan       Loan     @relation(fields: [loanId], references: [id], onDelete: Cascade)
+  
+  @@map("documents")
+}
+
+// ============================================================
+// INTEGRATIONS
+// ============================================================
+
+model Integration {
+  id        String   @id @default(uuid())
+  tenantId  String
+  type      IntegrationType
+  name      String
+  
+  // Configuration (encrypted)
+  config    Json     @db.JsonB
+  
+  // OAuth tokens (encrypted)
+  accessToken  String?
+  refreshToken String?
+  tokenExpiry  DateTime?
+  
+  // Status
+  isActive  Boolean  @default(true)
+  isConnected Boolean @default(false)
+  lastSyncedAt DateTime?
+  
+  // Metadata
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  tenant    Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  
+  @@map("integrations")
+}
+
+model PlaidConnection {
+  id        String   @id @default(uuid())
+  tenantId  String
+  loanId    String?
+  userId    String?
+  
+  // Plaid data
+  accessToken   String   // Encrypted
+  itemId        String
+  institutionId String?
+  institutionName String?
+  
+  // Account data
+  accounts      Json     @db.JsonB
+  balances      Json?    @db.JsonB
+  transactions  Json?    @db.JsonB
+  incomeData    Json?    @db.JsonB
+  
+  // Metadata
+  connectedAt   DateTime @default(now())
+  lastSyncedAt  DateTime?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  
+  tenant        Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  loan          Loan?    @relation(fields: [loanId], references: [id], onDelete: Cascade)
+  
+  @@map("plaid_connections")
+}
+
+model CalendarEvent {
+  id        String   @id @default(uuid())
+  tenantId  String
+  
+  // Calendar info
+  externalId String?  // From Google/Microsoft
+  title     String
+  description String?
+  startTime DateTime
+  endTime   DateTime
+  location  String?
+  attendees Json?    @db.JsonB
+  
+  // Metadata
+  createdBy String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deletedAt DateTime?
+  
+  tenant    Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  
+  @@map("calendar_events")
+}
+
+// ============================================================
+// QR CODES
+// ============================================================
+
+model QRCode {
+  id        String     @id @default(uuid())
+  tenantId  String
+  type      QRCodeType
+  
+  // QR data
+  code      String     @unique  // JWT token
+  payload   Json       @db.JsonB
+  
+  // Security
+  expiresAt DateTime?
+  isOneTime Boolean    @default(false)
+  isUsed    Boolean    @default(false)
+  usedAt    DateTime?
+  
+  // Tracking
+  scanCount Int        @default(0)
+  scans     Json?      @db.JsonB  // Array of scan events
+  
+  // Metadata
+  createdBy String?
+  createdAt DateTime   @default(now())
+  
+  tenant    Tenant     @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  
+  @@map("qr_codes")
+}
+
+// ============================================================
+// AUDIT & ANALYTICS
+// ============================================================
+
+model AuditLog {
+  id        String   @id @default(uuid())
+  tenantId  String?
+  userId    String?
+  
+  // Event details
+  action    String
+  resource  String
+  resourceId String?
+  changes   Json?    @db.JsonB
+  
+  // Request info
+  ipAddress String?
+  userAgent String?
+  
+  // Metadata
+  createdAt DateTime @default(now())
+  
+  tenant    Tenant?  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  
+  @@index([tenantId, createdAt])
+  @@index([userId])
+  @@index([action])
+  @@map("audit_logs")
+}
+
+model AnalyticsEvent {
+  id        String   @id @default(uuid())
+  tenantId  String
+  
+  // Event details
+  eventType String
+  eventData Json?    @db.JsonB
+  
+  // Context
+  userId    String?
+  loanId    String?
+  
+  // Metadata
+  createdAt DateTime @default(now())
+  
+  tenant    Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  
+  @@index([tenantId, eventType, createdAt])
+  @@map("analytics_events")
+}
+
+// ============================================================
+// NOTIFICATIONS
+// ============================================================
+
+model Notification {
+  id        String   @id @default(uuid())
+  tenantId  String?
+  userId    String
+  
+  // Notification details
+  title     String
+  message   String
+  type      String
+  channel   NotificationChannel
+  status    NotificationStatus @default(PENDING)
+  
+  // Delivery
+  sentAt    DateTime?
+  readAt    DateTime?
+  
+  // Metadata
+  data      Json?    @db.JsonB
+  createdAt DateTime @default(now())
+  
+  tenant    Tenant?  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@index([userId, status])
+  @@map("notifications")
+}
+
+// ============================================================
+// API & WEBHOOKS
+// ============================================================
+
+model ApiKey {
+  id        String   @id @default(uuid())
+  tenantId  String
+  
+  // API key
+  name      String
+  key       String   @unique
+  secretHash String  // HMAC secret for webhook signatures
+  
+  // Permissions
+  scopes    Json?    @db.JsonB
+  
+  // Status
+  isActive  Boolean  @default(true)
+  lastUsedAt DateTime?
+  expiresAt DateTime?
+  
+  // Metadata
+  createdBy String?
+  createdAt DateTime @default(now())
+  
+  tenant    Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  
+  @@map("api_keys")
+}
+
+// ============================================================
+// SUBSCRIPTIONS (Stripe integration ready)
+// ============================================================
+
+model Subscription {
+  id        String   @id @default(uuid())
+  tenantId  String   @unique
+  
+  // Stripe data
+  stripeCustomerId     String?
+  stripeSubscriptionId String?
+  stripePriceId        String?
+  
+  // Plan details
+  plan      SubscriptionPlan
+  status    SubscriptionStatus
+  
+  // Billing
+  currentPeriodStart DateTime?
+  currentPeriodEnd   DateTime?
+  cancelAt           DateTime?
+  canceledAt         DateTime?
+  
+  // Metadata
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  @@map("subscriptions")
+}
+
