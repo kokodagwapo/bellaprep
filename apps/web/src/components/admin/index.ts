@@ -8,4 +8,5 @@ export { QRCenterPage } from './QRCenterPage';
 export { SecurityPage } from './SecurityPage';
 export { FormBuilderPage } from './FormBuilderPage';
 export { AuditLogPage } from './AuditLogPage';
+export { AnalyticsDashboard } from './AnalyticsDashboard';
 
