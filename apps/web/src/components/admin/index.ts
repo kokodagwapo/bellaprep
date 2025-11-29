@@ -6,4 +6,6 @@ export { ProductsPage } from './ProductsPage';
 export { IntegrationsPage } from './IntegrationsPage';
 export { QRCenterPage } from './QRCenterPage';
 export { SecurityPage } from './SecurityPage';
+export { FormBuilderPage } from './FormBuilderPage';
+export { AuditLogPage } from './AuditLogPage';
 
