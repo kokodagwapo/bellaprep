@@ -66,24 +66,11 @@ const Form1003: React.FC<Form1003Props> = ({ initialData }) => {
     const labels: string[] = [];
     const indices: number[] = [];
     
-    // Form1003 flow labels
-    const stepLabels = [
-      'Borrower Info',
-      'Extended Info',
-      'Financial Info',
-      'Employment',
-      'Assets/Liabilities',
-      'Property Info',
-      'Declarations',
-      'State Disclosures',
-      'Acknowledgments',
-      'Demographics',
-      'Review & Submit'
-    ];
-    
-    form1003Flow.forEach((_, i) => {
-      if (stepLabels[i]) {
-        labels.push(stepLabels[i]);
+    // Use labels from flow definition
+    form1003Flow.forEach((flowStep, i) => {
+      const label = (flowStep as any).label;
+      if (label) {
+        labels.push(label);
         indices.push(i);
       }
     });
