@@ -16,5 +16,24 @@
     "noUnusedParameters": false,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["**/*"]
+  "include": [
+    "App.tsx",
+    "appFlow.ts",
+    "bellaKnowledgeBase.ts",
+    "index.tsx",
+    "types.ts",
+    "vite-env.d.ts",
+    "components/**/*",
+    "data/**/*",
+    "lib/**/*",
+    "services/**/*",
+    "types/**/*",
+    "utils/**/*"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "apps",
+    "packages"
+  ]
 }

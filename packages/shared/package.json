@@ -1,0 +1,14 @@
+{
+  "name": "@bellaprep/shared",
+  "version": "1.0.0",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "scripts": {
+    "lint": "eslint . --ext ts --report-unused-disable-directives --max-warnings 0",
+    "build": "tsc"
+  },
+  "devDependencies": {
+    "typescript": "^5.2.0"
+  }
+}
+
