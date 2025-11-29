@@ -1,4 +1,5 @@
 export { AdminLayout } from './AdminLayout';
+export { AdminApp } from './AdminApp';
 export { DashboardPage } from './DashboardPage';
 export { OrganizationPage } from './OrganizationPage';
 export { UsersPage } from './UsersPage';
