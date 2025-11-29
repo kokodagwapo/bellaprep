@@ -221,6 +221,14 @@ export interface FormData {
   interestRate?: number;
   loanTypeSource?: 'prep4loan' | 'urla1003' | ''; // Track where loan type was set
   
+  // Refinance-specific fields
+  currentLoanBalance?: number;
+  currentMonthlyPayment?: number;
+  currentInterestRate?: number;
+  currentLender?: string;
+  refinancePurpose?: 'lower_rate' | 'lower_payment' | 'cash_out' | 'shorten_term' | 'remove_pmi' | 'debt_consolidation' | '';
+  cashOutAmount?: number;
+  
   // New fields from master flow
   primaryResidenceIntent?: {
     moveInWithin60Days?: boolean;
