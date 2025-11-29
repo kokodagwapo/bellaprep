@@ -1,0 +1,102 @@
+service: bellaprep-api
+
+frameworkVersion: '3'
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  stage: ${opt:stage, 'dev'}
+  region: ${opt:region, 'us-east-1'}
+  memorySize: 1024
+  timeout: 30
+  
+  environment:
+    NODE_ENV: ${self:provider.stage}
+    DATABASE_URL: ${ssm:/bellaprep/${self:provider.stage}/database-url}
+    JWT_SECRET: ${ssm:/bellaprep/${self:provider.stage}/jwt-secret}
+    JWT_REFRESH_SECRET: ${ssm:/bellaprep/${self:provider.stage}/jwt-refresh-secret}
+    ENCRYPTION_KEY: ${ssm:/bellaprep/${self:provider.stage}/encryption-key}
+    S3_BUCKET: ${self:custom.s3Bucket}
+    SENDGRID_API_KEY: ${ssm:/bellaprep/${self:provider.stage}/sendgrid-api-key, ''}
+    TWILIO_ACCOUNT_SID: ${ssm:/bellaprep/${self:provider.stage}/twilio-account-sid, ''}
+    TWILIO_AUTH_TOKEN: ${ssm:/bellaprep/${self:provider.stage}/twilio-auth-token, ''}
+    PLAID_CLIENT_ID: ${ssm:/bellaprep/${self:provider.stage}/plaid-client-id, ''}
+    PLAID_SECRET: ${ssm:/bellaprep/${self:provider.stage}/plaid-secret, ''}
+    PLAID_ENV: ${ssm:/bellaprep/${self:provider.stage}/plaid-env, 'sandbox'}
+  
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - s3:GetObject
+            - s3:PutObject
+            - s3:DeleteObject
+          Resource:
+            - arn:aws:s3:::${self:custom.s3Bucket}/*
+        - Effect: Allow
+          Action:
+            - ssm:GetParameter
+            - ssm:GetParameters
+          Resource:
+            - arn:aws:ssm:${self:provider.region}:*:parameter/bellaprep/${self:provider.stage}/*
+
+custom:
+  s3Bucket: bellaprep-${self:provider.stage}-documents
+  serverless-offline:
+    httpPort: 3001
+    websocketPort: 3002
+
+plugins:
+  - serverless-plugin-typescript
+  - serverless-offline
+
+functions:
+  api:
+    handler: src/lambda.handler
+    events:
+      - http:
+          method: ANY
+          path: /
+          cors: true
+      - http:
+          method: ANY
+          path: '{proxy+}'
+          cors: true
+
+  # WebSocket handler for real-time features
+  websocket:
+    handler: src/websocket.handler
+    events:
+      - websocket:
+          route: $connect
+      - websocket:
+          route: $disconnect
+      - websocket:
+          route: $default
+
+resources:
+  Resources:
+    # S3 Bucket for documents
+    DocumentsBucket:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: ${self:custom.s3Bucket}
+        CorsConfiguration:
+          CorsRules:
+            - AllowedHeaders:
+                - '*'
+              AllowedMethods:
+                - GET
+                - PUT
+                - POST
+                - DELETE
+              AllowedOrigins:
+                - '*'
+              MaxAge: 3000
+        PublicAccessBlockConfiguration:
+          BlockPublicAcls: true
+          BlockPublicPolicy: true
+          IgnorePublicAcls: true
+          RestrictPublicBuckets: true
+

@@ -6,48 +6,41 @@ import {
   OnGatewayDisconnect,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
-import { AuditService } from '../audit.service';
+import { Logger } from '@nestjs/common';
 
 @WebSocketGateway({
-  cors: {
-    origin: '*',
-  },
+  cors: { origin: '*' },
+  namespace: '/audit',
 })
 export class AuditGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer()
   server: Server;
 
-  constructor(private auditService: AuditService) {}
+  private readonly logger = new Logger(AuditGateway.name);
 
   handleConnection(client: Socket) {
-    console.log(`Client connected: ${client.id}`);
+    this.logger.log('Client connected: ' + client.id);
   }
 
   handleDisconnect(client: Socket) {
-    console.log(`Client disconnected: ${client.id}`);
+    this.logger.log('Client disconnected: ' + client.id);
   }
 
-  @SubscribeMessage('subscribe-audit')
-  handleSubscribe(client: Socket, payload: { tenantId?: string; filters?: any }) {
-    // Join room for tenant-specific audit logs
-    if (payload.tenantId) {
-      client.join(`audit:${payload.tenantId}`);
-    } else {
-      client.join('audit:all');
-    }
+  @SubscribeMessage('subscribe')
+  handleSubscribe(client: Socket, tenantId: string) {
+    client.join('tenant:' + tenantId);
+    this.logger.log('Client ' + client.id + ' subscribed to tenant ' + tenantId);
+    return { event: 'subscribed', data: { tenantId } };
   }
 
-  @SubscribeMessage('unsubscribe-audit')
-  handleUnsubscribe(client: Socket) {
-    client.leaveAll();
+  @SubscribeMessage('unsubscribe')
+  handleUnsubscribe(client: Socket, tenantId: string) {
+    client.leave('tenant:' + tenantId);
+    this.logger.log('Client ' + client.id + ' unsubscribed from tenant ' + tenantId);
+    return { event: 'unsubscribed', data: { tenantId } };
   }
 
-  // Method to broadcast audit log (called from service)
-  broadcastAuditLog(tenantId: string | undefined, log: any) {
-    if (tenantId) {
-      this.server.to(`audit:${tenantId}`).emit('audit-log', log);
-    }
-    this.server.to('audit:all').emit('audit-log', log);
+  emitAuditEvent(tenantId: string, event: any) {
+    this.server.to('tenant:' + tenantId).emit('audit', event);
   }
 }
-

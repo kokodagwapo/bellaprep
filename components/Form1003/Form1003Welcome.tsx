@@ -118,14 +118,13 @@ const Form1003Welcome: React.FC<Form1003WelcomeProps> = ({ onNext }) => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.2, ease: [0.25, 0.46, 0.45, 0.94] }}
-          className="text-base sm:text-lg md:text-xl lg:text-2xl font-light text-foreground max-w-3xl mx-auto leading-[1.4] tracking-[-0.01em] mb-4 sm:mb-5 md:mb-6 px-2"
+          className="text-base sm:text-lg md:text-xl font-light text-muted-foreground max-w-2xl mx-auto leading-relaxed mb-4 sm:mb-5 md:mb-6 px-2"
           style={{ 
-            textShadow: '0 1px 10px rgba(0, 0, 0, 0.03)',
             maxWidth: '100%',
             padding: '0 clamp(0.5rem, 2vw, 1rem)',
             fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Inter", "Helvetica Neue", Arial, sans-serif',
             fontWeight: '300',
-            color: '#374151'
+            color: '#6b7280'
           }}
         >
           Uniform Residential Loan Application 1003
@@ -135,7 +134,7 @@ const Form1003Welcome: React.FC<Form1003WelcomeProps> = ({ onNext }) => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.25, ease: [0.25, 0.46, 0.45, 0.94] }}
-          className="text-sm sm:text-base md:text-lg font-light text-muted-foreground max-w-2xl mx-auto leading-relaxed tracking-[-0.01em] px-2 mb-0"
+          className="text-base sm:text-lg md:text-xl font-light text-muted-foreground max-w-2xl mx-auto leading-relaxed px-2 mb-0"
           style={{ 
             maxWidth: '100%',
             padding: '0 clamp(0.5rem, 2vw, 1rem)',
@@ -143,9 +142,7 @@ const Form1003Welcome: React.FC<Form1003WelcomeProps> = ({ onNext }) => {
             wordBreak: 'break-word',
             fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Inter", "Helvetica Neue", Arial, sans-serif',
             fontWeight: '300',
-            color: '#6b7280',
-            lineHeight: '1.7',
-            letterSpacing: '-0.01em'
+            color: '#6b7280'
           }}
         >
           Bella will guide you through each section step by step, ensuring your application is complete and ready for lender review. With OCR-powered document extraction and real-time insights, Bella helps you complete the form accurately and efficiently.

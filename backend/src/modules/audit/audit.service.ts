@@ -1,134 +1,103 @@
-import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../../common/prisma/prisma.service';
-import { CreateAuditLogDto } from './dto/create-audit-log.dto';
+import { Injectable, Logger } from '@nestjs/common';
+import { PrismaService } from '../../prisma/prisma.service';
+
+export interface CreateAuditLogDto {
+  tenantId?: string;
+  userId?: string;
+  borrowerId?: string;
+  event: string;
+  module: string;
+  metadata?: Record<string, any>;
+  ipAddress?: string;
+  userAgent?: string;
+}
 
 @Injectable()
 export class AuditService {
+  private readonly logger = new Logger(AuditService.name);
+
   constructor(private prisma: PrismaService) {}
 
-  async create(
-    createAuditLogDto: CreateAuditLogDto,
-    tenantId?: string,
-    userId?: string,
-    ipAddress?: string,
-    userAgent?: string,
-  ) {
-    return this.prisma.auditLog.create({
-      data: {
-        tenantId,
-        userId,
-        borrowerId: createAuditLogDto.borrowerId,
-        event: createAuditLogDto.event,
-        module: createAuditLogDto.module,
-        metadata: createAuditLogDto.metadata || {},
-        ipAddress,
-        userAgent,
-      },
-    });
+  async create(dto: CreateAuditLogDto) {
+    try {
+      return await this.prisma.auditLog.create({
+        data: {
+          tenantId: dto.tenantId,
+          userId: dto.userId,
+          borrowerId: dto.borrowerId,
+          event: dto.event,
+          module: dto.module,
+          metadata: dto.metadata,
+          ipAddress: dto.ipAddress,
+          userAgent: dto.userAgent,
+        },
+      });
+    } catch (error) {
+      this.logger.error('Failed to create audit log', error);
+      throw error;
+    }
   }
 
-  async findAll(
-    tenantId?: string,
-    userId?: string,
-    borrowerId?: string,
-    module?: string,
-    event?: string,
-    limit: number = 100,
-    offset: number = 0,
-  ) {
+  async log(dto: CreateAuditLogDto) {
+    return this.create(dto);
+  }
+
+  async findByTenant(tenantId: string, options?: { skip?: number; take?: number }) {
     return this.prisma.auditLog.findMany({
-      where: {
-        ...(tenantId && { tenantId }),
-        ...(userId && { userId }),
-        ...(borrowerId && { borrowerId }),
-        ...(module && { module }),
-        ...(event && { event }),
-      },
+      where: { tenantId },
       orderBy: { createdAt: 'desc' },
-      take: limit,
-      skip: offset,
-      include: {
-        user: {
-          select: {
-            id: true,
-            email: true,
-            firstName: true,
-            lastName: true,
-          },
-        },
-        borrower: {
-          select: {
-            id: true,
-            email: true,
-          },
-        },
-      },
+      skip: options?.skip ?? 0,
+      take: options?.take ?? 50,
     });
   }
 
-  async findOne(id: string) {
-    return this.prisma.auditLog.findUnique({
-      where: { id },
-      include: {
-        user: {
-          select: {
-            id: true,
-            email: true,
-            firstName: true,
-            lastName: true,
-          },
-        },
-        borrower: {
-          select: {
-            id: true,
-            email: true,
-          },
-        },
-      },
+  async findByUser(userId: string, options?: { skip?: number; take?: number }) {
+    return this.prisma.auditLog.findMany({
+      where: { userId },
+      orderBy: { createdAt: 'desc' },
+      skip: options?.skip ?? 0,
+      take: options?.take ?? 50,
     });
   }
 
-  async getStats(tenantId?: string, days: number = 30) {
-    const startDate = new Date();
-    startDate.setDate(startDate.getDate() - days);
+  async findByBorrower(borrowerId: string, options?: { skip?: number; take?: number }) {
+    return this.prisma.auditLog.findMany({
+      where: { borrowerId },
+      orderBy: { createdAt: 'desc' },
+      skip: options?.skip ?? 0,
+      take: options?.take ?? 50,
+    });
+  }
 
-    const [total, byModule, byEvent] = await Promise.all([
+  async getStats(tenantId: string) {
+    const now = new Date();
+    const last24h = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+    const last7d = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+
+    const [total, last24hCount, last7dCount, byEvent] = await Promise.all([
+      this.prisma.auditLog.count({ where: { tenantId } }),
       this.prisma.auditLog.count({
-        where: {
-          ...(tenantId && { tenantId }),
-          createdAt: { gte: startDate },
-        },
+        where: { tenantId, createdAt: { gte: last24h } },
       }),
-      this.prisma.auditLog.groupBy({
-        by: ['module'],
-        where: {
-          ...(tenantId && { tenantId }),
-          createdAt: { gte: startDate },
-        },
-        _count: true,
+      this.prisma.auditLog.count({
+        where: { tenantId, createdAt: { gte: last7d } },
       }),
       this.prisma.auditLog.groupBy({
         by: ['event'],
-        where: {
-          ...(tenantId && { tenantId }),
-          createdAt: { gte: startDate },
-        },
+        where: { tenantId, createdAt: { gte: last7d } },
         _count: true,
-        take: 10,
+        orderBy: { _count: { event: 'desc' } },
       }),
     ]);
 
     return {
       total,
-      byModule: byModule.map((item) => ({
-        module: item.module,
-        count: item._count,
-      })),
-      byEvent: byEvent.map((item) => ({
+      last24h: last24hCount,
+      last7d: last7dCount,
+      byEvent: byEvent.slice(0, 10).map((item) => ({
         event: item.event,
         count: item._count,
       })),
     };
   }
 }
-

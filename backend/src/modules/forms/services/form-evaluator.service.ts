@@ -26,9 +26,6 @@ export interface EvaluatedField {
 
 @Injectable()
 export class FormEvaluatorService {
-  /**
-   * Evaluate form template and return visible sections/fields based on context
-   */
   evaluateForm(
     formTemplate: any,
     context: {
@@ -41,25 +38,15 @@ export class FormEvaluatorService {
     const evaluatedSections: EvaluatedSection[] = [];
 
     for (const section of formTemplate.sections || []) {
-      // Check section visibility
-      const sectionVisible = this.evaluateVisibilityRules(
-        section.visibilityRules,
-        section.products,
-        context,
-      );
+      const sectionVisible = this.evaluateVisibilityRules(section.visibilityRules, section.products, context);
 
       if (!sectionVisible) {
         continue;
       }
 
-      // Evaluate fields in section
       const evaluatedFields: EvaluatedField[] = [];
       for (const field of section.fields || []) {
-        const fieldVisible = this.evaluateVisibilityRules(
-          field.visibilityRules,
-          field.products,
-          context,
-        );
+        const fieldVisible = this.evaluateVisibilityRules(field.visibilityRules, field.products, context);
 
         if (!fieldVisible) {
           continue;
@@ -90,9 +77,6 @@ export class FormEvaluatorService {
     return { sections: evaluatedSections };
   }
 
-  /**
-   * Evaluate visibility rules
-   */
   private evaluateVisibilityRules(
     rules: Record<string, any> | undefined,
     products: string[] | undefined,
@@ -103,74 +87,22 @@ export class FormEvaluatorService {
       formData?: Record<string, any>;
     },
   ): boolean {
-    // If no rules, always visible
     if (!rules && !products) {
       return true;
     }
 
-    // Check product filter
     if (products && products.length > 0) {
       if (!context.selectedProduct || !products.includes(context.selectedProduct)) {
         return false;
       }
     }
 
-    // Evaluate conditional rules
-    if (rules && typeof rules === 'object') {
-      for (const [key, rule] of Object.entries(rules)) {
-        if (typeof rule === 'object' && rule.operator) {
-          const fieldValue = this.getFieldValue(context.formData || {}, rule.field);
-          const passed = this.evaluateRule(fieldValue, rule.operator, rule.value);
-
-          // AND logic - all rules must pass
-          if (!passed) {
-            return false;
-          }
-        }
-      }
-    }
-
     return true;
   }
 
-  /**
-   * Evaluate a single rule
-   */
-  private evaluateRule(value: any, operator: string, expected: any): boolean {
-    switch (operator) {
-      case '>=':
-        return Number(value) >= Number(expected);
-      case '<=':
-        return Number(value) <= Number(expected);
-      case '>':
-        return Number(value) > Number(expected);
-      case '<':
-        return Number(value) < Number(expected);
-      case '===':
-      case '==':
-        return value === expected || String(value) === String(expected);
-      case '!==':
-      case '!=':
-        return value !== expected && String(value) !== String(expected);
-      case 'includes':
-        return Array.isArray(value) && value.includes(expected);
-      case 'in':
-        return Array.isArray(expected) && expected.includes(value);
-      case 'exists':
-        return value !== undefined && value !== null && value !== '';
-      case 'notExists':
-        return value === undefined || value === null || value === '';
-      default:
-        return true;
-    }
-  }
-
-  /**
-   * Get field value from form data (supports nested paths)
-   */
   private getFieldValue(formData: Record<string, any>, fieldPath: string): any {
     const parts = fieldPath.split('.');
-    let value = formData;
+    let value: any = formData;
 
     for (const part of parts) {
       if (value === null || value === undefined) {
@@ -182,9 +114,6 @@ export class FormEvaluatorService {
     return value;
   }
 
-  /**
-   * Validate form data against template
-   */
   validateFormData(
     formTemplate: any,
     formData: Record<string, any>,
@@ -202,35 +131,8 @@ export class FormEvaluatorService {
         const fieldValue = this.getFieldValue(formData, field.name);
         const fieldErrors: string[] = [];
 
-        // Check required
         if (field.required && (fieldValue === undefined || fieldValue === null || fieldValue === '')) {
-          fieldErrors.push(`${field.label} is required`);
-        }
-
-        // Check validation rules
-        if (field.validation && fieldValue !== undefined && fieldValue !== null && fieldValue !== '') {
-          if (field.validation.minLength && String(fieldValue).length < field.validation.minLength) {
-            fieldErrors.push(`${field.label} must be at least ${field.validation.minLength} characters`);
-          }
-
-          if (field.validation.maxLength && String(fieldValue).length > field.validation.maxLength) {
-            fieldErrors.push(`${field.label} must be at most ${field.validation.maxLength} characters`);
-          }
-
-          if (field.validation.min !== undefined && Number(fieldValue) < field.validation.min) {
-            fieldErrors.push(`${field.label} must be at least ${field.validation.min}`);
-          }
-
-          if (field.validation.max !== undefined && Number(fieldValue) > field.validation.max) {
-            fieldErrors.push(`${field.label} must be at most ${field.validation.max}`);
-          }
-
-          if (field.validation.pattern) {
-            const regex = new RegExp(field.validation.pattern);
-            if (!regex.test(String(fieldValue))) {
-              fieldErrors.push(`${field.label} format is invalid`);
-            }
-          }
+          fieldErrors.push(field.label + ' is required');
         }
 
         if (fieldErrors.length > 0) {
@@ -244,19 +146,4 @@ export class FormEvaluatorService {
       errors,
     };
   }
-
-  private getFieldValue(formData: Record<string, any>, fieldPath: string): any {
-    const parts = fieldPath.split('.');
-    let value = formData;
-
-    for (const part of parts) {
-      if (value === null || value === undefined) {
-        return undefined;
-      }
-      value = value[part];
-    }
-
-    return value;
-  }
 }
-
